@@ -17,7 +17,7 @@
 
     <properties>
         <revision>1</revision>
-        <sha/>
+        <sha></sha>
         <changelist>-SNAPSHOT</changelist>
         <java.version>11</java.version>
         <felles.version>1.0_20190819103533_69f5183</felles.version>
