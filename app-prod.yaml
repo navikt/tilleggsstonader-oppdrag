@@ -33,10 +33,10 @@ spec:
     requests:
       memory: 512Mi
       cpu: 500m
-  ingresses:
-    - https://familie-oppdrag.nais.preprod.local
   secureLogs:
     enabled: true
+  ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
+    - https://familie-oppdrag.nais.adeo.no
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: preprod
+      value: prod
