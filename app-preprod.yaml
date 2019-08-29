@@ -8,7 +8,7 @@ metadata:
 
 spec:
   image: navikt/familie-oppdrag:{{version}}
-  port: 8086
+  port: 8087
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30
