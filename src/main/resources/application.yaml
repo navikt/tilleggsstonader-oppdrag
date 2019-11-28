@@ -1,3 +1,12 @@
+server:
+  port: 8087
+  servlet:
+    context-path: /
+
+spring:
+  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  main.banner-mode: "off"
+
 management:
   endpoint.health.show-details: always
   endpoints.web:
@@ -6,12 +15,3 @@ management:
     path-mapping:
       info: "status/isAlive"
   metrics.export.prometheus.enabled: true
-  metrics.web.server.auto-time-requests: true
-
-server:
-  servlet:
-    context-path: /
-
-spring:
-  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
-  main.banner-mode: "off"
