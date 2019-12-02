@@ -11,7 +11,7 @@ import javax.xml.datatype.XMLGregorianCalendar
 class OppdragSkjemaConstants {
 
     companion object {
-        val OPPDRAG_GJELDER_DATO_FOM = LocalDate.of(2000, 1,1)
+        val OPPDRAG_GJELDER_DATO_FOM = LocalDate.of(2000, 1, 1)
         const val KODE_AKSJON = "1"
 
         const val ENHET_TYPE = "BOS"
