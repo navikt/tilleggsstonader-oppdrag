@@ -1,13 +1,25 @@
 package no.nav.familie.oppdrag.iverksetting
 
-import no.trygdeetaten.skjema.oppdrag.Oppdrag110
+import no.trygdeetaten.skjema.oppdrag.TfradragTillegg
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
+import javax.xml.datatype.DatatypeFactory
+import javax.xml.datatype.XMLGregorianCalendar
 
 
 class OppdragSkjemaConstants {
 
-    fun lagNyOppdrag110() {
-        val oppdrag110 = Oppdrag110()
+    companion object {
+        val OPPDRAG_GJELDER_DATO_FOM = LocalDate.of(2000, 1,1)
+        const val KODE_AKSJON = "1"
 
+        const val ENHET_TYPE = "BOS"
+        const val ENHET = "8020"
+        val ENHET_DATO_FOM = LocalDate.of(1900, 1, 1)
+
+        val FRADRAG_TILLEGG = TfradragTillegg.T
+        const val BRUK_KJØREPLAN = "N"
     }
 }
 
@@ -34,15 +46,6 @@ enum class SatsTypeKode(val kode: String) {
     ÅRLIG("AAR"),
     A_KONTO("AKTO"),
     UKJENT("-");
-
-    companion object {
-        fun fromKode(kode: String): SatsTypeKode {
-            for (s in values()) {
-                if (s.kode == kode ) return s
-            }
-            return UKJENT
-        }
-    }
 }
 
 enum class GradTypeKode(val kode: String) {
@@ -53,20 +56,7 @@ enum class GradTypeKode(val kode: String) {
 
 }
 
-enum class UtbetalingsType(val kode: String) {
-    YTELSE("YTEL"),
-    FEILUTBETALING("FEIL"),
-    FORSKUDSSKATT("SKAT"),
-    JUSTERING("JUST"),
-    TREKK("TREK"),
-    UDEFINERT("-");
-
-    companion object {
-        fun fromKode(kode: String): UtbetalingsType {
-            for (u in values()) {
-                if (u.kode == kode ) return u
-            }
-            return UDEFINERT
-        }
-    }
+fun LocalDate.toXMLDate(): XMLGregorianCalendar {
+    return DatatypeFactory.newInstance()
+            .newXMLGregorianCalendar(GregorianCalendar.from(atStartOfDay(ZoneId.systemDefault())))
 }
