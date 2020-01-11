@@ -11,6 +11,7 @@ import no.nav.familie.oppdrag.iverksetting.OppdragSender
 import no.nav.familie.oppdrag.repository.OppdragProtokoll
 import no.nav.familie.oppdrag.repository.OppdragProtokollRepository
 import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
+import no.nav.familie.oppdrag.service.OppdragService
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.math.BigDecimal
@@ -52,7 +53,9 @@ internal class OppdragControllerTest{
         every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } answers { emptyList() }
         every { oppdragProtokollRepository.save(any<OppdragProtokoll>()) } answers { arg(0) }
 
-        val oppdragController = OppdragController(oppdragSender, mapper, oppdragProtokollRepository)
+        val oppdragService = OppdragService(oppdragSender,oppdragProtokollRepository)
+
+        val oppdragController = OppdragController(oppdragService, mapper)
 
         oppdragController.sendOppdrag(utbetalingsoppdrag)
 
@@ -82,7 +85,11 @@ internal class OppdragControllerTest{
                 OppdragProtokollStatus.LAGT_PÅ_KØ,
                 localDateTimeNow,
                 localDateTimeNow)
-        val oppdragController = OppdragController(oppdragSender, mapper, oppdragProtokollRepository)
+
+
+        val oppdragService = OppdragService(oppdragSender,oppdragProtokollRepository)
+
+        val oppdragController = OppdragController(oppdragService, mapper)
 
         every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } answers { listOf(testOppdragsProtokoll) }
 
