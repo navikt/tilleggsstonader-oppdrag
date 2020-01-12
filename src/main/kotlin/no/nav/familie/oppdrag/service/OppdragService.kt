@@ -22,20 +22,13 @@ class OppdragService(
     @Transactional(rollbackFor = [Throwable::class])
     fun opprettOppdrag(utbetalingsoppdrag : Utbetalingsoppdrag, oppdrag: Oppdrag) {
 
-        if (oppdragProtokollRepository.hentEksisterendeOppdrag(utbetalingsoppdrag.id.fagsystem,
-                                                               utbetalingsoppdrag.id.behandlingsId,
-                                                               utbetalingsoppdrag.id.fødselsnummer).isNotEmpty()) {
-            throw IllegalArgumentException("Oppdraget finnes fra før")
-        }
-
         LOG.info("Legger oppdrag på kø "+oppdrag.id)
         oppdragSender.sendOppdrag(oppdrag)
 
         LOG.info("Lagrer oppdrag i databasen "+oppdrag.id)
         oppdragProtokollRepository.save(OppdragProtokoll.lagFraOppdrag(utbetalingsoppdrag, oppdrag))
 
-        throw RuntimeException()
-    }
+     }
 
     companion object {
         val LOG = LoggerFactory.getLogger(OppdragService::class.java)

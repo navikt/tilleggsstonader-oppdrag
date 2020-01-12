@@ -65,6 +65,7 @@ class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
         val transactionManager = JmsTransactionManager()
         transactionManager.connectionFactory = connectionFactory
         factory.setTransactionManager(transactionManager)
+        factory.setSessionTransacted(true)
         return factory
     }
 

@@ -69,6 +69,10 @@ internal class OppdragControllerTest{
         }
     }
 
+    /*
+
+    Kanskje ikke nødvendig HVIS unikhet garanteres av primærnøkkelen
+
     @Test
     fun skal_ikke_lagre_oppdragsprotokoll_for_eksisterende_oppdrag() {
 
@@ -98,4 +102,5 @@ internal class OppdragControllerTest{
         verify (exactly = 0) { oppdragProtokollRepository.save(any<OppdragProtokoll>()) }
         assertEquals(HttpStatus.BAD_REQUEST, svar.statusCode)
     }
+    */
 }

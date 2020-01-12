@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import javax.jms.TextMessage
 
 @Service
@@ -19,6 +20,7 @@ class OppdragMottaker(
         val env: Environment) {
 
     // jmsListenerContainerFactory sørger for en transaksjon. Exception her betyr at meldingen blir liggende på køen
+    @Transactional
     @JmsListener(destination = "\${oppdrag.mq.mottak}", containerFactory = "jmsListenerContainerFactory")
     fun mottaKvitteringFraOppdrag(melding: TextMessage) {
         var svarFraOppdrag = melding.text as String

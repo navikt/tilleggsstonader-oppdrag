@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.nav.familie.oppdrag.service.OppdragService
+import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -31,7 +32,7 @@ internal class OppdragControllerIntegrasjonTest {
             Utbetalingsoppdrag.KodeEndring.NY,
             "TEST",
             "SAKSNR",
-            "FNR-010",
+            "FNR-014",
             "SAKSBEHANDLERID",
             localDateTimeNow,
             listOf(Utbetalingsperiode(false,
@@ -48,10 +49,7 @@ internal class OppdragControllerIntegrasjonTest {
 
     @Autowired lateinit var oppdragService : OppdragService
 
-    @Test
-    fun test() {}
-
-    @Test
+    @Ignore("Krever at MQ og PostgresSql kjører lokalt. Se readme")
     fun testSkal_lagre_oppdragprotokoll_for_utbetalingoppdrag() {
 
         val mapper = OppdragMapper()
@@ -59,7 +57,6 @@ internal class OppdragControllerIntegrasjonTest {
         val oppdragController = OppdragController(oppdragService, mapper)
 
         oppdragController.sendOppdrag(utbetalingsoppdrag)
-
     }
 
 }
