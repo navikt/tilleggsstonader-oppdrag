@@ -5,27 +5,20 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.nav.familie.oppdrag.service.OppdragService
-import org.junit.Assume
-import org.junit.jupiter.api.Assumptions.assumeFalse
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
+import org.junit.Ignore
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.dao.DuplicateKeyException
-import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.jms.annotation.EnableJms
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.DisabledIf
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 @Configuration
 @ComponentScan("no.nav.familie.oppdrag") class TestConfig
@@ -33,6 +26,7 @@ import kotlin.test.assertTrue
 @ActiveProfiles("dev")
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @EnableJms
+@Ignore
 internal class OppdragControllerIntegrasjonTest {
 
     val localDateTimeNow = LocalDateTime.now()
@@ -58,12 +52,6 @@ internal class OppdragControllerIntegrasjonTest {
     )
 
     @Autowired lateinit var oppdragService: OppdragService
-
-    @BeforeEach
-    fun before() {
-        assumeFalse(System.getenv("CIRCLECI")?.contains("true")?:false);
-        assumeFalse("true".equals(System.getenv("GITHUB_ACTIONS")?.contains("true")?:false));
-    }
 
     @Test
     fun test_skal_lagre_oppdragprotokoll_for_utbetalingoppdrag() {
