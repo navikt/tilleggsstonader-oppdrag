@@ -7,7 +7,6 @@ import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
 import no.nav.familie.oppdrag.repository.protokollStatus
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
@@ -16,10 +15,11 @@ import javax.jms.TextMessage
 
 @Service
 class OppdragMottaker(
-        @Autowired val oppdragProtokollRepository: OppdragProtokollRepository,
-        val env: Environment) {
+        val oppdragProtokollRepository: OppdragProtokollRepository,
+        val env: Environment
+){
+    internal var LOG = LoggerFactory.getLogger(OppdragMottaker::class.java)
 
-    // jmsListenerContainerFactory sørger for en transaksjon. Exception her betyr at meldingen blir liggende på køen
     @Transactional
     @JmsListener(destination = "\${oppdrag.mq.mottak}", containerFactory = "jmsListenerContainerFactory")
     fun mottaKvitteringFraOppdrag(melding: TextMessage) {
@@ -30,45 +30,49 @@ class OppdragMottaker(
 
         val kvittering = lesKvittering(svarFraOppdrag)
         val oppdragId = kvittering.id
-        LOG.info("Mottatt melding på kvitteringskø for fagsak ${oppdragId}: Status ${kvittering.status}, svar ${hentMelding(kvittering)}")
+        LOG.info("Mottatt melding på kvitteringskø for fagsak ${oppdragId}: Status ${kvittering.status}, " +
+                 "svar ${kvittering.mmel?.beskrMelding ?: "Beskrivende melding ikke satt fra OS"}")
 
         LOG.info("Henter oppdrag ${oppdragId} fra databasen")
         val sendteOppdrag: List<OppdragProtokoll> = oppdragProtokollRepository.hentEksisterendeOppdrag(
                 oppdragId.fagsystem,
                 oppdragId.behandlingsId,
-                oppdragId.fødselsnummer
+                oppdragId.personIdent
         )
 
         when {
-            sendteOppdrag.size!=1 -> {
+            sendteOppdrag.size==0 -> {
                 // TODO: Fant ikke oppdrag. Det er VELDIG feil
-                LOG.error("Fant ikke oppdraget knytt til kvittering: "+oppdragId)
+                LOG.error("Fant ikke oppdrag ${oppdragId} knyttet til kvittering. Kvitteringen var ${melding.text}")
+
+            }
+            sendteOppdrag.size>1 -> {
+                // TODO: Fant to eller flere oppdrag med samme primærnøkkel. Det er også VELDIG feil
+                LOG.error("Fant flere oppdrag for samme id: ${oppdragId}. Kvitteringen var ${melding.text}")
 
             }
             sendteOppdrag[0].status != OppdragProtokollStatus.LAGT_PÅ_KØ -> {
                 // TODO: Oppdraget har en status vi ikke venter. Det er GANSKE så feil
                 LOG.warn("Oppdraget tilknyttet mottatt kvittering har uventet status i databasen. Oppdraget er: ${oppdragId}. " +
-                         "Status i databasen er ${sendteOppdrag[0].status}")
+                         "Status i databasen er ${sendteOppdrag[0].status}. " +
+                         "Lagrer likevel oppdatert oppdrag i databasen med ny status ${kvittering.protokollStatus}")
+                oppdaterOppdrag(sendteOppdrag[0], kvittering)
             }
             else -> {
-                val nyStatus = kvittering.protokollStatus
-                LOG.info("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${nyStatus}")
-                val oppdatertOppdrag = sendteOppdrag[0].copy(status = nyStatus)
-                oppdragProtokollRepository.save(oppdatertOppdrag)
+                LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.protokollStatus}")
+                oppdaterOppdrag(sendteOppdrag[0], kvittering)
             }
         }
+    }
+
+    private fun oppdaterOppdrag(sendtOppdrag: OppdragProtokoll,
+                                kvittering: Oppdrag) {
+        val oppdatertOppdrag = sendtOppdrag.copy(status = kvittering.protokollStatus)
+        oppdragProtokollRepository.save(oppdatertOppdrag)
     }
 
     fun lesKvittering(svarFraOppdrag: String): Oppdrag {
         val kvittering = Jaxb().tilOppdrag(svarFraOppdrag)
         return kvittering
-    }
-
-    private fun hentMelding(kvittering: Oppdrag): String {
-        return kvittering.mmel?.beskrMelding ?: "Beskrivende melding ikke satt fra OS"
-    }
-
-    companion object {
-        val LOG = LoggerFactory.getLogger(OppdragMottaker::class.java)
     }
 }

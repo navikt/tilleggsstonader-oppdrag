@@ -5,7 +5,7 @@ import no.trygdeetaten.skjema.oppdrag.Oppdrag
 
 
 data class OppdragId(val fagsystem : String,
-                     val fødselsnummer : String,
+                     val personIdent : String,
                      val behandlingsId : String)
 
 val Oppdrag.id : OppdragId

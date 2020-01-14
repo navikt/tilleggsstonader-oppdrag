@@ -22,10 +22,10 @@ class OppdragService(
     @Transactional(rollbackFor = [Throwable::class])
     fun opprettOppdrag(utbetalingsoppdrag : Utbetalingsoppdrag, oppdrag: Oppdrag) {
 
-        LOG.info("Legger oppdrag på kø "+oppdrag.id)
+        LOG.debug("Legger oppdrag på kø "+oppdrag.id)
         oppdragSender.sendOppdrag(oppdrag)
 
-        LOG.info("Lagrer oppdrag i databasen "+oppdrag.id)
+        LOG.debug("Lagrer oppdrag i databasen "+oppdrag.id)
         oppdragProtokollRepository.save(OppdragProtokoll.lagFraOppdrag(utbetalingsoppdrag, oppdrag))
 
      }
