@@ -1,7 +1,9 @@
 package no.nav.familie.oppdrag.repository
 
+import no.nav.familie.oppdrag.domene.OppdragId
+
 interface OppdragProtokollRepository {
 
-    fun hentOppdrag(fagsystem: String, behandlingId: String, personIdent: String): List<OppdragProtokoll>
+    fun hentOppdrag(oppdragId : OppdragId): List<OppdragProtokoll>
     fun lagreOppdrag(oppdragProtokoll: OppdragProtokoll)
 }
