@@ -61,8 +61,8 @@ internal class OppdragControllerIntegrasjonTest {
 
     @BeforeEach
     fun before() {
-        assumeFalse("true".equals(System.getenv("CIRCLECI")));
-        assumeFalse("true".equals(System.getenv("GITHUB_ACTIONS")));
+        assumeFalse(System.getenv("CIRCLECI")?.contains("true")?:false);
+        assumeFalse("true".equals(System.getenv("GITHUB_ACTIONS")?.contains("true")?:false));
     }
 
     @Test
