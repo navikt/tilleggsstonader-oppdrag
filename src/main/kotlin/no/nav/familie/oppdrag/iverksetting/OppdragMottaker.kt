@@ -34,7 +34,7 @@ class OppdragMottaker(
                  "svar ${kvittering.mmel?.beskrMelding ?: "Beskrivende melding ikke satt fra OS"}")
 
         LOG.info("Henter oppdrag ${oppdragId} fra databasen")
-        val sendteOppdrag: List<OppdragProtokoll> = oppdragProtokollRepository.hentEksisterendeOppdrag(
+        val sendteOppdrag: List<OppdragProtokoll> = oppdragProtokollRepository.hentOppdrag(
                 oppdragId.fagsystem,
                 oppdragId.behandlingsId,
                 oppdragId.personIdent
@@ -68,7 +68,7 @@ class OppdragMottaker(
     private fun oppdaterOppdrag(sendtOppdrag: OppdragProtokoll,
                                 kvittering: Oppdrag) {
         val oppdatertOppdrag = sendtOppdrag.copy(status = kvittering.protokollStatus)
-        oppdragProtokollRepository.save(oppdatertOppdrag)
+        oppdragProtokollRepository.lagreOppdrag(oppdatertOppdrag)
     }
 
     fun lesKvittering(svarFraOppdrag: String): Oppdrag {

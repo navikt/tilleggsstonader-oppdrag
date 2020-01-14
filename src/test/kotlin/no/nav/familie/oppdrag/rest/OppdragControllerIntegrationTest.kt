@@ -5,6 +5,10 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.nav.familie.oppdrag.service.OppdragService
+import org.junit.Assume
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +19,7 @@ import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.jms.annotation.EnableJms
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.junit.jupiter.DisabledIf
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -28,7 +33,6 @@ import kotlin.test.assertTrue
 @ActiveProfiles("dev")
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @EnableJms
-@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 internal class OppdragControllerIntegrasjonTest {
 
     val localDateTimeNow = LocalDateTime.now()
@@ -55,6 +59,12 @@ internal class OppdragControllerIntegrasjonTest {
 
     @Autowired lateinit var oppdragService: OppdragService
 
+    @BeforeEach
+    fun before() {
+        assumeFalse("true".equals(System.getenv("CIRCLECI")));
+        assumeFalse("true".equals(System.getenv("GITHUB_ACTIONS")));
+    }
+
     @Test
     fun test_skal_lagre_oppdragprotokoll_for_utbetalingoppdrag() {
 
@@ -75,11 +85,10 @@ internal class OppdragControllerIntegrasjonTest {
         val utbetalingsoppdrag = utbetalingsoppdragMedTilfeldigAktoer
         oppdragController.sendOppdrag(utbetalingsoppdrag)
 
-        val exception = assertFailsWith<DbActionExecutionException> {
-            oppdragController.sendOppdrag(utbetalingsoppdragMedTilfeldigAktoer.copy(aktoer = utbetalingsoppdrag.aktoer)) }
+        assertFailsWith<DuplicateKeyException> {
+            oppdragController.sendOppdrag(utbetalingsoppdragMedTilfeldigAktoer.copy(aktoer = utbetalingsoppdrag.aktoer))
+        }
 
-        assertTrue { exception.cause is DuplicateKeyException }
-
-     }
+    }
 
 }

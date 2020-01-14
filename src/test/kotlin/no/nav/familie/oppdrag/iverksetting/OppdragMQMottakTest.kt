@@ -83,17 +83,17 @@ class OppdragMQMottakTest {
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
-        every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } returns
+        every { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) } returns
                 listOf(oppdragProtokoll)
 
-        every { oppdragProtokollRepository.save(any<OppdragProtokoll>()) } returns oppdragProtokoll
+        every { oppdragProtokollRepository.lagreOppdrag(any()) } just Runs
 
         val oppdragMottaker = OppdragMottaker(oppdragProtokollRepository, devEnv)
 
         oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage)
 
-        verify(exactly = 1) { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) }
-        verify(exactly = 1) { oppdragProtokollRepository.save(any<OppdragProtokoll>()) }
+        verify(exactly = 1) { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) }
+        verify(exactly = 1) { oppdragProtokollRepository.lagreOppdrag(any<OppdragProtokoll>()) }
 
     }
 
@@ -103,10 +103,10 @@ class OppdragMQMottakTest {
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
-        every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } returns
+        every { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) } returns
                 listOf(oppdragProtokoll, oppdragProtokoll)
 
-        every { oppdragProtokollRepository.save(any<OppdragProtokoll>()) } returns oppdragProtokoll
+        every { oppdragProtokollRepository.lagreOppdrag(any()) } just Runs
 
         val oppdragMottaker = OppdragMottaker(oppdragProtokollRepository, devEnv)
         oppdragMottaker.LOG = mockk()
@@ -116,19 +116,17 @@ class OppdragMQMottakTest {
 
         oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage)
 
-        verify(exactly = 1) { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) }
+        verify(exactly = 1) { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) }
         verify(exactly = 1) { oppdragMottaker.LOG.error(any()) }
-        verify(exactly = 0) { oppdragProtokollRepository.save(any<OppdragProtokoll>()) }
+        verify(exactly = 0) { oppdragProtokollRepository.lagreOppdrag(any<OppdragProtokoll>()) }
     }
 
     @Test
     fun skal_logge_error_hvis_oppdraget_mangler_i_databasen() {
-        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll
-
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
-        every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } returns emptyList()
-        every { oppdragProtokollRepository.save(any<OppdragProtokoll>()) } returns oppdragProtokoll
+        every { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) } returns emptyList()
+        every { oppdragProtokollRepository.lagreOppdrag(any()) } just Runs
 
         val oppdragMottaker = OppdragMottaker(oppdragProtokollRepository, devEnv)
         oppdragMottaker.LOG = mockk()
@@ -138,9 +136,9 @@ class OppdragMQMottakTest {
 
         oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage)
 
-        verify(exactly = 1) { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) }
+        verify(exactly = 1) { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) }
         verify(exactly = 1) { oppdragMottaker.LOG.error(any()) }
-        verify(exactly = 0) { oppdragProtokollRepository.save(any<OppdragProtokoll>()) }
+        verify(exactly = 0) { oppdragProtokollRepository.lagreOppdrag(any<OppdragProtokoll>()) }
     }
 
     @Test
@@ -149,10 +147,10 @@ class OppdragMQMottakTest {
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
-        every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } returns
+        every { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) } returns
                 listOf(oppdragProtokoll.copy(status = OppdragProtokollStatus.KVITTERT_OK))
 
-        every { oppdragProtokollRepository.save(any<OppdragProtokoll>()) } returns oppdragProtokoll
+        every { oppdragProtokollRepository.lagreOppdrag(any()) } just Runs
 
         val oppdragMottaker = OppdragMottaker(oppdragProtokollRepository, devEnv)
         oppdragMottaker.LOG = mockk()
@@ -162,9 +160,9 @@ class OppdragMQMottakTest {
 
         oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage)
 
-        verify(exactly = 1) { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) }
+        verify(exactly = 1) { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) }
         verify(exactly = 1) { oppdragMottaker.LOG.warn(any()) }
-        verify(exactly = 1) { oppdragProtokollRepository.save(any<OppdragProtokoll>()) }
+        verify(exactly = 1) { oppdragProtokollRepository.lagreOppdrag(any<OppdragProtokoll>()) }
     }
 
     private fun lesKvittering(filnavn: String): String {

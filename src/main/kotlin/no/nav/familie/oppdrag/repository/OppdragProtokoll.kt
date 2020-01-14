@@ -6,12 +6,10 @@ import no.nav.familie.kontrakter.felles.oppdrag.behandlingsIdForFørsteUtbetalin
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.nav.familie.oppdrag.iverksetting.Status
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
-import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
 
-data class OppdragProtokoll(@Id val serienummer: Long = 0,
-                            val fagsystem: String,
+data class OppdragProtokoll(val fagsystem: String,
                             @Column("person_ident") val personIdent: String,
                             @Column("fagsak_id") val fagsakId: String,
                             @Column("behandling_id") val behandlingId: String,

@@ -26,7 +26,7 @@ class OppdragService(
         oppdragSender.sendOppdrag(oppdrag)
 
         LOG.debug("Lagrer oppdrag i databasen "+oppdrag.id)
-        oppdragProtokollRepository.save(OppdragProtokoll.lagFraOppdrag(utbetalingsoppdrag, oppdrag))
+        oppdragProtokollRepository.lagreOppdrag(OppdragProtokoll.lagFraOppdrag(utbetalingsoppdrag, oppdrag))
 
      }
 

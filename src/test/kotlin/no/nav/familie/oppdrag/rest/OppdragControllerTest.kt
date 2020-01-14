@@ -1,8 +1,6 @@
 package no.nav.familie.oppdrag.rest
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
@@ -50,8 +48,8 @@ internal class OppdragControllerTest{
         val oppdragSender = mockk<OppdragSender>(relaxed = true)
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
-        every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } answers { emptyList() }
-        every { oppdragProtokollRepository.save(any<OppdragProtokoll>()) } answers { arg(0) }
+        every { oppdragProtokollRepository.hentOppdrag(any(), any(), any()) } answers { emptyList() }
+        every { oppdragProtokollRepository.lagreOppdrag(any()) } just Runs
 
         val oppdragService = OppdragService(oppdragSender,oppdragProtokollRepository)
 
@@ -60,47 +58,11 @@ internal class OppdragControllerTest{
         oppdragController.sendOppdrag(utbetalingsoppdrag)
 
         verify {
-            oppdragProtokollRepository.save(match<OppdragProtokoll> {
+            oppdragProtokollRepository.lagreOppdrag(match<OppdragProtokoll> {
                 it.melding.contains("FAGSYSTEM_TEST")
                 && it.status == OppdragProtokollStatus.LAGT_PÅ_KØ
                 && it.opprettetTidspunkt > localDateTimeNow
-                && it.serienummer == 0L
             })
         }
     }
-
-    /*
-
-    Kanskje ikke nødvendig HVIS unikhet garanteres av primærnøkkelen
-
-    @Test
-    fun skal_ikke_lagre_oppdragsprotokoll_for_eksisterende_oppdrag() {
-
-        val mapper = OppdragMapper()
-        val oppdragSender = mockk<OppdragSender>(relaxed = true)
-        val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
-        val testOppdragsProtokoll = OppdragProtokoll(1,
-                "PERSONID",
-                "FAGSYSTEM_TEST",
-                "SAKSNR",
-                "1",
-                "INPUT_DATA",
-                "MELDING",
-                OppdragProtokollStatus.LAGT_PÅ_KØ,
-                localDateTimeNow,
-                localDateTimeNow)
-
-
-        val oppdragService = OppdragService(oppdragSender,oppdragProtokollRepository)
-
-        val oppdragController = OppdragController(oppdragService, mapper)
-
-        every { oppdragProtokollRepository.hentEksisterendeOppdrag(any(), any(), any()) } answers { listOf(testOppdragsProtokoll) }
-
-         val svar = oppdragController.sendOppdrag(utbetalingsoppdrag)
-
-        verify (exactly = 0) { oppdragProtokollRepository.save(any<OppdragProtokoll>()) }
-        assertEquals(HttpStatus.BAD_REQUEST, svar.statusCode)
-    }
-    */
 }
