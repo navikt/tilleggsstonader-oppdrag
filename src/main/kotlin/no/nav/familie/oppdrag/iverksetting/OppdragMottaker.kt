@@ -52,19 +52,13 @@ class OppdragMottaker(
                 LOG.warn("Oppdraget tilknyttet mottatt kvittering har uventet status i databasen. Oppdraget er: ${oppdragId}. " +
                          "Status i databasen er ${sendteOppdrag[0].status}. " +
                          "Lagrer likevel oppdatert oppdrag i databasen med ny status ${kvittering.protokollStatus}")
-                oppdaterOppdrag(sendteOppdrag[0], kvittering)
+                oppdragProtokollRepository.oppdaterStatus(oppdragId,kvittering.protokollStatus)
             }
             else -> {
                 LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.protokollStatus}")
-                oppdaterOppdrag(sendteOppdrag[0], kvittering)
+                oppdragProtokollRepository.oppdaterStatus(oppdragId,kvittering.protokollStatus)
             }
         }
-    }
-
-    private fun oppdaterOppdrag(sendtOppdrag: OppdragProtokoll,
-                                kvittering: Oppdrag) {
-        val oppdatertOppdrag = sendtOppdrag.copy(status = kvittering.protokollStatus)
-        oppdragProtokollRepository.lagreOppdrag(oppdatertOppdrag)
     }
 
     fun lesKvittering(svarFraOppdrag: String): Oppdrag {

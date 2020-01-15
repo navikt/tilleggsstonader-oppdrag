@@ -5,5 +5,6 @@ import no.nav.familie.oppdrag.domene.OppdragId
 interface OppdragProtokollRepository {
 
     fun hentOppdrag(oppdragId : OppdragId): List<OppdragProtokoll>
-    fun lagreOppdrag(oppdragProtokoll: OppdragProtokoll)
+    fun opprettOppdrag(oppdragProtokoll: OppdragProtokoll)
+    fun oppdaterStatus(oppdragId: OppdragId, oppdragProtokollStatus: OppdragProtokollStatus)
 }

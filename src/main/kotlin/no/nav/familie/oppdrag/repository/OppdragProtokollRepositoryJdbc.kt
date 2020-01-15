@@ -13,28 +13,37 @@ class OppdragProtokollRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragPr
         val hentStatement = "SELECT * FROM OPPDRAG_PROTOKOLL WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ?"
 
         return jdbcTemplate.query(hentStatement,
-                                  arrayOf(oppdragId.fagsystem,oppdragId.behandlingsId,oppdragId.personIdent),
+                                  arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
                                   OppdragProtokollRowMapper())
     }
 
-    override fun lagreOppdrag(oppdragProtokoll: OppdragProtokoll) {
+    override fun opprettOppdrag(oppdragProtokoll: OppdragProtokoll) {
         val insertStatement = "INSERT INTO oppdrag_protokoll VALUES (?,?,?,?,?,?,?,?,?)"
 
         jdbcTemplate.update(insertStatement,
-                oppdragProtokoll.melding,
-                oppdragProtokoll.status.name,
-                oppdragProtokoll.opprettetTidspunkt,
-                oppdragProtokoll.personIdent,
-                oppdragProtokoll.fagsakId,
-                oppdragProtokoll.behandlingId,
-                oppdragProtokoll.fagsystem,
-                oppdragProtokoll.avstemmingTidspunkt,
-                oppdragProtokoll.inputData)
+                            oppdragProtokoll.melding,
+                            oppdragProtokoll.status.name,
+                            oppdragProtokoll.opprettetTidspunkt,
+                            oppdragProtokoll.personIdent,
+                            oppdragProtokoll.fagsakId,
+                            oppdragProtokoll.behandlingId,
+                            oppdragProtokoll.fagsystem,
+                            oppdragProtokoll.avstemmingTidspunkt,
+                            oppdragProtokoll.inputData)
     }
 
+    override fun oppdaterStatus(oppdragId: OppdragId, oppdragProtokollStatus: OppdragProtokollStatus) {
+
+        val update = "UPDATE oppdrag_protokoll SET status = '${oppdragProtokollStatus.name}' " +
+                     "WHERE person_ident = '${oppdragId.personIdent}' " +
+                     "AND fagsystem = '${oppdragId.fagsystem}' " +
+                     "AND behandling_id = '${oppdragId.behandlingsId}'"
+
+        jdbcTemplate.execute(update)
+    }
 }
 
-class OppdragProtokollRowMapper: RowMapper<OppdragProtokoll> {
+class OppdragProtokollRowMapper : RowMapper<OppdragProtokoll> {
 
     override fun mapRow(resultSet: ResultSet, rowNumbers: Int): OppdragProtokoll? {
         return OppdragProtokoll(
