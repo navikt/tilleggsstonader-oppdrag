@@ -1,71 +1,49 @@
 package no.nav.familie.oppdrag.repository
 
-import no.nav.familie.kontrakter.felles.oppdrag.Opphør
-import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
+import no.nav.familie.oppdrag.util.Containers
+import no.nav.familie.oppdrag.util.TestConfig
+import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.test.context.ActiveProfiles
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
+import org.springframework.test.context.ContextConfiguration
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.assertFailsWith
 
-@Configuration
-@ComponentScan("no.nav.familie.oppdrag") class TestConfig
-
 @ActiveProfiles("dev")
+@ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @Disabled
+@Testcontainers
 internal class OppdragProtokollRepositoryJdbcTest {
 
-    val localDateTimeNow = LocalDateTime.now()
-    val localDateNow = LocalDate.now()
-
-    val utbetalingsoppdragMedTilfeldigAktoer = Utbetalingsoppdrag(
-            Utbetalingsoppdrag.KodeEndring.NY,
-            "TEST",
-            "SAKSNR",
-            UUID.randomUUID().toString(), // Foreløpig plass til en 50-tegn string og ingen gyldighetssjekk
-            "SAKSBEHANDLERID",
-            localDateTimeNow,
-            listOf(Utbetalingsperiode(false,
-                                      Opphør(localDateNow),
-                                      localDateNow,
-                                      "KLASSE A",
-                                      localDateNow,
-                                      localDateNow,
-                                      BigDecimal.ONE,
-                                      Utbetalingsperiode.SatsType.MND,
-                                      "UTEBETALES_TIL",
-                                      1))
-    )
-
-
     @Autowired lateinit var oppdragProtokollRepository: OppdragProtokollRepository
+
+    companion object {
+        @Container var postgreSQLContainer = Containers.postgreSQLContainer
+    }
 
     @Test
     fun skal_ikke_lagre_duplikat() {
 
-        oppdragProtokollRepository.opprettOppdrag(utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll)
+        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer().somOppdragProtokoll
+
+        oppdragProtokollRepository.opprettOppdrag(oppdragProtokoll)
 
         assertFailsWith<DuplicateKeyException> {
-            oppdragProtokollRepository.opprettOppdrag(utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll)
+            oppdragProtokollRepository.opprettOppdrag(oppdragProtokoll)
         }
-
     }
 
     @Test
     fun skal_lagre_status() {
 
-        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll
+        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer().somOppdragProtokoll
                 .copy(status = OppdragProtokollStatus.LAGT_PÅ_KØ)
 
         oppdragProtokollRepository.opprettOppdrag(oppdragProtokoll)
