@@ -24,7 +24,7 @@ import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@Configuration
+/*@Configuration
 @ComponentScan("no.nav.familie.oppdrag") class TestConfig
 
 @ActiveProfiles("dev")
@@ -33,8 +33,8 @@ import kotlin.test.assertFailsWith
 @Disabled
 internal class OppdragControllerIntegrasjonTest {
 
-    val localDateTimeNow = LocalDateTime.now()
-    val localDateNow = LocalDate.now()
+    final val localDateTimeNow = LocalDateTime.now()
+    final val localDateNow = LocalDate.now()
 
     val utbetalingsoppdragMedTilfeldigAktoer = Utbetalingsoppdrag(
             Utbetalingsoppdrag.KodeEndring.NY,
@@ -71,10 +71,10 @@ internal class OppdragControllerIntegrasjonTest {
 
         do {
             val oppdrag = oppdragProtokollRepository.hentOppdrag(utbetalingsoppdragMedTilfeldigAktoer.id)
-            oppdragStatus = oppdrag[0].status
+            oppdragStatus = oppdrag.status
 
         } while (oppdragStatus == OppdragProtokollStatus.LAGT_PÅ_KØ)
 
         assertEquals( OppdragProtokollStatus.KVITTERT_UKJENT,oppdragStatus)
     }
-}
+}*/

@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertFailsWith
 
-@Configuration
+/*@Configuration
 @ComponentScan("no.nav.familie.oppdrag") class TestConfig
 
 @ActiveProfiles("dev")
@@ -26,8 +26,8 @@ import kotlin.test.assertFailsWith
 @Disabled
 internal class OppdragProtokollRepositoryJdbcTest {
 
-    val localDateTimeNow = LocalDateTime.now()
-    val localDateNow = LocalDate.now()
+    final val localDateTimeNow = LocalDateTime.now()
+    final val localDateNow = LocalDate.now()
 
     val utbetalingsoppdragMedTilfeldigAktoer = Utbetalingsoppdrag(
             Utbetalingsoppdrag.KodeEndring.NY,
@@ -71,13 +71,13 @@ internal class OppdragProtokollRepositoryJdbcTest {
         oppdragProtokollRepository.opprettOppdrag(oppdragProtokoll)
 
         val hentetOppdragProtokoll = oppdragProtokollRepository.hentOppdrag(oppdragProtokoll.id)
-        assertEquals(OppdragProtokollStatus.LAGT_PÅ_KØ, hentetOppdragProtokoll[0].status)
+        assertEquals(OppdragProtokollStatus.LAGT_PÅ_KØ, hentetOppdragProtokoll.status)
 
-        oppdragProtokollRepository.oppdaterStatus(hentetOppdragProtokoll[0].id,OppdragProtokollStatus.KVITTERT_OK)
+        oppdragProtokollRepository.oppdaterStatus(hentetOppdragProtokoll.id, OppdragProtokollStatus.KVITTERT_OK)
 
-        val hentetOppdatertOppdragProtokoll = oppdragProtokollRepository.hentOppdrag(hentetOppdragProtokoll[0].id)
-        assertEquals(OppdragProtokollStatus.KVITTERT_OK, hentetOppdatertOppdragProtokoll[0].status)
+        val hentetOppdatertOppdragProtokoll = oppdragProtokollRepository.hentOppdrag(hentetOppdragProtokoll.id)
+        assertEquals(OppdragProtokollStatus.KVITTERT_OK, hentetOppdatertOppdragProtokoll.status)
 
     }
 
-}
+}*/

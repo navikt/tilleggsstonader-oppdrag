@@ -10,6 +10,7 @@ import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
 import no.nav.familie.oppdrag.repository.somOppdragProtokoll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.core.env.Environment
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -84,7 +85,7 @@ class OppdragMQMottakTest {
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
         every { oppdragProtokollRepository.hentOppdrag(any()) } returns
-                listOf(oppdragProtokoll)
+                oppdragProtokoll
 
         every { oppdragProtokollRepository.oppdaterStatus(any(),any()) } just Runs
 
@@ -103,8 +104,7 @@ class OppdragMQMottakTest {
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
-        every { oppdragProtokollRepository.hentOppdrag(any()) } returns
-                listOf(oppdragProtokoll, oppdragProtokoll)
+        every { oppdragProtokollRepository.hentOppdrag(any()) } throws Exception()
 
         every { oppdragProtokollRepository.opprettOppdrag(any()) } just Runs
 
@@ -114,10 +114,7 @@ class OppdragMQMottakTest {
         every { oppdragMottaker.LOG.info(any()) } just Runs
         every { oppdragMottaker.LOG.error(any()) } just Runs
 
-        oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage)
-
-        verify(exactly = 1) { oppdragProtokollRepository.hentOppdrag(any()) }
-        verify(exactly = 1) { oppdragMottaker.LOG.error(any()) }
+        assertThrows<Exception> { oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage) }
         verify(exactly = 0) { oppdragProtokollRepository.opprettOppdrag(any<OppdragProtokoll>()) }
     }
 
@@ -125,7 +122,7 @@ class OppdragMQMottakTest {
     fun skal_logge_error_hvis_oppdraget_mangler_i_databasen() {
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
-        every { oppdragProtokollRepository.hentOppdrag(any()) } returns emptyList()
+        every { oppdragProtokollRepository.hentOppdrag(any()) } throws Exception()
         every { oppdragProtokollRepository.opprettOppdrag(any()) } just Runs
 
         val oppdragMottaker = OppdragMottaker(oppdragProtokollRepository, devEnv)
@@ -134,10 +131,7 @@ class OppdragMQMottakTest {
         every { oppdragMottaker.LOG.info(any()) } just Runs
         every { oppdragMottaker.LOG.error(any()) } just Runs
 
-        oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage)
-
-        verify(exactly = 1) { oppdragProtokollRepository.hentOppdrag(any()) }
-        verify(exactly = 1) { oppdragMottaker.LOG.error(any()) }
+        assertThrows<Exception> { oppdragMottaker.mottaKvitteringFraOppdrag("kvittering-akseptert.xml".fraRessursSomTextMessage) }
         verify(exactly = 0) { oppdragProtokollRepository.opprettOppdrag(any<OppdragProtokoll>()) }
     }
 
@@ -148,7 +142,7 @@ class OppdragMQMottakTest {
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
         every { oppdragProtokollRepository.hentOppdrag(any()) } returns
-                listOf(oppdragProtokoll.copy(status = OppdragProtokollStatus.KVITTERT_OK))
+                oppdragProtokoll.copy(status = OppdragProtokollStatus.KVITTERT_OK)
 
         every { oppdragProtokollRepository.oppdaterStatus(any(),OppdragProtokollStatus.KVITTERT_OK) } just Runs
 
