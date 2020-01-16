@@ -8,7 +8,6 @@ import no.nav.familie.oppdrag.service.OppdragService
 import no.nav.familie.oppdrag.util.Containers
 import no.nav.familie.oppdrag.util.TestConfig
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,11 +49,11 @@ internal class OppdragControllerIntegrasjonTest {
 
         do {
             val oppdrag = oppdragProtokollRepository.hentOppdrag(utbetalingsoppdrag.id)
+
             oppdragStatus = oppdrag[0].status
 
         } while (oppdragStatus == OppdragProtokollStatus.LAGT_PÅ_KØ)
 
         assertEquals( OppdragProtokollStatus.KVITTERT_UKJENT,oppdragStatus)
     }
-
 }
