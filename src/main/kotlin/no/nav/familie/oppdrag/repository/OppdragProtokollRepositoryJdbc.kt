@@ -21,7 +21,7 @@ class OppdragProtokollRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragPr
         return when( listeAvOppdrag.size ) {
             0 -> {
                 LOG.error("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
-                throw Exception("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
+                throw NoSuchElementException("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
             }
             1 -> listeAvOppdrag[0]
             else -> {

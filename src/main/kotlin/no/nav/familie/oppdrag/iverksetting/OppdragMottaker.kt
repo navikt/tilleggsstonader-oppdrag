@@ -36,18 +36,15 @@ class OppdragMottaker(
         LOG.info("Henter oppdrag ${oppdragId} fra databasen")
         val sendteOppdrag: OppdragProtokoll = oppdragProtokollRepository.hentOppdrag(oppdragId)
 
-        when {
-            sendteOppdrag.status != OppdragProtokollStatus.LAGT_PÅ_KØ -> {
-                // TODO: Oppdraget har en status vi ikke venter. Det er GANSKE så feil
-                LOG.warn("Oppdraget tilknyttet mottatt kvittering har uventet status i databasen. Oppdraget er: ${oppdragId}. " +
-                         "Status i databasen er ${sendteOppdrag.status}. " +
-                         "Lagrer likevel oppdatert oppdrag i databasen med ny status ${kvittering.protokollStatus}")
-                oppdragProtokollRepository.oppdaterStatus(oppdragId, kvittering.protokollStatus)
-            }
-            else -> {
-                LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.protokollStatus}")
-                oppdragProtokollRepository.oppdaterStatus(oppdragId, kvittering.protokollStatus)
-            }
+        if (sendteOppdrag.status != OppdragProtokollStatus.LAGT_PÅ_KØ) {
+            // TODO: Oppdraget har en status vi ikke venter. Det er GANSKE så feil
+            LOG.warn("Oppdraget tilknyttet mottatt kvittering har uventet status i databasen. Oppdraget er: ${oppdragId}. " +
+                    "Status i databasen er ${sendteOppdrag.status}. " +
+                    "Lagrer likevel oppdatert oppdrag i databasen med ny status ${kvittering.protokollStatus}")
+            oppdragProtokollRepository.oppdaterStatus(oppdragId, kvittering.protokollStatus)
+        } else  {
+            LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.protokollStatus}")
+            oppdragProtokollRepository.oppdaterStatus(oppdragId, kvittering.protokollStatus)
         }
     }
 
