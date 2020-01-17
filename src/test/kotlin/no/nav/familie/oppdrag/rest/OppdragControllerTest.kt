@@ -46,7 +46,6 @@ internal class OppdragControllerTest{
         val oppdragSender = mockk<OppdragSender>(relaxed = true)
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
-        every { oppdragProtokollRepository.hentOppdrag(any()) } answers { emptyList() }
         every { oppdragProtokollRepository.opprettOppdrag(any()) } just Runs
 
         val oppdragService = OppdragService(oppdragSender,oppdragProtokollRepository)

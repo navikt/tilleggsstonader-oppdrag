@@ -1,6 +1,7 @@
 package no.nav.familie.oppdrag.repository
 
 import no.nav.familie.oppdrag.domene.OppdragId
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -8,13 +9,26 @@ import java.sql.ResultSet
 
 @Repository
 class OppdragProtokollRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragProtokollRepository {
+    internal var LOG = LoggerFactory.getLogger(OppdragProtokollRepositoryJdbc::class.java)
 
-    override fun hentOppdrag(oppdragId: OppdragId): List<OppdragProtokoll> {
+    override fun hentOppdrag(oppdragId: OppdragId): OppdragProtokoll {
         val hentStatement = "SELECT * FROM OPPDRAG_PROTOKOLL WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ?"
 
-        return jdbcTemplate.query(hentStatement,
+        val listeAvOppdrag = jdbcTemplate.query(hentStatement,
                                   arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
                                   OppdragProtokollRowMapper())
+
+        return when( listeAvOppdrag.size ) {
+            0 -> {
+                LOG.error("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
+                throw NoSuchElementException("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
+            }
+            1 -> listeAvOppdrag[0]
+            else -> {
+                LOG.error("Feil ved henting av oppdrag. Fant fler oppdrag med id $oppdragId")
+                throw Exception("Feil ved henting av oppdrag. Fant fler oppdrag med id $oppdragId")
+            }
+        }
     }
 
     override fun opprettOppdrag(oppdragProtokoll: OppdragProtokoll) {

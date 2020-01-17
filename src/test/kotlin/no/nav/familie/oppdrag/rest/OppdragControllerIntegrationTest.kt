@@ -50,8 +50,7 @@ internal class OppdragControllerIntegrasjonTest {
         do {
             val oppdrag = oppdragProtokollRepository.hentOppdrag(utbetalingsoppdrag.id)
 
-            oppdragStatus = oppdrag[0].status
-
+            oppdragStatus = oppdrag.status
         } while (oppdragStatus == OppdragProtokollStatus.LAGT_PÅ_KØ)
 
         assertEquals( OppdragProtokollStatus.KVITTERT_UKJENT,oppdragStatus)

@@ -2,12 +2,15 @@ package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
+import no.nav.familie.oppdrag.domene.OppdragId
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
+import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
 import no.nav.familie.oppdrag.service.OppdragService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -28,6 +31,21 @@ class OppdragController(@Autowired val oppdragService: OppdragService,
 
         oppdragService.opprettOppdrag(utbetalingsoppdrag,oppdrag)
         return ResponseEntity.ok().body(Ressurs.Companion.success("Oppdrag sendt ok"))
+    }
+
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/status"])
+    fun hentStatus(@Valid @RequestBody oppdragId: OppdragId): ResponseEntity<Ressurs<OppdragProtokollStatus>> {
+        return Result.runCatching { oppdragService.hentStatusForOppdrag(oppdragId) }
+                .fold(
+                        onFailure = {
+                            ResponseEntity
+                                    .status(HttpStatus.NOT_FOUND)
+                                    .body(Ressurs.failure(errorMessage = "Fant ikke oppdrag med id $oppdragId"))
+                        },
+                        onSuccess = {
+                            ResponseEntity.ok(Ressurs.success(it))
+                        }
+                )
     }
 
     @PostMapping(path = ["/grensesnittavstemming/{fagsystem}"])
