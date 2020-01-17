@@ -8,6 +8,7 @@ import no.nav.familie.oppdrag.repository.OppdragProtokoll
 import no.nav.familie.oppdrag.repository.OppdragProtokollRepository
 import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
 import no.nav.familie.oppdrag.repository.somOppdragProtokoll
+import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -23,29 +24,6 @@ import kotlin.test.assertEquals
 class OppdragMQMottakTest {
 
     lateinit var oppdragMottaker: OppdragMottaker
-
-    val localDateTimeNow = LocalDateTime.now()
-    val localDateNow = LocalDate.now()
-
-
-    val utbetalingsoppdragMedTilfeldigAktoer = Utbetalingsoppdrag(
-            Utbetalingsoppdrag.KodeEndring.NY,
-            "TEST",
-            "SAKSNR",
-            UUID.randomUUID().toString(), // Foreløpig plass til en 50-tegn string og ingen gyldighetssjekk
-            "SAKSBEHANDLERID",
-            localDateTimeNow,
-            listOf(Utbetalingsperiode(false,
-                                      Opphør(localDateNow),
-                                      localDateNow,
-                                      "KLASSE A",
-                                      localDateNow,
-                                      localDateNow,
-                                      BigDecimal.ONE,
-                                      Utbetalingsperiode.SatsType.MND,
-                                      "UTEBETALES_TIL",
-                                      1))
-    )
 
     val devEnv: Environment
         get() {
@@ -80,7 +58,7 @@ class OppdragMQMottakTest {
 
     @Test
     fun skal_lagre_status_fra_kvittering() {
-        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll
+        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer().somOppdragProtokoll
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
@@ -100,7 +78,7 @@ class OppdragMQMottakTest {
 
     @Test
     fun skal_logge_error_hvis_det_finnes_to_identiske_oppdrag_i_databasen() {
-        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll
+        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer().somOppdragProtokoll
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 
@@ -137,7 +115,7 @@ class OppdragMQMottakTest {
 
     @Test
     fun skal_logge_warn_hvis_oppdrag_i_databasen_har_uventet_status() {
-        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer.somOppdragProtokoll
+        val oppdragProtokoll = utbetalingsoppdragMedTilfeldigAktoer().somOppdragProtokoll
 
         val oppdragProtokollRepository = mockk<OppdragProtokollRepository>()
 

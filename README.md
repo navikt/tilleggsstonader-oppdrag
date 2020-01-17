@@ -1,8 +1,11 @@
 # familie-oppdrag
 Generell proxy mot Oppdragsystemet (OS) for familie-ytelsene
 
-## Bygging og kjøring lokalt
-Bygging gjøres med `mvn clean install`. For å kjøre opp appen lokalt kan en kjøre `DevLauncher` med Spring-profilen `dev` satt.
+## Bygging
+Bygging gjøres med `mvn clean install`. 
+
+## Kjøring lokalt
+For å kjøre opp appen lokalt kan en kjøre `DevLauncher` med Spring-profilen `dev` satt.
 Appen tilgjengeliggjøres da på `localhost:8087`.
 I tillegg må man kjøre opp en MQ-container med docker:
 ```
