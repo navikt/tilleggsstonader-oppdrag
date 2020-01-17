@@ -6,7 +6,9 @@ import no.trygdeetaten.skjema.oppdrag.Oppdrag
 
 data class OppdragId(val fagsystem : String,
                      val personIdent : String,
-                     val behandlingsId : String)
+                     val behandlingsId : String) {
+    override fun toString(): String = "OppdragId(fagsystem=$fagsystem, behandlingsId=$behandlingsId)"
+}
 
 val Oppdrag.id : OppdragId
     get() = OppdragId(this.oppdrag110.kodeFagomraade,

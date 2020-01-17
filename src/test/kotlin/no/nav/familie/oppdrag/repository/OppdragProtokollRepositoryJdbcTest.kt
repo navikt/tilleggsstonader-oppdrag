@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertFailsWith
 
-/*@Configuration
+@Configuration
 @ComponentScan("no.nav.familie.oppdrag") class TestConfig
 
 @ActiveProfiles("dev")
@@ -80,4 +80,4 @@ internal class OppdragProtokollRepositoryJdbcTest {
 
     }
 
-}*/
+}
