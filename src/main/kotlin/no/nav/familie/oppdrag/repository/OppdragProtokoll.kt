@@ -1,11 +1,10 @@
 package no.nav.familie.oppdrag.repository
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.behandlingsIdForFørsteUtbetalingsperiode
 import no.nav.familie.oppdrag.domene.OppdragId
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
-import no.nav.familie.oppdrag.iverksetting.Status
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
@@ -28,8 +27,8 @@ data class OppdragProtokoll(val fagsystem: String,
                     fagsakId = utbetalingsoppdrag.saksnummer,
                     behandlingId = utbetalingsoppdrag.behandlingsIdForFørsteUtbetalingsperiode(),
                     avstemmingTidspunkt = utbetalingsoppdrag.avstemmingTidspunkt,
-                    inputData = ObjectMapper().writeValueAsString(utbetalingsoppdrag),
-                    melding = ObjectMapper().writeValueAsString(oppdrag)
+                    inputData = objectMapper.writeValueAsString(utbetalingsoppdrag),
+                    melding = objectMapper.writeValueAsString(oppdrag)
             )
         }
     }
