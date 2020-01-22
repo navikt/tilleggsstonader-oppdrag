@@ -1,10 +1,10 @@
 package no.nav.familie.oppdrag.iverksetting
 
 import no.nav.familie.oppdrag.domene.id
-import no.nav.familie.oppdrag.repository.OppdragProtokoll
-import no.nav.familie.oppdrag.repository.OppdragProtokollRepository
-import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
-import no.nav.familie.oppdrag.repository.protokollStatus
+import no.nav.familie.oppdrag.repository.OppdragLager
+import no.nav.familie.oppdrag.repository.OppdragLagerRepository
+import no.nav.familie.oppdrag.repository.OppdragStatus
+import no.nav.familie.oppdrag.repository.oppdragStatus
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
@@ -15,7 +15,7 @@ import javax.jms.TextMessage
 
 @Service
 class OppdragMottaker(
-        val oppdragProtokollRepository: OppdragProtokollRepository,
+        val oppdragLagerRepository: OppdragLagerRepository,
         val env: Environment
 ){
     internal var LOG = LoggerFactory.getLogger(OppdragMottaker::class.java)
@@ -33,18 +33,21 @@ class OppdragMottaker(
         LOG.info("Mottatt melding på kvitteringskø for fagsak ${oppdragId}: Status ${kvittering.status}, " +
                  "svar ${kvittering.mmel?.beskrMelding ?: "Beskrivende melding ikke satt fra OS"}")
 
-        LOG.info("Henter oppdrag ${oppdragId} fra databasen")
-        val sendteOppdrag: OppdragProtokoll = oppdragProtokollRepository.hentOppdrag(oppdragId)
+        LOG.debug("Henter oppdrag ${oppdragId} fra databasen")
+        val sendteOppdrag: OppdragLager = oppdragLagerRepository.hentOppdrag(oppdragId)
+        if (kvittering.mmel != null) {
+            oppdragLagerRepository.oppdaterKvitteringsmelding(oppdragId, kvittering.mmel)
+        }
 
-        if (sendteOppdrag.status != OppdragProtokollStatus.LAGT_PÅ_KØ) {
+        if (sendteOppdrag.status != OppdragStatus.LAGT_PÅ_KØ) {
             // TODO: Oppdraget har en status vi ikke venter. Det er GANSKE så feil
             LOG.warn("Oppdraget tilknyttet mottatt kvittering har uventet status i databasen. Oppdraget er: ${oppdragId}. " +
                     "Status i databasen er ${sendteOppdrag.status}. " +
-                    "Lagrer likevel oppdatert oppdrag i databasen med ny status ${kvittering.protokollStatus}")
-            oppdragProtokollRepository.oppdaterStatus(oppdragId, kvittering.protokollStatus)
+                    "Lagrer likevel oppdatert oppdrag i databasen med ny status ${kvittering.oppdragStatus}")
+            oppdragLagerRepository.oppdaterStatus(oppdragId, kvittering.oppdragStatus)
         } else  {
-            LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.protokollStatus}")
-            oppdragProtokollRepository.oppdaterStatus(oppdragId, kvittering.protokollStatus)
+            LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.oppdragStatus}")
+            oppdragLagerRepository.oppdaterStatus(oppdragId, kvittering.oppdragStatus)
         }
     }
 
