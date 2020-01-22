@@ -4,7 +4,7 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.domene.OppdragId
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
-import no.nav.familie.oppdrag.repository.OppdragProtokollStatus
+import no.nav.familie.oppdrag.repository.OppdragStatus
 import no.nav.familie.oppdrag.service.OppdragService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
@@ -26,15 +26,26 @@ class OppdragController(@Autowired val oppdragService: OppdragService,
 
    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/oppdrag"])
    fun sendOppdrag(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<String>> {
-        val oppdrag110 = oppdragMapper.tilOppdrag110(utbetalingsoppdrag)
-        val oppdrag = oppdragMapper.tilOppdrag(oppdrag110)
+       return Result.runCatching {
+           val oppdrag110 = oppdragMapper.tilOppdrag110(utbetalingsoppdrag)
+           val oppdrag = oppdragMapper.tilOppdrag(oppdrag110)
 
-        oppdragService.opprettOppdrag(utbetalingsoppdrag,oppdrag)
-        return ResponseEntity.ok().body(Ressurs.Companion.success("Oppdrag sendt ok"))
+           oppdragService.opprettOppdrag(utbetalingsoppdrag,oppdrag)
+       }.fold(
+               onFailure = {
+                   SECURE_LOG.error("Feil ved iverksetting av oppdrag:", it)
+                   ResponseEntity
+                           .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                           .body(Ressurs.failure(errorMessage = "Klarte ikke sende oppdrag for saksnr ${utbetalingsoppdrag.saksnummer}"))
+               },
+               onSuccess = {
+                   ResponseEntity.ok(Ressurs.success("Oppdrag sendt OK"))
+               }
+       )
     }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/status"])
-    fun hentStatus(@Valid @RequestBody oppdragId: OppdragId): ResponseEntity<Ressurs<OppdragProtokollStatus>> {
+    fun hentStatus(@Valid @RequestBody oppdragId: OppdragId): ResponseEntity<Ressurs<OppdragStatus>> {
         return Result.runCatching { oppdragService.hentStatusForOppdrag(oppdragId) }
                 .fold(
                         onFailure = {
@@ -49,6 +60,6 @@ class OppdragController(@Autowired val oppdragService: OppdragService,
     }
 
     companion object {
-        val LOG = LoggerFactory.getLogger(OppdragController::class.java)
+        val SECURE_LOG = LoggerFactory.getLogger("secureLogger")
     }
 }
