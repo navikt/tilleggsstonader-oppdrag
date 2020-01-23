@@ -33,3 +33,5 @@ management:
   health:
     db:
       enabled: true
+
+BA_SAK_CLIENT_ID: ""
