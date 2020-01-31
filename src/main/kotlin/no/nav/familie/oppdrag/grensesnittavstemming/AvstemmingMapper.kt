@@ -14,7 +14,9 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AvstemmingMapper(private val oppdragsliste: List<OppdragLager>,
-                       private val fagOmråde: String) {
+                       private val fagOmråde: String,
+                       private val fom: LocalDateTime,
+                       private val tom: LocalDateTime) {
     private val ANTALL_DETALJER_PER_MELDING = 70
     private val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")
     val avstemmingId = encodeUUIDBase64(UUID.randomUUID())
@@ -56,8 +58,8 @@ class AvstemmingMapper(private val oppdragsliste: List<OppdragLager>,
             this.avleverendeKomponentKode = fagOmråde
             this.mottakendeKomponentKode = SystemKode.OPPDRAGSSYSTEMET.kode
             this.underkomponentKode = fagOmråde
-            this.nokkelFom = getLavesteAvstemmingstidspunkt().format(tidspunktFormatter)
-            this.nokkelTom = getHøyesteAvstemmingstidspunkt().format(tidspunktFormatter)
+            this.nokkelFom = fom.format(tidspunktFormatter)
+            this.nokkelTom = tom.format(tidspunktFormatter)
             this.avleverendeAvstemmingId = avstemmingId
             this.brukerId = fagOmråde
         }
