@@ -91,10 +91,19 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
 
     private fun akkumulerTotalbeløp(utbetalingsperiode: Utbetalingsperiode) {
         // utlede om utbetalingsperioden er aktuell for avstemmingsdato
-        if (utbetalingsperiode.vedtakdatoFom.isBefore(avstemmingsDato.toLocalDate()) && utbetalingsperiode.vedtakdatoTom.isAfter(avstemmingsDato.toLocalDate())) {
+        if (erPeriodenAktiv(utbetalingsperiode)) {
             totalBeløp+=utbetalingsperiode.sats.toLong()
             totalantall++
         }
+    }
+
+    private fun erPeriodenAktiv(utbetalingsperiode: Utbetalingsperiode): Boolean {
+        val utbetalingsperiodeFom = utbetalingsperiode.vedtakdatoFom
+        val utbetalingsperiodeTom = utbetalingsperiode.vedtakdatoTom
+        val avstemmingsdato = avstemmingsDato.toLocalDate()
+
+        return (utbetalingsperiodeFom.isBefore(avstemmingsdato) && utbetalingsperiodeTom.isAfter(avstemmingsdato))
+                || utbetalingsperiodeFom.isAfter(avstemmingsdato)
     }
 
     private fun lagAttestant(utbetalingsoppdrag: Utbetalingsoppdrag): Attestant {
