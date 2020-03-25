@@ -27,13 +27,6 @@ psql -U postgres
 CREATE DATABASE "familie-oppdrag";
 ```
 
-For å kjøre med denne lokalt må følgende miljøvariabler settes i `application-dev.yml`:
-```
-spring.datasource.url: jdbc:postgresql://0.0.0.0:5432/familie-oppdrag
-spring.datasource.username: postgres
-spring.datasource.password: test
-```
-
 Les mer om postgres på nav [her](https://github.com/navikt/utvikling/blob/master/PostgreSQL.md). For å hente credentials manuelt, se [her](https://github.com/navikt/utvikling/blob/master/Vault.md). 
 
 ## Teste i preprod, f.eks Postman
