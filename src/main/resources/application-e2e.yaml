@@ -10,15 +10,20 @@ oppdrag.mq:
   mottak: DEV.QUEUE.1
   avstemming: DEV.QUEUE.2
   channel: DEV.ADMIN.SVRCONN
-  hostname: localhost
+  hostname: host.docker.internal
   port: 1414
   user: admin
   password: passw0rd
   enabled: true
 
-spring.datasource:
-  url: jdbc:postgresql://postgres-oppdrag:5432/familieoppdrag
-  username: familie
-  password: familie-pwd
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-oppdrag:5432/familieoppdrag
+    username: familie
+    password: familie-pwd
+  cloud:
+    vault:
+      database:
+        role: familie
 
 ACCEPTED_CLIENTS: ${OPPDRAG_BA_SAK_CLIENT_ID}
