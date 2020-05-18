@@ -1,6 +1,6 @@
 no.nav.security.jwt:
   issuer.azuread:
-    discoveryurl: http://host.docker.internal:1111/v2.0/.well-known/openid-configuration
+    discoveryurl: http://mock-oauth2-server:1111/v2.0/.well-known/openid-configuration
     accepted_audience: api://${OPPDRAG_CLIENT_ID}/.default
     cookie_name: azure_token
 
@@ -10,7 +10,7 @@ oppdrag.mq:
   mottak: DEV.QUEUE.1
   avstemming: DEV.QUEUE.2
   channel: DEV.ADMIN.SVRCONN
-  hostname: host.docker.internal
+  hostname: mq
   port: 1414
   user: admin
   password: passw0rd
