@@ -23,7 +23,7 @@ class OppdragMottaker(
     @JmsListener(destination = "\${oppdrag.mq.mottak}", containerFactory = "jmsListenerContainerFactory")
     fun mottaKvitteringFraOppdrag(melding: TextMessage) {
         var svarFraOppdrag = melding.text as String
-        if (!env.activeProfiles.contains("dev")) {
+        if (!env.activeProfiles.contains("dev") && !env.activeProfiles.contains("e2e")) {
             svarFraOppdrag = svarFraOppdrag.replace("oppdrag xmlns", "ns2:oppdrag xmlns:ns2")
         }
 
