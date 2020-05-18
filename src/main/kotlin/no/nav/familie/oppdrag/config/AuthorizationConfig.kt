@@ -1,4 +1,4 @@
-package no.nav.familie.ba.sak.config
+package no.nav.familie.oppdrag.config
 
 import no.nav.familie.sikkerhet.AuthorizationFilter
 import no.nav.familie.sikkerhet.OIDCUtil
