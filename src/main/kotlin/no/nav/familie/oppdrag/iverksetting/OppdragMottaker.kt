@@ -45,8 +45,12 @@ class OppdragMottaker(
             oppdragLagerRepository.oppdaterKvitteringsmelding(oppdragId, kvittering.mmel, førsteOppdragUtenKvittering.versjon)
         }
 
-        LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.oppdragStatus}")
-        oppdragLagerRepository.oppdaterStatus(oppdragId, kvittering.oppdragStatus, førsteOppdragUtenKvittering.versjon)
+        if (!env.activeProfiles.contains("dev") && !env.activeProfiles.contains("e2e")) {
+            LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.oppdragStatus}")
+            oppdragLagerRepository.oppdaterStatus(oppdragId, kvittering.oppdragStatus, førsteOppdragUtenKvittering.versjon)
+        } else {
+            oppdragLagerRepository.oppdaterStatus(oppdragId, OppdragStatus.KVITTERT_OK, førsteOppdragUtenKvittering.versjon)
+        }
     }
 
     fun lesKvittering(svarFraOppdrag: String): Oppdrag {
