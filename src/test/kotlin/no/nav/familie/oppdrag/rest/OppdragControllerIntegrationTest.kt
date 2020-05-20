@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 
 @ActiveProfiles("dev")
-@ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class,Containers.MQInitializer::class))
+@ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class, Containers.MQInitializer::class])
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @EnableJms
 @DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
@@ -53,6 +53,6 @@ internal class OppdragControllerIntegrasjonTest {
             oppdragStatus = oppdrag.status
         } while (oppdragStatus == OppdragStatus.LAGT_PÅ_KØ)
 
-        assertEquals( OppdragStatus.KVITTERT_UKJENT,oppdragStatus)
+        assertEquals( OppdragStatus.KVITTERT_OK,oppdragStatus)
     }
 }
