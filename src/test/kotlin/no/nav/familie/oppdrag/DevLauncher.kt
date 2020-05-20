@@ -1,15 +1,13 @@
 package no.nav.familie.oppdrag
 
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.jms.annotation.EnableJms
+import no.nav.familie.oppdrag.config.ApplicationConfig
+import org.springframework.boot.builder.SpringApplicationBuilder
 
-@SpringBootApplication(scanBasePackages = ["no.nav.familie.oppdrag"])
-@EnableJms
-class DevLauncher
-
-fun main(args: Array<String>) {
-    val springApp = SpringApplication(DevLauncher::class.java)
-    springApp.setAdditionalProfiles("dev")
-    springApp.run(*args)
+object DevLauncher {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val app = SpringApplicationBuilder(ApplicationConfig::class.java)
+                .profiles("dev")
+        app.run(*args)
+    }
 }
