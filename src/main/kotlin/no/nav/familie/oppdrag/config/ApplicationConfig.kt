@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 
 @SpringBootConfiguration
-@EntityScan(ApplicationConfig.pakkenavn)
-@ComponentScan(ApplicationConfig.pakkenavn)
+@EntityScan(ApplicationConfig.pakkenavn, "no.nav.familie.sikkerhet")
+@ComponentScan(ApplicationConfig.pakkenavn, "no.nav.familie.sikkerhet")
 @EnableJwtTokenValidation
 class ApplicationConfig {
 
@@ -32,6 +32,6 @@ class ApplicationConfig {
     }
 
     companion object {
-        const val pakkenavn = "no.nav.familie"
+        const val pakkenavn = "no.nav.familie.oppdrag"
     }
 }

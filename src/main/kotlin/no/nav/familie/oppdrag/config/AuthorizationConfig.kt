@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 
+@Configuration
 class AuthorizationConfig(
         private val oidcUtil: OIDCUtil,
         @Value("\${ACCEPTED_CLIENTS}")
