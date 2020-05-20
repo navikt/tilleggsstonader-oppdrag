@@ -17,6 +17,7 @@ class OppdragMottaker(
         val oppdragLagerRepository: OppdragLagerRepository,
         val env: Environment
 ) {
+
     internal var LOG = LoggerFactory.getLogger(OppdragMottaker::class.java)
 
     @Transactional
@@ -30,9 +31,9 @@ class OppdragMottaker(
         val kvittering = lesKvittering(svarFraOppdrag)
         val oppdragId = kvittering.id
         LOG.info("Mottatt melding på kvitteringskø for fagsak ${oppdragId}: Status ${kvittering.status}, " +
-                "svar ${kvittering.mmel?.beskrMelding ?: "Beskrivende melding ikke satt fra OS"}")
+                 "svar ${kvittering.mmel?.beskrMelding ?: "Beskrivende melding ikke satt fra OS"}")
 
-        LOG.debug("Henter oppdrag ${oppdragId} fra databasen")
+        LOG.debug("Henter oppdrag $oppdragId fra databasen")
 
         val førsteOppdragUtenKvittering = oppdragLagerRepository.hentAlleVersjonerAvOppdrag(oppdragId)
                 .find { oppdrag -> oppdrag.status == OppdragStatus.LAGT_PÅ_KØ }
@@ -46,7 +47,7 @@ class OppdragMottaker(
         }
 
         if (!env.activeProfiles.contains("dev") && !env.activeProfiles.contains("e2e")) {
-            LOG.debug("Lagrer oppdatert oppdrag ${oppdragId} i databasen med ny status ${kvittering.oppdragStatus}")
+            LOG.debug("Lagrer oppdatert oppdrag $oppdragId i databasen med ny status ${kvittering.oppdragStatus}")
             oppdragLagerRepository.oppdaterStatus(oppdragId, kvittering.oppdragStatus, førsteOppdragUtenKvittering.versjon)
         } else {
             oppdragLagerRepository.oppdaterStatus(oppdragId, OppdragStatus.KVITTERT_OK, førsteOppdragUtenKvittering.versjon)
@@ -54,7 +55,6 @@ class OppdragMottaker(
     }
 
     fun lesKvittering(svarFraOppdrag: String): Oppdrag {
-        val kvittering = Jaxb.tilOppdrag(svarFraOppdrag)
-        return kvittering
+        return Jaxb.tilOppdrag(svarFraOppdrag)
     }
 }
