@@ -39,3 +39,5 @@ management:
 
 BA_SAK_CLIENT_ID: ""
 EF_SAK_CLIENT_ID: ""
+OPPDRAG_SERVICE_URL: "https://wasapp.adeo.no/cics/services/simulerFpServiceWSBinding"
+SECURITYTOKENSERVICE_URL: https://sts.adeo.no/SecurityTokenServiceProvider/
