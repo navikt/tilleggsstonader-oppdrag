@@ -4,10 +4,10 @@
 
     <!-- Logger for sensitive data -->
     <appender name="secureLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/Users/marcusgustafson/dev/secure.log</file>
-        <rolling/Users/marcusgustafson/dev/secure-logsPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>/Users/marcusgustafson/dev/secure-logs/secure.log.%i</fileNamePattern>
-            <minIndex>1</minIndex>
+        <file>/secure-logs/secure.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
+           <minIndex>1</minIndex>
             <maxIndex>1</maxIndex>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
@@ -34,7 +34,7 @@
     <logger name="no.nav.familie" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.apache" level="INFO"/>
-    <logger name="org.apache.cxf" level="ERROR"/>
+    <logger name="org.apache.cxf" level="TRACE"/>
     <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR"/>
     <logger name="org.apache.wss4j.common.crypto.CryptoBase" level="ERROR"/>
 
