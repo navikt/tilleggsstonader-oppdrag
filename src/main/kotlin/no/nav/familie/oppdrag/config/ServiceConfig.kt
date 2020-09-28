@@ -2,6 +2,8 @@ package no.nav.familie.oppdrag.config
 
 import no.nav.sbl.dialogarena.common.cxf.CXFClient
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService
+import org.apache.cxf.interceptor.LoggingInInterceptor
+import org.apache.cxf.interceptor.LoggingOutInterceptor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,5 +26,6 @@ class ServiceConfig(@Value("\${SECURITYTOKENSERVICE_URL}") stsUrl: String,
                     .address(simulerFpServiceUrl)
                     .timeout(20000, 20000)
                     .configureStsForSystemUser()
+                    .withOutInterceptor(LoggingOutInterceptor())
                     .build()
 }
