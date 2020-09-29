@@ -2,6 +2,7 @@ package no.nav.familie.oppdrag.simulering.util
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
+import no.nav.familie.oppdrag.simulering.TypeKlasse
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
@@ -93,7 +94,7 @@ fun lagBeregningStoppnivaFeilUtbetaling(date: LocalDate,
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
     beregningStoppnivaa.kodeFagomraade = fagOmrade
 
-    lagBeregningStoppnivaaDetaljer("FEIL")
+    lagBeregningStoppnivaaDetaljer(TypeKlasse.FEIL.name)
 
     return beregningStoppnivaa
 }
@@ -124,7 +125,7 @@ fun lagBeregningStoppnivaRevurdering(date: LocalDate,
     return beregningStoppnivaa
 }
 
-private fun lagBeregningStoppnivaaDetaljer(typeKlasse: String = "YTEL",
+private fun lagBeregningStoppnivaaDetaljer(typeKlasse: String = TypeKlasse.YTEL.name,
                                            belop: BigDecimal = BigDecimal(1000)): BeregningStoppnivaaDetaljer {
     val beregningStoppnivaaDetaljer = BeregningStoppnivaaDetaljer()
     beregningStoppnivaaDetaljer.typeKlasse = typeKlasse

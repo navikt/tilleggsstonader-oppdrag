@@ -26,14 +26,17 @@ class SimulerBeregningResponseMapper {
                 beregningsPeriode.beregningStoppnivaa.filter { it.kodeFagomraade == "BA"}
 
         // Feilutbetaling medfører at etterbetaling er 0
-        val inneholderFeilUtbType = stoppNivaBA.any{ stopNivå -> stopNivå.beregningStoppnivaaDetaljer.any { detaljer -> detaljer.typeKlasse == "FEIL" } }
+        val inneholderFeilUtbType = stoppNivaBA.any{ stopNivå -> stopNivå.beregningStoppnivaaDetaljer.any { detaljer -> detaljer.typeKlasse == TypeKlasse.FEIL.name } }
         if(inneholderFeilUtbType) return 0
 
         // Summer perioder av type YTEL og med forfallsdato bak i tiden.
-        return stoppNivaBA.filter { førfallPassert(it.forfall, dato) }.flatMap { it.beregningStoppnivaaDetaljer }.filter { it.typeKlasse == "YTEL" }.sumBy { it.belop?.toInt() ?: 0}
+        return stoppNivaBA.filter { førfallPassert(it.forfall, dato) }.flatMap { it.beregningStoppnivaaDetaljer }.filter { it.typeKlasse == TypeKlasse.YTEL.name }.sumBy { it.belop?.toInt() ?: 0}
     }
 
     private fun førfallPassert(forfall: String, dato: LocalDate): Boolean =
          dato >= LocalDate.parse(forfall, DateTimeFormatter.ISO_DATE)
+}
 
+enum class TypeKlasse {
+    FEIL, YTEL
 }
