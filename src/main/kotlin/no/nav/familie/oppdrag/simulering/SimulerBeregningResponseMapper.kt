@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.simulering
 
+import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.springframework.stereotype.Component
@@ -10,11 +11,11 @@ import java.time.format.DateTimeFormatter
 class SimulerBeregningResponseMapper {
 
     fun toSimulerResultDto(simulerBeregningResponse: SimulerBeregningResponse,
-                           dato: LocalDate = LocalDate.now()): SimulerResultatDto {
+                           dato: LocalDate = LocalDate.now()): RestSimulerResultat {
 
         val totalEtterbetalingsBeløp = simulerBeregningResponse.response.simulering.beregningsPeriode.sumBy { finnEtterbetalingPerPeriode(it, dato) }
 
-        return SimulerResultatDto(etterbetaling = totalEtterbetalingsBeløp)
+        return RestSimulerResultat(etterbetaling = totalEtterbetalingsBeløp)
     }
 
     private fun finnEtterbetalingPerPeriode(beregningsPeriode: BeregningsPeriode, dato: LocalDate): Int {

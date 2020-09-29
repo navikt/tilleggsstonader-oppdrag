@@ -1,8 +1,8 @@
 package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.simulering.SimulerResultatDto
 import no.nav.familie.oppdrag.simulering.SimuleringTjeneste
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
@@ -22,7 +22,7 @@ import javax.validation.Valid
 class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste) {
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/etterbetalingsbelop"])
-    fun startSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<SimulerResultatDto>> {
+    fun startSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<RestSimulerResultat>> {
         LOG.info("Hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}")
 
         return Result.runCatching {

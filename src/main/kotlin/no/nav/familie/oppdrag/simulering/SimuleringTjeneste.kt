@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.simulering
 
+import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -11,7 +12,7 @@ class SimuleringTjeneste(@Autowired val simuleringSender: SimuleringSender,
                          @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
                          @Autowired val simulerBeregningResponseMapper: SimulerBeregningResponseMapper) {
 
-    fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): SimulerResultatDto {
+    fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
         return simulerBeregningResponseMapper.toSimulerResultDto(
