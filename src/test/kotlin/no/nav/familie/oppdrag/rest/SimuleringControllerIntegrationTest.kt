@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 
@@ -22,7 +21,6 @@ internal class SimuleringControllerIntegrasjonTest {
     @Autowired lateinit var simuleringController: SimuleringController
 
     @Test
-    @Ignore
     fun test_etterbetalingsbelop() {
         val response = simuleringController.startSimulering(lagTestUtbetalingsoppdragForFGBMedEttBarn())
         assertEquals(1000, response.body?.data?.etterbetaling)
