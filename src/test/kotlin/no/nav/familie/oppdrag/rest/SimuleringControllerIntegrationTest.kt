@@ -16,7 +16,6 @@ import kotlin.test.assertEquals
 @ActiveProfiles("dev")
 @SpringBootTest(classes = [SimuleringController::class, SimuleringSender::class, SimuleringTjeneste::class, SimulerBeregningRequestMapper::class, ClientMocks::class, SimulerBeregningResponseMapper::class],
                 properties = ["spring.cloud.vault.enabled=false"])
-
 internal class SimuleringControllerIntegrasjonTest {
 
     @Autowired lateinit var simuleringController: SimuleringController
@@ -24,6 +23,6 @@ internal class SimuleringControllerIntegrasjonTest {
     @Test
     fun test_etterbetalingsbelop() {
         val response = simuleringController.startSimulering(lagTestUtbetalingsoppdragForFGBMedEttBarn())
-        assertEquals(1000L, response.body?.data?.etterbetaling)
+        assertEquals(1000, response.body?.data?.etterbetaling)
     }
 }

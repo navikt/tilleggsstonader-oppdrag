@@ -10,6 +10,8 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 
 fun lagTestUtbetalingsoppdragForFGBMedEttBarn()
@@ -45,19 +47,23 @@ fun lagTestUtbetalingsoppdragForFGBMedEttBarn()
     )
 }
 
-fun lagTestSimuleringResponse(): SimulerBeregningResponse {
-    val beregningStoppnivaaDetaljer = lagBeregningStoppnivaaDetaljer()
-
-    val beregningStoppnivaa = BeregningStoppnivaa()
-    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(beregningStoppnivaaDetaljer)
+fun lagBeregningsPeriode(bergeningStopNiva: List<BeregningStoppnivaa>, date: LocalDate): BeregningsPeriode {
 
     val beregningsPeriode = BeregningsPeriode()
-    beregningsPeriode.beregningStoppnivaa.add(beregningStoppnivaa)
+    beregningsPeriode.periodeFom = date.with(TemporalAdjusters.firstDayOfMonth()).toString()
+    beregningsPeriode.periodeTom = date.with(TemporalAdjusters.lastDayOfMonth()).toString()
+    beregningsPeriode.beregningStoppnivaa.addAll(bergeningStopNiva)
+
+    return beregningsPeriode
+}
+
+fun lagSimulerBeregningResponse(beregningsPerioder: List<BeregningsPeriode>): SimulerBeregningResponse {
 
     val beregning = Beregning()
-    beregning.beregningsPeriode.add(beregningsPeriode)
+    beregning.beregningsPeriode.addAll(beregningsPerioder)
 
-    val simulerBeregningResponse = no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.SimulerBeregningResponse()
+    val simulerBeregningResponse =
+            no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.SimulerBeregningResponse()
     simulerBeregningResponse.simulering = beregning
 
     val response = SimulerBeregningResponse()
@@ -66,10 +72,62 @@ fun lagTestSimuleringResponse(): SimulerBeregningResponse {
     return response
 }
 
-private fun lagBeregningStoppnivaaDetaljer(): BeregningStoppnivaaDetaljer {
+fun lagTestSimuleringResponse(): SimulerBeregningResponse {
+    val currentDate: LocalDate = LocalDate.of(2020, Month.SEPTEMBER, 15)
+
+    val enTideligereMåned = currentDate.plusMonths(1)
+
+    val periodeNåværendeMåned = lagBeregningsPeriode(
+            listOf(lagBeregningStoppniva(currentDate, 2)), currentDate)
+
+    val periodeTidligereMåned = lagBeregningsPeriode(
+            listOf(lagBeregningStoppniva(enTideligereMåned)), enTideligereMåned)
+
+  return lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
+}
+
+fun lagBeregningStoppnivaFeilUtbetaling(date: LocalDate,
+                                        forfall: Long = 0,
+                                        fagOmrade: String = "BA"): BeregningStoppnivaa {
+    val beregningStoppnivaa = BeregningStoppnivaa()
+    beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
+    beregningStoppnivaa.kodeFagomraade = fagOmrade
+
+    lagBeregningStoppnivaaDetaljer("FEIL")
+
+    return beregningStoppnivaa
+}
+
+fun lagBeregningStoppniva(date: LocalDate,
+                          forfall: Long = 0,
+                          fagOmrade: String = "BA"): BeregningStoppnivaa {
+
+    val beregningStoppnivaa = BeregningStoppnivaa()
+    beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
+    beregningStoppnivaa.kodeFagomraade = fagOmrade
+
+    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(lagBeregningStoppnivaaDetaljer())
+
+    return beregningStoppnivaa
+}
+
+fun lagBeregningStoppnivaRevurdering(date: LocalDate,
+                                     forfall: Long = 0,
+                                     fagOmrade: String = "BA"): BeregningStoppnivaa {
+    val beregningStoppnivaa = BeregningStoppnivaa()
+    beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
+    beregningStoppnivaa.kodeFagomraade = fagOmrade
+
+    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(lagBeregningStoppnivaaDetaljer(belop = BigDecimal(1000)))
+    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(lagBeregningStoppnivaaDetaljer(belop = BigDecimal(-500)))
+
+    return beregningStoppnivaa
+}
+
+private fun lagBeregningStoppnivaaDetaljer(typeKlasse: String = "YTEL",
+                                           belop: BigDecimal = BigDecimal(1000)): BeregningStoppnivaaDetaljer {
     val beregningStoppnivaaDetaljer = BeregningStoppnivaaDetaljer()
-    beregningStoppnivaaDetaljer.faktiskFom = "2020-04-07"
-    beregningStoppnivaaDetaljer.faktiskTom = "2020-04-30"
-    beregningStoppnivaaDetaljer.belop = BigDecimal(1073)
+    beregningStoppnivaaDetaljer.typeKlasse = typeKlasse
+    beregningStoppnivaaDetaljer.belop = belop
     return beregningStoppnivaaDetaljer
 }
