@@ -36,7 +36,7 @@ class SimulerBeregningRequestMapper {
         val oppdragsEnhet = oppdragSkjemaFactory.createEnhet().apply {
             enhet = OppdragSkjemaConstants.ENHET
             typeEnhet = OppdragSkjemaConstants.ENHET_TYPE
-            datoEnhetFom = OppdragSkjemaConstants.ENHET_DATO_FOM.toXMLDate().toString()
+            datoEnhetFom = OppdragSkjemaConstants.ENHET_DATO_FOM.toString()
         }
 
         return fpServiceTypesFactory.createOppdrag().apply {
@@ -45,7 +45,7 @@ class SimulerBeregningRequestMapper {
             fagsystemId = utbetalingsoppdrag.saksnummer
             utbetFrekvens = UtbetalingsfrekvensKode.MÅNEDLIG.kode
             oppdragGjelderId = utbetalingsoppdrag.aktoer
-            datoOppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.toXMLDate().toString()
+            datoOppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.toString()
             saksbehId = utbetalingsoppdrag.saksbehandlerId
             enhet.add(oppdragsEnhet)
             avstemmingsnokkel.addAll(avstemmingsnokkel)
@@ -78,8 +78,8 @@ class SimulerBeregningRequestMapper {
             vedtakId = utbetalingsperiode.datoForVedtak.toString()
             delytelseId = utbetalingsoppdrag.saksnummer + utbetalingsperiode.periodeId
             kodeKlassifik = utbetalingsperiode.klassifisering
-            datoVedtakFom = utbetalingsperiode.vedtakdatoFom.toXMLDate().toString()
-            datoVedtakTom = utbetalingsperiode.vedtakdatoTom.toXMLDate().toString()
+            datoVedtakFom = utbetalingsperiode.vedtakdatoFom.toString()
+            datoVedtakTom = utbetalingsperiode.vedtakdatoTom.toString()
             sats = utbetalingsperiode.sats
             fradragTillegg = FradragTillegg.F
             typeSats = SatsTypeKode.fromKode(utbetalingsperiode.satsType.name).kode
