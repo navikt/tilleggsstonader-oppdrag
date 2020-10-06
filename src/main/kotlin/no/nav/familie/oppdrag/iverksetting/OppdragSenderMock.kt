@@ -26,7 +26,7 @@ class OppdragSenderMock(val oppdragLagerRepository: OppdragLagerRepository) : Op
 
     private fun mottaKvitteringFraOppdrag(oppdragId: OppdragId) =
             thread(start = true) {
-                Thread.sleep(2000)
+                Thread.sleep(20000)
                 oppdragLagerRepository.oppdaterStatus(oppdragId, OppdragStatus.KVITTERT_OK)
             }
 
