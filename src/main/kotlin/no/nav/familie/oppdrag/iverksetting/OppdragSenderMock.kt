@@ -19,19 +19,12 @@ class OppdragSenderMock(val oppdragLagerRepository: OppdragLagerRepository) : Op
     @Transactional
     override fun sendOppdrag(oppdrag: Oppdrag): String {
         //Mocker ut funksjonen mottaKvitteringFraOppdrag
-        mottaKvitteringFraOppdrag(oppdrag.id)
+        oppdragLagerRepository.oppdaterStatus(oppdrag.id, OppdragStatus.KVITTERT_OK)
 
         return oppdrag.oppdrag110.fagsystemId
     }
 
-    private fun mottaKvitteringFraOppdrag(oppdragId: OppdragId) =
-            thread(start = true) {
-                Thread.sleep(20000)
-                oppdragLagerRepository.oppdaterStatus(oppdragId, OppdragStatus.KVITTERT_OK)
-            }
-
     companion object {
-
         val LOG = LoggerFactory.getLogger(OppdragSenderMock::class.java)
     }
 }
