@@ -21,7 +21,6 @@ import javax.jms.JMSException
 private const val UTF_8_WITH_PUA = 1208
 
 @Configuration
-@Profile("!e2e")
 class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
                       @Value("\${oppdrag.mq.queuemanager}") val queuemanager: String,
                       @Value("\${oppdrag.mq.channel}") val channel: String,
