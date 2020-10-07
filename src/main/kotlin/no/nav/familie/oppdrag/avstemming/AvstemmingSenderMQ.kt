@@ -14,7 +14,6 @@ import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Service
 
 @Service
-@Profile("!e2e")
 class AvstemmingSenderMQ(val jmsTemplateAvstemming: JmsTemplate,
                          @Value("\${oppdrag.mq.enabled}") val erEnabled: String) : AvstemmingSender {
 
