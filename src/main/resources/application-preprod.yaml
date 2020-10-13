@@ -23,5 +23,6 @@ spring:
   datasource:
     url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-oppdrag
 
-OPPDRAG_SERVICE_URL: "https://cics-q1.adeo.no/oppdrag/simulerFpServiceWSBinding"
+#OPPDRAG_SERVICE_URL: "https://cics-q1.adeo.no/oppdrag/simulerFpServiceWSBinding"
+OPPDRAG_SERVICE_URL: "http://ztest.test.local:9280/oppdrag/simulerFpServiceWSBinding"
 SECURITYTOKENSERVICE_URL: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
