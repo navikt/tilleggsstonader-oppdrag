@@ -23,7 +23,8 @@ import javax.validation.Valid
 class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste) {
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/etterbetalingsbelop"])
-    fun startSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<RestSimulerResultat>> {
+    fun startSimulering(@Valid @RequestBody
+                        utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<RestSimulerResultat>> {
         LOG.info("Hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}")
 
         return Result.runCatching {
@@ -36,9 +37,9 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
                     LOG.error("Feil ved simulering av etterbetaling:", it)
                     ResponseEntity
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(Ressurs.failure(
-                                    errorMessage = "Klarte ikke hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}, " +
-                                                   "med feilmelding ${it.message}"))
+                            .body(Ressurs.failure(errorMessage = "Klarte ikke hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}, " +
+                                                                 "med feilmelding ${it.message}",
+                                                  error = it))
                 }
         )
     }
