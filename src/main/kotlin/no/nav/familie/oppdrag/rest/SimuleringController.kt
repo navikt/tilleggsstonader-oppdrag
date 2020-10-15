@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.simulering.SimuleringTjeneste
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -41,6 +42,12 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
                 }
         )
     }
+
+    //Temporær funksjon som skal brukes for å teste responser fra oppdrag.
+    //TODO: skal fjernes når den ikke mer er i bruk.
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/direktesimulering"])
+    fun direkteSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<SimulerBeregningResponse> =
+            ResponseEntity.ok(simuleringTjeneste.hentSimulerBeregningResponse(utbetalingsoppdrag))
 
     companion object {
 
