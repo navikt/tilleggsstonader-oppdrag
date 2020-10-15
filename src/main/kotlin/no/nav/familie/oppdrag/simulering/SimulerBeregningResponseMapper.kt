@@ -41,7 +41,7 @@ class SimulerBeregningResponseMapper {
                 .flatMap { it.beregningStoppnivaaDetaljer }
                 .filter { it.typeKlasse == TypeKlasse.YTEL.name }
                 .sumBy { it.belop?.toInt() ?: 0 }
-        LOG.info("Sum etterbetling for perioden $sum")
+        LOG.info("Sum etterbetaling for perioden er $sum")
         return sum
     }
 

@@ -79,10 +79,10 @@ fun lagTestSimuleringResponse(): SimulerBeregningResponse {
     val enTideligereMåned = currentDate.plusMonths(1)
 
     val periodeNåværendeMåned = lagBeregningsPeriode(
-            listOf(lagBeregningStoppniva(currentDate, 2)), currentDate)
+            listOf(lagBeregningStoppniva(currentDate)), currentDate)
 
     val periodeTidligereMåned = lagBeregningsPeriode(
-            listOf(lagBeregningStoppniva(enTideligereMåned)), enTideligereMåned)
+            listOf(lagBeregningStoppniva(enTideligereMåned, 2)), enTideligereMåned)
 
   return lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
 }
