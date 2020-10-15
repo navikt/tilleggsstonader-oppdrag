@@ -16,7 +16,8 @@ class SimulerBeregningResponseMapper {
                             dato: LocalDate = LocalDate.now()): RestSimulerResultat {
 
         val totalEtterbetalingsBeløp =
-                simulerBeregningResponse.response.simulering.beregningsPeriode.sumBy { finnEtterbetalingPerPeriode(it, dato) }
+                simulerBeregningResponse.response?.simulering?.beregningsPeriode?.sumBy { finnEtterbetalingPerPeriode(it, dato) }
+                ?: 0
 
         return RestSimulerResultat(etterbetaling = totalEtterbetalingsBeløp)
     }
