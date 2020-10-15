@@ -25,9 +25,9 @@ class SimuleringTjeneste(@Autowired val simuleringSender: SimuleringSender,
         return try {
             return simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
         } catch (ex: SimulerBeregningFeilUnderBehandling) {
-            throw Exception(ex.faultInfo.errorMessage)
-        } catch (ex: Exception) {
-            throw Exception(ex.message)
+            throw Exception(ex.message, ex)
+        } catch (ex: Throwable) {
+            throw Exception(ex.message, ex)
         }
     }
 }
