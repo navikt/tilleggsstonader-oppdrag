@@ -29,17 +29,17 @@ class SimulerBeregningResponseMapper {
         if (datoFraPeriode.month > dato.month) return 0
 
         val stoppNivaBA =
-                beregningsPeriode.beregningStoppnivaa.filter { it.kodeFagomraade == "BA" }
+                beregningsPeriode.beregningStoppnivaa.filter { it.kodeFagomraade?.trim() == "BA" }
 
         // Feilutbetaling medfører at etterbetaling er 0
         val inneholderFeilUtbType =
-                stoppNivaBA.any { stopNivå -> stopNivå.beregningStoppnivaaDetaljer.any { detaljer -> detaljer.typeKlasse == TypeKlasse.FEIL.name } }
+                stoppNivaBA.any { stopNivå -> stopNivå.beregningStoppnivaaDetaljer.any { detaljer -> detaljer.typeKlasse?.trim() == TypeKlasse.FEIL.name } }
         if (inneholderFeilUtbType) return 0
 
         // Summer perioder av type YTEL og med forfallsdato bak i tiden.
         val sum = stoppNivaBA.filter { førfallPassert(it.forfall, dato) }
                 .flatMap { it.beregningStoppnivaaDetaljer }
-                .filter { it.typeKlasse == TypeKlasse.YTEL.name }
+                .filter { it.typeKlasse?.trim() == TypeKlasse.YTEL.name }
                 .sumBy { it.belop?.toInt() ?: 0 }
         LOG.info("Sum etterbetaling for perioden er $sum")
         return sum
@@ -51,7 +51,6 @@ class SimulerBeregningResponseMapper {
     companion object {
 
         val LOG = LoggerFactory.getLogger(SimulerBeregningResponseMapper::class.java)
-        val secureLog = LoggerFactory.getLogger("secureLogger")
     }
 }
 
