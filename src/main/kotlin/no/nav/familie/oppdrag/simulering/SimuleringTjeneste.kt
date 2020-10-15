@@ -2,7 +2,7 @@ package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
+import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -20,8 +20,14 @@ class SimuleringTjeneste(@Autowired val simuleringSender: SimuleringSender,
         )
     }
 
-    fun hentSimulerBeregningResponse(utbetalingsoppdrag: Utbetalingsoppdrag):SimulerBeregningResponse {
+    fun hentSimulerBeregningResponse(utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
-        return simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
+        return try {
+            return simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
+        } catch (ex: SimulerBeregningFeilUnderBehandling) {
+            throw Exception(ex.faultInfo.errorMessage)
+        } catch (ex: Exception) {
+            throw Exception(ex.message)
+        }
     }
 }
