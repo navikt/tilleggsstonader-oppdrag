@@ -15,7 +15,7 @@ class SimuleringTjeneste(@Autowired val simuleringSender: SimuleringSender,
     fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
-        return simulerBeregningResponseMapper.toSimulerResultDto(
+        return simulerBeregningResponseMapper.toRestSimulerResult(
                 simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
         )
     }

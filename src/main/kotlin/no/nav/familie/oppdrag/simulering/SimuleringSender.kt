@@ -8,7 +8,6 @@ import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 
-
 @Service
 class SimuleringSender(private val port: SimulerFpService) {
 

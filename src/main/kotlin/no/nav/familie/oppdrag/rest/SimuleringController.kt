@@ -35,7 +35,9 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
                     LOG.error("Feil ved simulering av etterbetaling:", it)
                     ResponseEntity
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(Ressurs.failure(errorMessage = "Klarte ikke hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}"))
+                            .body(Ressurs.failure(
+                                    errorMessage = "Klarte ikke hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}, " +
+                                                   "med feilmelding ${it.message}"))
                 }
         )
     }

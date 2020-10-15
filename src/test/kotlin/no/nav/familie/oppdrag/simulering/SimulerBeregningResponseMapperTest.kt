@@ -30,7 +30,7 @@ class SimulerBeregningResponseMapperTest() {
                 listOf(lagBeregningStoppniva(enTideligereMåned)), enTideligereMåned)
 
         val response = lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toSimulerResultDto(response, dagensDato)
+        val dto = mapper.toRestSimulerResult(response, dagensDato)
 
         assertEquals(1000, dto.etterbetaling)
     }
@@ -51,7 +51,7 @@ class SimulerBeregningResponseMapperTest() {
 
         val response = lagSimulerBeregningResponse(listOf(periodeNesteMåned,
                                                           periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toSimulerResultDto(response, dagensDato)
+        val dto = mapper.toRestSimulerResult(response, dagensDato)
 
         assertEquals(2000, dto.etterbetaling)
     }
@@ -67,7 +67,7 @@ class SimulerBeregningResponseMapperTest() {
                 listOf(lagBeregningStoppnivaRevurdering(enTideligereMåned)), enTideligereMåned)
 
         val response = lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toSimulerResultDto(response, dagensDato)
+        val dto = mapper.toRestSimulerResult(response, dagensDato)
 
         assertEquals(500, dto.etterbetaling)
     }
@@ -83,7 +83,7 @@ class SimulerBeregningResponseMapperTest() {
                 listOf(lagBeregningStoppnivaFeilUtbetaling(enTideligereMåned)), enTideligereMåned)
 
         val response = lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toSimulerResultDto(response, dagensDato)
+        val dto = mapper.toRestSimulerResult(response, dagensDato)
 
         assertEquals(0, dto.etterbetaling)
     }
