@@ -11,11 +11,7 @@ import java.time.Month
 
 
 @ActiveProfiles("dev")
-@SpringBootTest(classes = [SimulerBeregningResponseMapper::class],
-                properties = ["spring.cloud.vault.enabled=false"])
 class SimulerBeregningResponseMapperTest() {
-
-    @Autowired lateinit var mapper: SimulerBeregningResponseMapper
 
     val dagensDato: LocalDate = LocalDate.of(2020, Month.SEPTEMBER, 15)
 
@@ -30,7 +26,7 @@ class SimulerBeregningResponseMapperTest() {
                 listOf(lagBeregningStoppniva(enTideligereMåned)), enTideligereMåned)
 
         val response = lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toRestSimulerResult(response, dagensDato)
+        val dto = response.toRestSimulerResult(dagensDato)
 
         assertEquals(1000, dto.etterbetaling)
     }
@@ -51,7 +47,7 @@ class SimulerBeregningResponseMapperTest() {
 
         val response = lagSimulerBeregningResponse(listOf(periodeNesteMåned,
                                                           periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toRestSimulerResult(response, dagensDato)
+        val dto = response.toRestSimulerResult(dagensDato)
 
         assertEquals(2000, dto.etterbetaling)
     }
@@ -67,7 +63,7 @@ class SimulerBeregningResponseMapperTest() {
                 listOf(lagBeregningStoppnivaRevurdering(enTideligereMåned)), enTideligereMåned)
 
         val response = lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toRestSimulerResult(response, dagensDato)
+        val dto = response.toRestSimulerResult(dagensDato)
 
         assertEquals(500, dto.etterbetaling)
     }
@@ -83,7 +79,7 @@ class SimulerBeregningResponseMapperTest() {
                 listOf(lagBeregningStoppnivaFeilUtbetaling(enTideligereMåned)), enTideligereMåned)
 
         val response = lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
-        val dto = mapper.toRestSimulerResult(response, dagensDato)
+        val dto = response.toRestSimulerResult(dagensDato)
 
         assertEquals(0, dto.etterbetaling)
     }
