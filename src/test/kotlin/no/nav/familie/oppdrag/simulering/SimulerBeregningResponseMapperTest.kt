@@ -16,7 +16,7 @@ class SimulerBeregningResponseMapperTest() {
     val dagensDato: LocalDate = LocalDate.of(2020, Month.SEPTEMBER, 15)
 
     @Test
-    fun beregn_etterbetaling_foregaende_maned() {
+    fun beregn_etterbetaling_føregående_måned() {
         val enTideligereMåned = dagensDato.minusMonths(1)
 
         val periodeNåværendeMåned = lagBeregningsPeriode(

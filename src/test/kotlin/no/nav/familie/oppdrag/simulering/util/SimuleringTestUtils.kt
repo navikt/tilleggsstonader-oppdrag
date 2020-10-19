@@ -12,6 +12,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import java.util.*
 
@@ -19,9 +20,10 @@ fun lagTestUtbetalingsoppdragForFGBMedEttBarn()
         : Utbetalingsoppdrag {
 
     val personIdent = "12345678901"
+
     val vedtakDato = LocalDate.now()
-    val datoFom = LocalDate.now().minusMonths(1)
-    val datoTom = LocalDate.now().plusMonths(3)
+    val datoFom: LocalDate = YearMonth.now().minusMonths(1).atDay(1)
+    val datoTom: LocalDate = YearMonth.now().plusMonths(3).atEndOfMonth()
     val fagsakId = "5566"
     val behandlingId = 334455L
 
@@ -74,7 +76,7 @@ fun lagSimulerBeregningResponse(beregningsPerioder: List<BeregningsPeriode>): Si
 }
 
 fun lagTestSimuleringResponse(): SimulerBeregningResponse {
-    val currentDate: LocalDate = LocalDate.of(2020, Month.SEPTEMBER, 15)
+    val currentDate: LocalDate = LocalDate.now()
 
     val enTideligereMåned = currentDate.plusMonths(1)
 
@@ -84,7 +86,7 @@ fun lagTestSimuleringResponse(): SimulerBeregningResponse {
     val periodeTidligereMåned = lagBeregningsPeriode(
             listOf(lagBeregningStoppniva(enTideligereMåned, 2)), enTideligereMåned)
 
-  return lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
+    return lagSimulerBeregningResponse(listOf(periodeNåværendeMåned, periodeTidligereMåned))
 }
 
 fun lagBeregningStoppnivaFeilUtbetaling(date: LocalDate,

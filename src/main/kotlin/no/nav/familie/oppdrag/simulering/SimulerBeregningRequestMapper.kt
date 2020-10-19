@@ -49,7 +49,7 @@ class SimulerBeregningRequestMapper {
             saksbehId = utbetalingsoppdrag.saksbehandlerId
             enhet.add(oppdragsEnhet)
             avstemmingsnokkel.addAll(avstemmingsnokkel)
-            //ompostering
+
             utbetalingsoppdrag.utbetalingsperiode.map { periode ->
                 oppdragslinje.add(tilOppdragsLinje(utbetalingsperiode = periode, utbetalingsoppdrag = utbetalingsoppdrag))
             }
@@ -67,7 +67,7 @@ class SimulerBeregningRequestMapper {
                     if (utbetalingsperiode.erEndringPåEksisterendePeriode) EndringsKode.ENDRING.kode else EndringsKode.NY.kode
             utbetalingsperiode.opphør?.let {
                 kodeStatusLinje = KodeStatusLinje.OPPH
-                datoStatusFom = it.opphørDatoFom.toXMLDate().toString()
+                datoStatusFom = it.opphørDatoFom.toString()
             }
             if (!utbetalingsperiode.erEndringPåEksisterendePeriode) {
                 utbetalingsperiode.forrigePeriodeId?.let {
@@ -81,7 +81,7 @@ class SimulerBeregningRequestMapper {
             datoVedtakFom = utbetalingsperiode.vedtakdatoFom.toString()
             datoVedtakTom = utbetalingsperiode.vedtakdatoTom.toString()
             sats = utbetalingsperiode.sats
-            fradragTillegg = FradragTillegg.F
+            fradragTillegg = FradragTillegg.T
             typeSats = SatsTypeKode.fromKode(utbetalingsperiode.satsType.name).kode
             brukKjoreplan = OppdragSkjemaConstants.BRUK_KJØREPLAN
             saksbehId = utbetalingsoppdrag.saksbehandlerId
