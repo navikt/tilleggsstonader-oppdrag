@@ -30,8 +30,10 @@ object RessursUtils {
     private fun <T> errorResponse(httpStatus: HttpStatus,
                                   errorMessage: String,
                                   throwable: Throwable?): ResponseEntity<Ressurs<T>> {
-        secureLogger.error("En feil har oppstått: $errorMessage", throwable)
-        LOG.error("En feil har oppstått: $errorMessage")
+        val className = if (throwable != null) "[${throwable::class.java.name}] " else ""
+
+        secureLogger.error("$className En feil har oppstått: $errorMessage", throwable)
+        LOG.error("$className En feil har oppstått: $errorMessage")
         return ResponseEntity.status(httpStatus).body(Ressurs.failure(errorMessage))
     }
 }
