@@ -1,10 +1,9 @@
 package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.oppdrag.simulering.util.*
+import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDate
 import java.time.Month
@@ -82,5 +81,20 @@ class SimulerBeregningResponseMapperTest() {
         val dto = response.toRestSimulerResult(dagensDato)
 
         assertEquals(0, dto.etterbetaling)
+    }
+
+    @Test
+    fun bergen_et_år() {
+        val beregningsPerioder = mutableListOf<BeregningsPeriode>()
+
+        for (manedNr in 1L..12L) {
+            val maned = dagensDato.minusMonths(manedNr)
+            beregningsPerioder.add(lagBeregningsPeriode(listOf(lagBeregningStoppniva(maned)), maned))
+        }
+
+        val response = lagSimulerBeregningResponse(beregningsPerioder.toList())
+        val dto = response.toRestSimulerResult(dagensDato)
+
+        assertEquals(12000, dto.etterbetaling)
     }
 }

@@ -19,7 +19,7 @@ fun SimulerBeregningResponse.toRestSimulerResult(
 private fun finnEtterbetalingPerPeriode(beregningsPeriode: BeregningsPeriode, dato: LocalDate, kodeFagomraade: String = "BA"): Int {
     // Fremtidige perioder gir ingen etterbetaling.
     val datoFraPeriode = LocalDate.parse(beregningsPeriode.periodeFom, DateTimeFormatter.ISO_DATE)
-    if (datoFraPeriode.month > dato.month) return 0
+    if (datoFraPeriode > dato) return 0
 
     val stoppNivaBA =
             beregningsPeriode.beregningStoppnivaa.filter { it.kodeFagomraade?.trim() == kodeFagomraade }
