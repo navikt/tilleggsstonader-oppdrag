@@ -1,11 +1,15 @@
 package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
+import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequest
+import no.nav.familie.kontrakter.felles.oppdrag.OppdragIdForFagsystem
 import no.nav.familie.oppdrag.common.RessursUtils.illegalState
 import no.nav.familie.oppdrag.common.RessursUtils.ok
 import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
@@ -20,6 +24,7 @@ import java.time.LocalDateTime
 class AvstemmingController(@Autowired val grensesnittavstemmingService: GrensesnittavstemmingService,
                            @Autowired val konsistensavstemmingService: KonsistensavstemmingService) {
 
+    @Deprecated("Bruk post med body")
     @PostMapping(path = ["/grensesnittavstemming/{fagsystem}"])
     fun sendGrensesnittavstemming(@PathVariable("fagsystem") fagsystem: String,
                                   @RequestParam("fom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) fom: LocalDateTime,
@@ -39,13 +44,24 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
                 )
     }
 
+    @PostMapping(path = ["/grensesnittavstemming"])
+    fun grensesnittavstemming(@RequestBody request: GrensesnittavstemmingRequest): ResponseEntity<Ressurs<String>> {
+        LOG.info("Grensesnittavstemming: Kjører for ${request.fagsystem}-oppdrag fra ${request.fra} til ${request.til}")
+
+        return Result.runCatching { grensesnittavstemmingService.utførGrensesnittavstemming(request) }
+                .fold(onFailure = { illegalState("Grensesnittavstemming feilet", it) },
+                      onSuccess = { ok("Grensesnittavstemming sendt ok") })
+    }
+
+    @Deprecated("Bruk post med body")
     @PostMapping(path = ["/konsistensavstemming/{fagsystem}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun sendKonsistensavstemming(@PathVariable("fagsystem") fagsystem: String,
                                  @RequestBody oppdragIdListe: List<OppdragIdForFagsystem>,
                                  @RequestParam("avstemmingsdato") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                  avstemmingsdato: LocalDateTime
     ): ResponseEntity<Ressurs<String>> {
-        LOG.info("Konsistensavstemming: Kjører for $fagsystem-oppdrag for $avstemmingsdato med ${oppdragIdListe.size} antall utbetalingsoppdrag")
+        LOG.info("Konsistensavstemming: Kjører for $fagsystem-oppdrag for $avstemmingsdato " +
+                 "med ${oppdragIdListe.size} antall utbetalingsoppdrag")
 
         return Result.runCatching {
             konsistensavstemmingService.utførKonsistensavstemming(fagsystem,
@@ -62,9 +78,20 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
                 )
     }
 
+    @PostMapping(path = ["/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequest): ResponseEntity<Ressurs<String>> {
+        LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
+                 "med ${request.oppdragIdListe.size} antall utbetalingsoppdrag")
+
+        return Result.runCatching {
+            konsistensavstemmingService.utførKonsistensavstemming(request)
+        }.fold(onFailure = { illegalState("Konsistensavstemming feilet", it) },
+               onSuccess = { ok("Konsistensavstemming sendt ok") })
+    }
+
     companion object {
 
-        val LOG = LoggerFactory.getLogger(AvstemmingController::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(AvstemmingController::class.java)
     }
 
 }
