@@ -3,9 +3,11 @@ package no.nav.familie.oppdrag.iverksetting
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.trygdeetaten.skjema.oppdrag.*
+import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
 
-object OppdragMapper {
+@Component
+class OppdragMapper {
 
     private val objectFactory = ObjectFactory()
     val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")

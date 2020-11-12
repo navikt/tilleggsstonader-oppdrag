@@ -2,6 +2,8 @@ package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.oppdragId
+import no.nav.familie.oppdrag.domene.id
+import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
 import no.nav.familie.oppdrag.service.OppdragService
 import no.nav.familie.oppdrag.util.Containers
@@ -38,7 +40,8 @@ internal class OppdragControllerIntegrasjonTest {
     @Test
     fun test_skal_lagre_oppdrag_for_utbetalingoppdrag() {
 
-        val oppdragController = OppdragController(oppdragService)
+        val mapper = OppdragMapper()
+        val oppdragController = OppdragController(oppdragService, mapper)
 
         val utbetalingsoppdrag = utbetalingsoppdragMedTilfeldigAktoer()
         oppdragController.sendOppdrag(utbetalingsoppdrag)
