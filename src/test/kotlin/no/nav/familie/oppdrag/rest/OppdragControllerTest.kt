@@ -1,11 +1,7 @@
 package no.nav.familie.oppdrag.rest
 
 import io.mockk.*
-import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.familie.kontrakter.felles.oppdrag.Opphør
-import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-import no.nav.familie.oppdrag.iverksetting.OppdragMapper
+import no.nav.familie.kontrakter.felles.oppdrag.*
 import no.nav.familie.oppdrag.iverksetting.OppdragSender
 import no.nav.familie.oppdrag.repository.OppdragLager
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
@@ -28,23 +24,21 @@ internal class OppdragControllerTest {
             "SAKSBEHANDLERID",
             localDateTimeNow,
             listOf(Utbetalingsperiode(true,
-                    Opphør(localDateNow),
-                    2,
-                    1,
-                    localDateNow,
-                    "BATR",
-                    localDateNow,
-                    localDateNow,
-                    BigDecimal.ONE,
-                    Utbetalingsperiode.SatsType.MND,
-                    "UTEBETALES_TIL",
-                    1))
+                                      Opphør(localDateNow),
+                                      2,
+                                      1,
+                                      localDateNow,
+                                      "BATR",
+                                      localDateNow,
+                                      localDateNow,
+                                      BigDecimal.ONE,
+                                      Utbetalingsperiode.SatsType.MND,
+                                      "UTEBETALES_TIL",
+                                      1))
     )
 
     @Test
     fun skal_lagre_oppdrag_for_utbetalingoppdrag() {
-
-        val mapper = OppdragMapper()
         val oppdragSender = mockk<OppdragSender>(relaxed = true)
 
         val oppdragLagerRepository = mockk<OppdragLagerRepository>()
@@ -52,15 +46,42 @@ internal class OppdragControllerTest {
 
         val oppdragService = OppdragServiceImpl(oppdragSender, oppdragLagerRepository)
 
-        val oppdragController = OppdragController(oppdragService, mapper)
+        val oppdragController = OppdragController(oppdragService)
 
         oppdragController.sendOppdrag(utbetalingsoppdrag)
 
         verify {
             oppdragLagerRepository.opprettOppdrag(match<OppdragLager> {
                 it.utgåendeOppdrag.contains("BA")
-                        && it.status == OppdragStatus.LAGT_PÅ_KØ
-                        && it.opprettetTidspunkt > localDateTimeNow
+                && it.status == OppdragStatus.LAGT_PÅ_KØ
+                && it.opprettetTidspunkt > localDateTimeNow
+            })
+        }
+    }
+
+    @Test
+    fun skal_lagre_oppdrag_for_utbetalingoppdrag_v2() {
+        val oppdragSender = mockk<OppdragSender>(relaxed = true)
+
+        val oppdragLagerRepository = mockk<OppdragLagerRepository>()
+        every { oppdragLagerRepository.opprettOppdrag(any()) } just Runs
+
+        val oppdragService = OppdragServiceImpl(oppdragSender, oppdragLagerRepository)
+
+        val oppdragController = OppdragController(oppdragService)
+
+        val gjeldendeBehandlingId = 12L
+        oppdragController.sendOppdragV2(OppdragRequest(
+                utbetalingsoppdrag = utbetalingsoppdrag,
+                gjeldendeBehandlingId = gjeldendeBehandlingId
+        ))
+
+        verify {
+            oppdragLagerRepository.opprettOppdrag(match<OppdragLager> {
+                it.utgåendeOppdrag.contains("BA")
+                && it.status == OppdragStatus.LAGT_PÅ_KØ
+                && it.opprettetTidspunkt > localDateTimeNow
+                && it.behandlingId == gjeldendeBehandlingId.toString()
             })
         }
     }
