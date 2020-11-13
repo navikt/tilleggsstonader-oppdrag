@@ -1,13 +1,12 @@
 package no.nav.familie.oppdrag.service
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
-import no.nav.familie.kontrakter.felles.oppdrag.OppdragRequest
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.domene.id
 import no.nav.familie.oppdrag.repository.OppdragLager
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.service.OppdragServiceImpl.Companion.tilOppdragSkjema
+import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -20,25 +19,9 @@ class OppdragServiceE2E(
         @Autowired private val oppdragLagerRepository: OppdragLagerRepository) : OppdragService {
 
     @Transactional(rollbackFor = [Throwable::class])
-    override fun opprettOppdrag(utbetalingsoppdrag: Utbetalingsoppdrag, versjon: Int) {
-        val oppdrag = utbetalingsoppdrag.tilOppdragSkjema()
-
+    override fun opprettOppdrag(utbetalingsoppdrag: Utbetalingsoppdrag, oppdrag: Oppdrag, versjon: Int) {
         LOG.debug("Lagrer oppdrag i databasen " + oppdrag.id)
         oppdragLagerRepository.opprettOppdrag(OppdragLager.lagFraOppdrag(utbetalingsoppdrag, oppdrag), versjon)
-
-        LOG.debug("Kvittering mottat ok " + oppdrag.id)
-        oppdragLagerRepository.oppdaterStatus(oppdrag.id, OppdragStatus.KVITTERT_OK)
-    }
-
-    @Transactional(rollbackFor = [Throwable::class])
-    override fun opprettOppdragV2(oppdragRequest: OppdragRequest, versjon: Int) {
-
-        val oppdrag = oppdragRequest.utbetalingsoppdrag.tilOppdragSkjema()
-
-        LOG.debug("Lagrer oppdrag i databasen " + oppdrag.id)
-        oppdragLagerRepository.opprettOppdrag(OppdragLager.lagFraOppdragV2(utbetalingsoppdrag = oppdragRequest.utbetalingsoppdrag,
-                                                                           gjeldendeBehandlingId = oppdragRequest.gjeldendeBehandlingId.toString(),
-                                                                           oppdrag = oppdrag), versjon)
 
         LOG.debug("Kvittering mottat ok " + oppdrag.id)
         oppdragLagerRepository.oppdaterStatus(oppdrag.id, OppdragStatus.KVITTERT_OK)
@@ -51,6 +34,5 @@ class OppdragServiceE2E(
     companion object {
 
         val LOG = LoggerFactory.getLogger(OppdragServiceE2E::class.java)
-
     }
 }
