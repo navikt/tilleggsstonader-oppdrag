@@ -1,11 +1,12 @@
 package no.nav.familie.oppdrag.service
 
+import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequest
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
+import no.nav.familie.kontrakter.felles.oppdrag.OppdragIdForFagsystem
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.rest.OppdragIdForFagsystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -15,15 +16,27 @@ import java.time.LocalDateTime
 class KonsistensavstemmingService(private val avstemmingSender: AvstemmingSender,
                                   private val oppdragLagerRepository: OppdragLagerRepository) {
 
-    fun utførKonsistensavstemming(fagsystem: String, oppdragIdListe: List<OppdragIdForFagsystem>, avstemmingsdato: LocalDateTime) {
+    fun utførKonsistensavstemming(request: KonsistensavstemmingRequest) {
+        utførKonsistensavstemming(request.fagsystem,
+                                  request.oppdragIdListe,
+                                  request.avstemmingstidspunkt)
+    }
+
+    fun utførKonsistensavstemming(fagsystem: String,
+                                  oppdragIdListe: List<OppdragIdForFagsystem>,
+                                  avstemmingstidspunkt: LocalDateTime) {
 
         val utbetalingsoppdrag = oppdragIdListe.map { id ->
-            val oppdragLager = oppdragLagerRepository.hentAlleVersjonerAvOppdrag(OppdragId(fagsystem, id.personIdent, id.behandlingsId.toString()))
-                .find { oppdragLager -> oppdragLager.status == OppdragStatus.KVITTERT_OK || oppdragLager.status == OppdragStatus.KVITTERT_MED_MANGLER }
-            oppdragLagerRepository.hentUtbetalingsoppdrag(OppdragId(fagsystem, id.personIdent, id.behandlingsId.toString()), oppdragLager!!.versjon)
+            val oppdragLager = oppdragLagerRepository.hentAlleVersjonerAvOppdrag(OppdragId(fagsystem,
+                                                                                           id.personIdent,
+                                                                                           id.behandlingsId.toString()))
+                    .find { oppdragLager -> oppdragLager.status == OppdragStatus.KVITTERT_OK
+                                            || oppdragLager.status == OppdragStatus.KVITTERT_MED_MANGLER }
+            oppdragLagerRepository.hentUtbetalingsoppdrag(OppdragId(fagsystem, id.personIdent, id.behandlingsId.toString()),
+                                                          oppdragLager!!.versjon)
         }
 
-        val konsistensavstemmingMapper = KonsistensavstemmingMapper(fagsystem, utbetalingsoppdrag, avstemmingsdato)
+        val konsistensavstemmingMapper = KonsistensavstemmingMapper(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt)
         val meldinger = konsistensavstemmingMapper.lagAvstemmingsmeldinger()
 
         if (meldinger.isEmpty()) {
@@ -31,7 +44,8 @@ class KonsistensavstemmingService(private val avstemmingSender: AvstemmingSender
             return
         }
 
-        LOG.info("Utfører konsistensavstemming for id ${konsistensavstemmingMapper.avstemmingId}, antall meldinger er ${meldinger.size}")
+        LOG.info("Utfører konsistensavstemming for id ${konsistensavstemmingMapper.avstemmingId}, " +
+                 "antall meldinger er ${meldinger.size}")
         meldinger.forEach {
             avstemmingSender.sendKonsistensAvstemming(it)
         }
@@ -40,6 +54,7 @@ class KonsistensavstemmingService(private val avstemmingSender: AvstemmingSender
     }
 
     companion object {
+
         val LOG: Logger = LoggerFactory.getLogger(KonsistensavstemmingService::class.java)
     }
 }

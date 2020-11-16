@@ -1,12 +1,12 @@
 package no.nav.familie.oppdrag.konsistensavstemming
 
 import io.mockk.*
+import no.nav.familie.kontrakter.felles.oppdrag.OppdragIdForFagsystem
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
 import no.nav.familie.oppdrag.repository.somOppdragLager
 import no.nav.familie.oppdrag.repository.somOppdragLagerMedVersjon
-import no.nav.familie.oppdrag.rest.OppdragIdForFagsystem
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag
 import org.junit.jupiter.api.BeforeEach
@@ -15,14 +15,14 @@ import java.time.LocalDateTime
 
 class KonsistensavstemmingServiceTest {
 
-    lateinit var konsistensavstemmingService: KonsistensavstemmingService
-    lateinit var oppdragLagerRepository: OppdragLagerRepository
-    lateinit var avstemmingSender: AvstemmingSender
+    private lateinit var konsistensavstemmingService: KonsistensavstemmingService
+    private lateinit var oppdragLagerRepository: OppdragLagerRepository
+    private lateinit var avstemmingSender: AvstemmingSender
 
     @BeforeEach
     fun setUp() {
         oppdragLagerRepository = mockk()
-        avstemmingSender = mockk<AvstemmingSender>()
+        avstemmingSender = mockk()
         konsistensavstemmingService = KonsistensavstemmingService(avstemmingSender, oppdragLagerRepository)
     }
 

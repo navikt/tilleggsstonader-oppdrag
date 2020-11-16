@@ -2,10 +2,12 @@ package no.nav.familie.oppdrag.service
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
+import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.grensesnittavstemming.GrensesnittavstemmingMapper
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Grunnlagsdata
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -23,9 +25,15 @@ class GrensesnittavstemmingService(
         }
     }
 
-    fun utførGrensesnittavstemming(fagsystem: String, fom: LocalDateTime, tom: LocalDateTime) {
-        val oppdragSomSkalAvstemmes = oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(fom, tom, fagsystem)
-        val avstemmingMapper = GrensesnittavstemmingMapper(oppdragSomSkalAvstemmes, fagsystem, fom, tom)
+    fun utførGrensesnittavstemming(request: GrensesnittavstemmingRequest) {
+        utførGrensesnittavstemming(request.fagsystem,
+                                   request.fra,
+                                   request.til)
+    }
+
+    fun utførGrensesnittavstemming(fagsystem: String, fra: LocalDateTime, til: LocalDateTime) {
+        val oppdragSomSkalAvstemmes = oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(fra, til, fagsystem)
+        val avstemmingMapper = GrensesnittavstemmingMapper(oppdragSomSkalAvstemmes, fagsystem, fra, til)
         val meldinger = avstemmingMapper.lagAvstemmingsmeldinger()
 
         if (meldinger.isEmpty()) {
@@ -55,43 +63,45 @@ class GrensesnittavstemmingService(
 
     private fun opprettMetrikkerForFagsystem(fagsystem: Fagsystem): Map<String, Counter> {
         val godkjentCounter = Metrics.counter("familie.oppdrag.grensesnittavstemming",
-                "fagsystem", fagsystem.name,
-                "status", Status.GODKJENT.status,
-                "beskrivelse", Status.GODKJENT.beskrivelse)
+                                              "fagsystem", fagsystem.name,
+                                              "status", Status.GODKJENT.status,
+                                              "beskrivelse", Status.GODKJENT.beskrivelse)
         val avvistCounter = Metrics.counter("familie.oppdrag.grensesnittavstemming",
-                "fagsystem", fagsystem.name,
-                "status", Status.AVVIST.status,
-                "beskrivelse", Status.AVVIST.beskrivelse)
+                                            "fagsystem", fagsystem.name,
+                                            "status", Status.AVVIST.status,
+                                            "beskrivelse", Status.AVVIST.beskrivelse)
         val manglerCounter = Metrics.counter("familie.oppdrag.grensesnittavstemming",
-                "fagsystem", fagsystem.name,
-                "status", Status.MANGLER.status,
-                "beskrivelse", Status.MANGLER.beskrivelse)
+                                             "fagsystem", fagsystem.name,
+                                             "status", Status.MANGLER.status,
+                                             "beskrivelse", Status.MANGLER.beskrivelse)
         val varselCounter = Metrics.counter("familie.oppdrag.grensesnittavstemming",
-                "fagsystem", fagsystem.name,
-                "status", Status.VARSEL.status,
-                "beskrivelse", Status.VARSEL.beskrivelse)
+                                            "fagsystem", fagsystem.name,
+                                            "status", Status.VARSEL.status,
+                                            "beskrivelse", Status.VARSEL.beskrivelse)
 
         return hashMapOf(Status.GODKJENT.status to godkjentCounter,
-                Status.AVVIST.status to avvistCounter,
-                Status.MANGLER.status to manglerCounter,
-                Status.VARSEL.status to varselCounter)
+                         Status.AVVIST.status to avvistCounter,
+                         Status.MANGLER.status to manglerCounter,
+                         Status.VARSEL.status to varselCounter)
     }
 
     companion object {
-        val LOG = LoggerFactory.getLogger(GrensesnittavstemmingService::class.java)
+
+        val LOG: Logger = LoggerFactory.getLogger(GrensesnittavstemmingService::class.java)
     }
 
 }
 
 enum class Status(val status: String, val beskrivelse: String) {
     GODKJENT("godkjent", "Antall oppdrag som har fått OK kvittering (alvorlighetsgrad 00)."),
-    AVVIST("avvist", "Antall oppdrag som har fått kvittering med funksjonell eller teknisk feil, samt ukjent (alvorlighetsgrad 08 og 12)."),
+    AVVIST("avvist",
+           "Antall oppdrag som har fått kvittering med funksjonell eller teknisk feil, samt ukjent (alvorlighetsgrad 08 og 12)."),
     MANGLER("mangler", "Antall oppdrag hvor kvittering mangler."),
     VARSEL("varsel", "Antall oppdrag som har fått kvittering med mangler (alvorlighetsgrad 04).")
 }
 
 enum class Fagsystem {
     BA,
-    EF,
+    EFOG,
     KS
 }
