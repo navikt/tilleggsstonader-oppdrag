@@ -15,6 +15,8 @@ object AvstemmingMapper {
     fun fagområdeTilAvleverendeKomponentKode(fagområde: String): String {
         return when(fagområde) {
             "EFOG" -> "EF"
+            "EFBT" -> "EF"
+            "EFSP" -> "EF"
             "BA" -> "BA"
             else -> throw Error("Grensesnittavstemming støttes ikke for $fagområde")
         }
