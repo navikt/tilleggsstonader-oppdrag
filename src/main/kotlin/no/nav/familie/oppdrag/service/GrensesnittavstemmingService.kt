@@ -103,5 +103,7 @@ enum class Status(val status: String, val beskrivelse: String) {
 enum class Fagsystem {
     BA,
     EFOG,
+    EFBT,
+    EFSP,
     KS
 }
