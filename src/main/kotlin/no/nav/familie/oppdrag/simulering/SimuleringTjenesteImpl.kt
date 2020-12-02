@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.simulering
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
@@ -18,6 +19,8 @@ import org.springframework.web.context.annotation.ApplicationScope
 class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                              @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper) : SimuleringTjeneste {
 
+    val mapper = jacksonObjectMapper()
+
     override fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat {
         return hentSimulerBeregningResponse(utbetalingsoppdrag).toRestSimulerResult()
     }
@@ -25,9 +28,16 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
     override fun hentSimulerBeregningResponse(utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
+        secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
+                          mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
 
         return try {
-            return simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
+            val response = simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
+
+            secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
+                              mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response))
+
+            return response
         } catch (ex: SimulerBeregningFeilUnderBehandling) {
             val feilmelding = genererFeilmelding(ex)
 
@@ -50,6 +60,7 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
 
     companion object {
 
+        val secureLogger = LoggerFactory.getLogger("secureLogger")
         val LOG: Logger = LoggerFactory.getLogger(KonsistensavstemmingService::class.java)
     }
 }
