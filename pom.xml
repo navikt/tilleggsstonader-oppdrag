@@ -104,6 +104,10 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb-impl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+        </dependency>
 
         <!-- MQ -->
         <dependency>
