@@ -3,12 +3,13 @@ package no.nav.familie.oppdrag.simulering.repository
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
 
-data class SimuleringMottaker (val id: Long? = null,
-                               @Column("simulering_id") val simuleringGrunnlag: SimuleringGrunnlag,
-                               val mottakerNummer: String? = null,
-                               @Column("mottaker_type") val mottakerType: MottakerType,
-                               @Column("opprettet_tidspunkt") val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
-                                ) {
+data class SimuleringMottaker(
+        val id: Long? = null,
+        @Column("simulering_id") val simuleringGrunnlag: SimuleringGrunnlag,
+        val mottakerNummer: String? = null,
+        @Column("mottaker_type") val mottakerType: MottakerType,
+        @Column("opprettet_tidspunkt") val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
+) {
 
     /*fun getSimulertePosteringer(): List<SimulertPostering> {
         return simulertePosteringer.stream().filter { sp: SimulertPostering -> !sp.erUtenInntrekk() }
