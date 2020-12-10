@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
+import no.nav.familie.oppdrag.simulering.repository.DetaljertSimuleringResultat
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.slf4j.Logger
@@ -46,6 +47,13 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         } catch (ex: Throwable) {
             throw Exception(ex.message, ex)
         }
+    }
+
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
+        val respons = hentSimulerBeregningResponse(utbetalingsoppdrag)
+
+
+        return DetaljertSimuleringResultat(simuleringMottaker = listOf())
     }
 
     private fun genererFeilmelding(ex: SimulerBeregningFeilUnderBehandling): String =
