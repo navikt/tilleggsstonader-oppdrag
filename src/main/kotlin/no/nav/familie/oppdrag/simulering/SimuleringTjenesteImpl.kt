@@ -21,6 +21,7 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                              @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper) : SimuleringTjeneste {
 
     val mapper = jacksonObjectMapper()
+    val simuleringResultatTransformer = SimuleringResultatTransformer()
 
     override fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat {
         return hentSimulerBeregningResponse(utbetalingsoppdrag).toRestSimulerResult()
@@ -32,12 +33,10 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
                           mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
 
-        return try {
+        try {
             val response = simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
-
             secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
                               mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response))
-
             return response
         } catch (ex: SimulerBeregningFeilUnderBehandling) {
             val feilmelding = genererFeilmelding(ex)
@@ -49,15 +48,15 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         }
     }
 
-    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(
+            utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
         val respons = hentSimulerBeregningResponse(utbetalingsoppdrag)
-
-
-        return DetaljertSimuleringResultat(simuleringMottaker = listOf())
+        val beregning = respons.response.simulering
+        return simuleringResultatTransformer.mapSimulering(beregning = beregning, utbetalingsoppdrag = utbetalingsoppdrag)
     }
 
     private fun genererFeilmelding(ex: SimulerBeregningFeilUnderBehandling): String =
-            ex.getFaultInfo().let {
+            ex.faultInfo.let {
                 "Feil ved hentSimulering (SimulerBeregningFeilUnderBehandling) " +
                 "source: ${it.errorSource}, " +
                 "type: ${it.errorType}, " +
