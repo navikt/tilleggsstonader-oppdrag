@@ -2,6 +2,7 @@ package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
+import no.nav.familie.oppdrag.simulering.repository.DetaljertSimuleringResultat
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,5 +16,6 @@ import org.springframework.web.context.annotation.ApplicationScope
 class SimuleringTjenesteE2E(): SimuleringTjeneste {
 
     override fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat = RestSimulerResultat(0)
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag, versjon: Int): DetaljertSimuleringResultat = DetaljertSimuleringResultat(simuleringMottaker = emptyList())
     override fun hentSimulerBeregningResponse(utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse = SimulerBeregningResponse()
 }

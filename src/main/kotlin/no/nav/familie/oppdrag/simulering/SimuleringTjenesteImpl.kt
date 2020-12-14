@@ -3,9 +3,12 @@ package no.nav.familie.oppdrag.simulering
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
+import no.nav.familie.oppdrag.repository.SimuleringsLager
+import no.nav.familie.oppdrag.repository.SimuleringsLagerRepository
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.familie.oppdrag.simulering.repository.DetaljertSimuleringResultat
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
+import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,7 +21,8 @@ import org.springframework.web.context.annotation.ApplicationScope
 @ApplicationScope
 @Profile("!e2e")
 class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
-                             @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper) : SimuleringTjeneste {
+                             @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
+                             @Autowired val simuleringsLagerRepository: SimuleringsLagerRepository) : SimuleringTjeneste {
 
     val mapper = jacksonObjectMapper()
     val simuleringResultatTransformer = SimuleringResultatTransformer()
@@ -33,6 +37,11 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
                           mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
 
+        return hentSimulerBeregningResponse(simulerBeregningRequest, utbetalingsoppdrag)
+    }
+
+    private fun hentSimulerBeregningResponse(simulerBeregningRequest: SimulerBeregningRequest,
+                                             utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse {
         try {
             val response = simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
             secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
@@ -48,9 +57,20 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         }
     }
 
-    override fun utførSimuleringOghentDetaljertSimuleringResultat(
-            utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
-        val respons = hentSimulerBeregningResponse(utbetalingsoppdrag)
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag,
+                                                                  versjon: Int): DetaljertSimuleringResultat {
+        val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
+
+        secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
+                          mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
+
+        val respons = hentSimulerBeregningResponse(simulerBeregningRequest, utbetalingsoppdrag)
+
+        simuleringsLagerRepository.opprettSimulering(simuleringsLager = SimuleringsLager.lagFraOppdrag(utbetalingsoppdrag,
+                                                                                                       simulerBeregningRequest,
+                                                                                                       respons),
+                                                     versjon = versjon)
+
         val beregning = respons.response.simulering
         return simuleringResultatTransformer.mapSimulering(beregning = beregning, utbetalingsoppdrag = utbetalingsoppdrag)
     }

@@ -47,24 +47,6 @@ class SimuleringResultatTransformer {
                 utenInntrekk = utenInntrekk)
     }
 
-    //TODO: Trenger vi denne metoden?
-    /*fun mapSimuleringUtenInntrekk(beregning: Beregning, simuleringGrunnlag: DetaljertSimuleringResultat) {
-        val mottaker: SimuleringMottaker = simuleringGrunnlag.
-                .getSimuleringMottakere()
-                .stream()
-                .filter { m -> m.getMottakerType().equals(MottakerType.BRUKER) }
-                .findFirst()
-                .orElseThrow { IllegalStateException("Utviklerfeil: skal ikke komme hit uten at bruker finnes som mottaker") }
-        for (periode in beregning.getBeregningsPeriode()) {
-            for (stoppnivaa in periode.getBeregningStoppnivaa()) {
-                for (detaljer in stoppnivaa.getBeregningStoppnivaaDetaljer()) {
-                    val postering: SimulertPostering = mapPostering(true, stoppnivaa, detaljer)
-                    mottaker.leggTilSimulertPostering(postering)
-                }
-            }
-        }
-    }*/
-
     private fun hentOrgNrEllerFnr(orgNrEllerFnr: String): String {
         return if (erOrgNr(orgNrEllerFnr)) {
             orgNrEllerFnr.substring(2)
