@@ -1,6 +1,8 @@
 package no.nav.familie.oppdrag.repository
 
-interface SimuleringsLagerRepository {
+import org.springframework.stereotype.Repository
+import java.util.*
 
-    fun opprettSimulering(simuleringsLager: SimuleringsLager, versjon: Int = 0)
+@Repository
+interface SimuleringsLagerRepository: RepositoryInterface<SimuleringsLager, UUID>, InsertUpdateRepository<SimuleringsLager> {
 }

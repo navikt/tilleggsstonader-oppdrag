@@ -27,10 +27,9 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
         return ok(simuleringTjeneste.utførSimulering(utbetalingsoppdrag))
     }
 
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/simulering/{versjon}"])
-    fun hentSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag,
-                       @PathVariable versjon: Int): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
-        return ok(simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag, versjon))
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/hent-simulering/v1"])
+    fun hentSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
+        return ok(simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag))
     }
 
     //Temporær funksjon som skal brukes for å teste responser fra oppdrag.

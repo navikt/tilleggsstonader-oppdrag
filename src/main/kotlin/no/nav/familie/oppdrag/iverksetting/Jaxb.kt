@@ -12,7 +12,9 @@ import javax.xml.transform.stream.StreamSource
 
 object Jaxb {
 
-    val jaxbContext = JAXBContext.newInstance(Oppdrag::class.java)
+    val jaxbContext = JAXBContext.newInstance(Oppdrag::class.java,
+                                              SimulerBeregningRequest::class.java,
+                                              SimulerBeregningResponse::class.java)
     val marshaller = jaxbContext.createMarshaller().apply {
         setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
     }

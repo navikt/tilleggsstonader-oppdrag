@@ -16,6 +16,6 @@ import org.springframework.web.context.annotation.ApplicationScope
 class SimuleringTjenesteE2E(): SimuleringTjeneste {
 
     override fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat = RestSimulerResultat(0)
-    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag, versjon: Int): DetaljertSimuleringResultat = DetaljertSimuleringResultat(simuleringMottaker = emptyList())
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat = DetaljertSimuleringResultat(simuleringMottaker = emptyList())
     override fun hentSimulerBeregningResponse(utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse = SimulerBeregningResponse()
 }

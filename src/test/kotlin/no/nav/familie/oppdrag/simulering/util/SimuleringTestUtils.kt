@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.simulering.util
 
+import io.mockk.InternalPlatformDsl.toStr
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.simulering.TypeKlasse
@@ -91,7 +92,7 @@ fun lagTestSimuleringResponse(): SimulerBeregningResponse {
 
 fun lagBeregningStoppnivaFeilUtbetaling(date: LocalDate,
                                         forfall: Long = 0,
-                                        fagOmrade: String = "BA"): BeregningStoppnivaa {
+                                        fagOmrade: String = "BATR"): BeregningStoppnivaa {
     val beregningStoppnivaa = BeregningStoppnivaa()
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
     beregningStoppnivaa.kodeFagomraade = fagOmrade
@@ -103,20 +104,21 @@ fun lagBeregningStoppnivaFeilUtbetaling(date: LocalDate,
 
 fun lagBeregningStoppniva(date: LocalDate,
                           forfall: Long = 0,
-                          fagOmrade: String = "BA"): BeregningStoppnivaa {
+                          fagOmrade: String = "BATR"): BeregningStoppnivaa {
 
     val beregningStoppnivaa = BeregningStoppnivaa()
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
     beregningStoppnivaa.kodeFagomraade = fagOmrade
 
-    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(lagBeregningStoppnivaaDetaljer())
+    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(lagBeregningStoppnivaaDetaljer(dato = date))
+    beregningStoppnivaa.utbetalesTilId = "1234567890"
 
     return beregningStoppnivaa
 }
 
 fun lagBeregningStoppnivaRevurdering(date: LocalDate,
                                      forfall: Long = 0,
-                                     fagOmrade: String = "BA"): BeregningStoppnivaa {
+                                     fagOmrade: String = "BATR"): BeregningStoppnivaa {
     val beregningStoppnivaa = BeregningStoppnivaa()
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
     beregningStoppnivaa.kodeFagomraade = fagOmrade
@@ -128,9 +130,12 @@ fun lagBeregningStoppnivaRevurdering(date: LocalDate,
 }
 
 private fun lagBeregningStoppnivaaDetaljer(typeKlasse: String = TypeKlasse.YTEL.name,
-                                           belop: BigDecimal = BigDecimal(1000)): BeregningStoppnivaaDetaljer {
+                                           belop: BigDecimal = BigDecimal(1000),
+                                           dato: LocalDate? = null): BeregningStoppnivaaDetaljer {
     val beregningStoppnivaaDetaljer = BeregningStoppnivaaDetaljer()
     beregningStoppnivaaDetaljer.typeKlasse = typeKlasse
     beregningStoppnivaaDetaljer.belop = belop
+    beregningStoppnivaaDetaljer.faktiskFom = dato?.minusMonths(2).toStr()
+    beregningStoppnivaaDetaljer.faktiskTom = dato?.toStr()
     return beregningStoppnivaaDetaljer
 }
