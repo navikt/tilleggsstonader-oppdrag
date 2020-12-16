@@ -6,6 +6,7 @@ import no.nav.familie.oppdrag.util.TestConfig
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -15,8 +16,9 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.assertEquals
 
 @ActiveProfiles("dev")
-@ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
+@ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class, Containers.MQInitializer::class))
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
+@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class SimuleringTjenesteImplTest {
 
@@ -25,6 +27,7 @@ internal class SimuleringTjenesteImplTest {
 
     companion object {
         @Container var postgreSQLContainer = Containers.postgreSQLContainer
+        @Container var ibmMQContainer = Containers.ibmMQContainer
     }
 
     @Test
