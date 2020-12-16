@@ -4,8 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.iverksetting.Jaxb
-import no.nav.familie.oppdrag.repository.SimuleringsLager
-import no.nav.familie.oppdrag.repository.SimuleringsLagerTjeneste
+import no.nav.familie.oppdrag.repository.SimuleringLager
+import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.familie.oppdrag.simulering.repository.DetaljertSimuleringResultat
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
@@ -22,7 +22,7 @@ import org.springframework.web.context.annotation.ApplicationScope
 @Profile("!e2e")
 class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                              @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
-                             @Autowired val simuleringsLagerTjeneste: SimuleringsLagerTjeneste) : SimuleringTjeneste {
+                             @Autowired val simuleringLagerTjeneste: SimuleringLagerTjeneste) : SimuleringTjeneste {
 
     val mapper = jacksonObjectMapper()
     val simuleringResultatTransformer = SimuleringResultatTransformer()
@@ -63,13 +63,13 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
                           mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
 
-        val simuleringsLager = SimuleringsLager.lagFraOppdrag(utbetalingsoppdrag, simulerBeregningRequest)
-        simuleringsLagerTjeneste.lagreINyTransaksjon(simuleringsLager)
+        val simuleringsLager = SimuleringLager.lagFraOppdrag(utbetalingsoppdrag, simulerBeregningRequest)
+        simuleringLagerTjeneste.lagreINyTransaksjon(simuleringsLager)
 
         val respons = hentSimulerBeregningResponse(simulerBeregningRequest, utbetalingsoppdrag)
 
         simuleringsLager.responseXml = Jaxb.tilXml(respons)
-        simuleringsLagerTjeneste.oppdater(simuleringsLager)
+        simuleringLagerTjeneste.oppdater(simuleringsLager)
 
         val beregning = respons.response.simulering
         return simuleringResultatTransformer.mapSimulering(beregning = beregning, utbetalingsoppdrag = utbetalingsoppdrag)

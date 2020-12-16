@@ -1,7 +1,6 @@
 package no.nav.familie.oppdrag.simulering
 
-import no.nav.familie.oppdrag.repository.SimuleringsLagerRepository
-import no.nav.familie.oppdrag.repository.SimuleringsLagerTjeneste
+import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.familie.oppdrag.util.Containers
 import no.nav.familie.oppdrag.util.TestConfig
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
@@ -21,7 +20,7 @@ import kotlin.test.assertEquals
 @Testcontainers
 internal class SimuleringTjenesteImplTest {
 
-    @Autowired lateinit var simuleringsLagerTjeneste: SimuleringsLagerTjeneste
+    @Autowired lateinit var simuleringLagerTjeneste: SimuleringLagerTjeneste
     @Autowired lateinit var simuleringTjeneste: SimuleringTjeneste
 
     companion object {
@@ -36,7 +35,7 @@ internal class SimuleringTjenesteImplTest {
 
         assertNotNull(simuleringResultat)
 
-        val alleLagretSimuleringsLager = simuleringsLagerTjeneste.finnAlleSimuleringsLager()
+        val alleLagretSimuleringsLager = simuleringLagerTjeneste.finnAlleSimuleringsLager()
         assertEquals(1, alleLagretSimuleringsLager.size)
         val simuleringsLager = alleLagretSimuleringsLager[0]
         assertNotNull(simuleringsLager.requestXml)

@@ -1,4 +1,4 @@
-CREATE TABLE simulerings_lager
+CREATE TABLE simulering_lager
 (
   id                    UUID PRIMARY KEY,
   fagsak_id             VARCHAR NOT NULL,
@@ -10,4 +10,4 @@ CREATE TABLE simulerings_lager
   response_xml          text
 );
 
-CREATE INDEX simuleringsid_idx ON simulerings_lager (behandling_id, fagsak_id, fagsystem);
+CREATE INDEX simuleringsid_idx ON simulering_lager (behandling_id, fagsak_id, fagsystem);

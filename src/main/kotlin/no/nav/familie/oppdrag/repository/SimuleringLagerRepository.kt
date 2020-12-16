@@ -4,5 +4,5 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface SimuleringsLagerRepository: RepositoryInterface<SimuleringsLager, UUID>, InsertUpdateRepository<SimuleringsLager> {
+interface SimuleringLagerRepository: RepositoryInterface<SimuleringLager, UUID>, InsertUpdateRepository<SimuleringLager> {
 }
