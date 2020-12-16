@@ -1,11 +1,11 @@
 package no.nav.familie.oppdrag.simulering.repository
 
 enum class FagOmrådeKode(val kode: String) {
-    ORDINÆR_BARNETRYGD("BATR"),
-    UTVIDET_BARNETRYGD("BAUT"),
-    SMÅBARNSTILLEGG("BATRSMA"),
-    EØS("BATR"),
-    MANUELL_VURDERING("BATR");
+    BARNETRYGD("BA"),
+    BARNETRYGD_INFOTRYGD("BAIT"),
+    ENSLIG_FORSØRGER("EF"),
+    ENSLIG_FORSØRGER_REFUSJON("EFREF"),
+    KONTANTSTØTTE("KS");
 
     companion object {
 

@@ -12,7 +12,6 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Month
 import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import java.util.*
@@ -92,19 +91,19 @@ fun lagTestSimuleringResponse(): SimulerBeregningResponse {
 
 fun lagBeregningStoppnivaFeilUtbetaling(date: LocalDate,
                                         forfall: Long = 0,
-                                        fagOmrade: String = "BATR"): BeregningStoppnivaa {
+                                        fagOmrade: String = "BA"): BeregningStoppnivaa {
     val beregningStoppnivaa = BeregningStoppnivaa()
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
     beregningStoppnivaa.kodeFagomraade = fagOmrade
 
-    lagBeregningStoppnivaaDetaljer(TypeKlasse.FEIL.name)
+    beregningStoppnivaa.beregningStoppnivaaDetaljer.add(lagBeregningStoppnivaaDetaljer(TypeKlasse.FEIL.name))
 
     return beregningStoppnivaa
 }
 
 fun lagBeregningStoppniva(date: LocalDate,
                           forfall: Long = 0,
-                          fagOmrade: String = "BATR"): BeregningStoppnivaa {
+                          fagOmrade: String = "BA"): BeregningStoppnivaa {
 
     val beregningStoppnivaa = BeregningStoppnivaa()
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
@@ -118,7 +117,7 @@ fun lagBeregningStoppniva(date: LocalDate,
 
 fun lagBeregningStoppnivaRevurdering(date: LocalDate,
                                      forfall: Long = 0,
-                                     fagOmrade: String = "BATR"): BeregningStoppnivaa {
+                                     fagOmrade: String = "BA"): BeregningStoppnivaa {
     val beregningStoppnivaa = BeregningStoppnivaa()
     beregningStoppnivaa.forfall = date.plusDays(forfall).toString()
     beregningStoppnivaa.kodeFagomraade = fagOmrade
@@ -135,7 +134,7 @@ private fun lagBeregningStoppnivaaDetaljer(typeKlasse: String = TypeKlasse.YTEL.
     val beregningStoppnivaaDetaljer = BeregningStoppnivaaDetaljer()
     beregningStoppnivaaDetaljer.typeKlasse = typeKlasse
     beregningStoppnivaaDetaljer.belop = belop
-    beregningStoppnivaaDetaljer.faktiskFom = dato?.minusMonths(2).toStr()
-    beregningStoppnivaaDetaljer.faktiskTom = dato?.toStr()
+    beregningStoppnivaaDetaljer.faktiskFom = dato?.toStr()
+    beregningStoppnivaaDetaljer.faktiskTom = dato?.plusMonths(1).toStr()
     return beregningStoppnivaaDetaljer
 }
