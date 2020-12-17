@@ -22,17 +22,13 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
     internal var LOG = LoggerFactory.getLogger(OppdragLagerRepositoryJdbc::class.java)
 
     override fun hentOppdrag(oppdragId: OppdragId, versjon: Int): OppdragLager {
-        val hentStatement =
-                "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
+        val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
 
         val listeAvOppdrag = jdbcTemplate.query(hentStatement,
-                                                arrayOf(oppdragId.behandlingsId,
-                                                        oppdragId.personIdent,
-                                                        oppdragId.fagsystem,
-                                                        versjon),
-                                                OppdragLagerRowMapper())
+                                  arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem, versjon),
+                                  OppdragLagerRowMapper())
 
-        return when (listeAvOppdrag.size) {
+        return when( listeAvOppdrag.size ) {
             0 -> {
                 LOG.error("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
                 throw NoSuchElementException("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
@@ -47,8 +43,8 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
 
     override fun opprettOppdrag(oppdragLager: OppdragLager, versjon: Int) {
         val insertStatement = "INSERT INTO oppdrag_lager " +
-                              "(utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +
-                              " VALUES (?,?,?,?,?,?,?,?,?,?)"
+                "(utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +
+                " VALUES (?,?,?,?,?,?,?,?,?,?)"
 
         jdbcTemplate.update(insertStatement,
                             oppdragLager.utgåendeOppdrag,
@@ -75,38 +71,30 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
     }
 
     override fun oppdaterKvitteringsmelding(oppdragId: OppdragId, kvittering: Mmel, versjon: Int) {
-        val updateStatement =
-                "UPDATE oppdrag_lager SET kvitteringsmelding = ? WHERE person_ident = ? AND fagsystem = ? AND behandling_id = ? AND versjon = ?"
+        val updateStatement = "UPDATE oppdrag_lager SET kvitteringsmelding = ? WHERE person_ident = ? AND fagsystem = ? AND behandling_id = ? AND versjon = ?"
 
         jdbcTemplate.update(updateStatement,
-                            objectMapper.writeValueAsString(kvittering),
-                            oppdragId.personIdent,
-                            oppdragId.fagsystem,
-                            oppdragId.behandlingsId,
-                            versjon)
+                objectMapper.writeValueAsString(kvittering),
+                oppdragId.personIdent,
+                oppdragId.fagsystem,
+                oppdragId.behandlingsId,
+                versjon)
     }
 
-    override fun hentIverksettingerForGrensesnittavstemming(fomTidspunkt: LocalDateTime,
-                                                            tomTidspunkt: LocalDateTime,
-                                                            fagOmråde: String): List<OppdragLager> {
-        val hentStatement =
-                "SELECT * FROM oppdrag_lager WHERE avstemming_tidspunkt >= ? AND avstemming_tidspunkt < ? AND fagsystem = ?"
+    override fun hentIverksettingerForGrensesnittavstemming(fomTidspunkt: LocalDateTime, tomTidspunkt: LocalDateTime, fagOmråde: String): List<OppdragLager> {
+        val hentStatement = "SELECT * FROM oppdrag_lager WHERE avstemming_tidspunkt >= ? AND avstemming_tidspunkt < ? AND fagsystem = ?"
 
         return jdbcTemplate.query(hentStatement,
-                                  arrayOf(fomTidspunkt, tomTidspunkt, fagOmråde),
-                                  OppdragLagerRowMapper())
+                arrayOf(fomTidspunkt, tomTidspunkt, fagOmråde),
+                OppdragLagerRowMapper())
     }
 
     override fun hentUtbetalingsoppdrag(oppdragId: OppdragId, versjon: Int): Utbetalingsoppdrag {
-        val hentStatement =
-                "SELECT utbetalingsoppdrag FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
+        val hentStatement = "SELECT utbetalingsoppdrag FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
 
         val jsonUtbetalingsoppdrag = jdbcTemplate.queryForObject(hentStatement,
-                                                                 arrayOf(oppdragId.behandlingsId,
-                                                                         oppdragId.personIdent,
-                                                                         oppdragId.fagsystem,
-                                                                         versjon),
-                                                                 String::class.java)
+                arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem, versjon),
+                String::class.java)
 
         return objectMapper.readValue(jsonUtbetalingsoppdrag)
     }
@@ -115,8 +103,8 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
         val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ?"
 
         return jdbcTemplate.query(hentStatement,
-                                  arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
-                                  OppdragLagerRowMapper())
+                arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
+                OppdragLagerRowMapper())
     }
 
     // TODO lag index på fagsystem og behandling_id ?

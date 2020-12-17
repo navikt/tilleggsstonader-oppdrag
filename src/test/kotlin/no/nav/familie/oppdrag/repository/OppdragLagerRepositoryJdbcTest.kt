@@ -11,6 +11,7 @@ import no.trygdeetaten.skjema.oppdrag.Mmel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DuplicateKeyException
@@ -27,14 +28,13 @@ import kotlin.test.assertFailsWith
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
-//@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
+@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class OppdragLagerRepositoryJdbcTest {
 
     @Autowired lateinit var oppdragLagerRepository: OppdragLagerRepository
 
     companion object {
-
         @Container var postgreSQLContainer = Containers.postgreSQLContainer
     }
 
@@ -85,7 +85,7 @@ internal class OppdragLagerRepositoryJdbcTest {
 
     private fun kvitteringsmelding(): Mmel {
         val kvitteringsmelding = Jaxb.tilOppdrag(this::class.java.getResourceAsStream("/kvittering-avvist.xml")
-                                                         .bufferedReader().use { it.readText() })
+                .bufferedReader().use { it.readText() })
         return kvitteringsmelding.mmel
     }
 
@@ -96,31 +96,27 @@ internal class OppdragLagerRepositoryJdbcTest {
 
         val avstemmingsTidspunktetSomSkalKjøres = LocalDateTime.now()
 
-        val baOppdragLager =
-                TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(avstemmingsTidspunktetSomSkalKjøres, "BA").somOppdragLager
-        val baOppdragLager2 =
-                TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now().minusDays(1), "BA").somOppdragLager
+        val baOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(avstemmingsTidspunktetSomSkalKjøres, "BA").somOppdragLager
+        val baOppdragLager2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now().minusDays(1), "BA").somOppdragLager
         val efOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now(), "EFOG").somOppdragLager
 
         oppdragLagerRepository.opprettOppdrag(baOppdragLager)
         oppdragLagerRepository.opprettOppdrag(baOppdragLager2)
         oppdragLagerRepository.opprettOppdrag(efOppdragLager)
 
-        val oppdrageneTilGrensesnittavstemming =
-                oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(startenPåDagen, sluttenAvDagen, "BA")
+        val oppdrageneTilGrensesnittavstemming = oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(startenPåDagen, sluttenAvDagen, "BA")
 
         assertEquals(1, oppdrageneTilGrensesnittavstemming.size)
         assertEquals("BA", oppdrageneTilGrensesnittavstemming.first().fagsystem)
         assertEquals(avstemmingsTidspunktetSomSkalKjøres.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")),
-                     oppdrageneTilGrensesnittavstemming.first().avstemmingTidspunkt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")))
+                oppdrageneTilGrensesnittavstemming.first().avstemmingTidspunkt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")))
     }
 
     @Test
     fun skal_hente_ut_oppdrag_for_konsistensavstemming() {
         val forrigeMåned = LocalDateTime.now().minusMonths(1)
         val baOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA").somOppdragLager
-        val baOppdragLager2 =
-                TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned.minusDays(1), "BA").somOppdragLager
+        val baOppdragLager2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned.minusDays(1), "BA").somOppdragLager
         oppdragLagerRepository.opprettOppdrag(baOppdragLager)
         oppdragLagerRepository.opprettOppdrag(baOppdragLager2)
 
