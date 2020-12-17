@@ -56,8 +56,13 @@ class KonsistensavstemmingService(private val avstemmingSender: AvstemmingSender
     fun utførKonsistensavstemming(request: KonsistensavstemmingRequestV2) {
         val fagsystem = request.fagsystem
         val avstemmingstidspunkt = request.avstemmingstidspunkt
-        val utbetalingsoppdrag = request.periodeIdn.map { id ->
-            oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(fagsystem, id.fagsakId, id.periodeIdn)
+        val utbetalingsoppdrag = request.periodeIdn.mapNotNull { id ->
+            if(id.periodeIdn.isNotEmpty()) {
+                oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(fagsystem, id.fagsakId, id.periodeIdn)
+            } else {
+                LOG.warn("Sendt en tom liste for fagsak={}", id.fagsakId)
+                null
+            }
         }.flatten()
 
         val konsistensavstemmingMapper =

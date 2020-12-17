@@ -8,6 +8,7 @@ import no.nav.familie.oppdrag.common.RessursUtils.ok
 import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -78,6 +79,7 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
     }
 
     @PostMapping(path = ["/v2/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @Unprotected
     fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2): ResponseEntity<Ressurs<String>> {
         LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
                  "med ${request.periodeIdn.size} antall periodeIdn")

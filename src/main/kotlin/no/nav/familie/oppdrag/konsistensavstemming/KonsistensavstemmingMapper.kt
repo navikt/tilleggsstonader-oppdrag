@@ -18,13 +18,13 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
                                  private val utbetalingsoppdrag: List<Utbetalingsoppdrag>,
                                  private val periodeIdn: List<PeriodeIdnForFagsak>,
                                  private val avstemmingsDato: LocalDateTime) {
+
     private val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")
     private val datoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val avstemmingId = AvstemmingMapper.encodeUUIDBase64(UUID.randomUUID())
     var totalBeløp = 0L
-    var totalantall = 0
 
-    fun lagAvstemmingsmeldinger() : List<Konsistensavstemmingsdata>  {
+    fun lagAvstemmingsmeldinger(): List<Konsistensavstemmingsdata> {
         if (utbetalingsoppdrag.isEmpty()) {
             return emptyList()
         }
@@ -32,7 +32,7 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         return (listOf(lagStartmelding()) + lagDatameldinger() + listOf(lagSluttmelding()))
     }
 
-    fun lagAvstemmingsmeldingerV2() : List<Konsistensavstemmingsdata>  {
+    fun lagAvstemmingsmeldingerV2(): List<Konsistensavstemmingsdata> {
         if (utbetalingsoppdrag.isEmpty()) {
             return emptyList()
         }
@@ -51,7 +51,7 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             val konsistensavstemmingsdata = lagAksjonsmelding(KonsistensavstemmingConstants.DATA)
             konsistensavstemmingsdata.apply {
                 val oppdragslinje = utbetalingsoppdrag.utbetalingsperiode.map { periode ->
-                    lagOppdragsLinjeListe(utbetalingsperiode = periode, utbetalingsoppdrag = utbetalingsoppdrag)
+                    lagOppdragslinje(utbetalingsperiode = periode, utbetalingsoppdrag = utbetalingsoppdrag)
                 }
                 oppdragsdataListe.add(lagOppdragsdata(utbetalingsoppdrag, oppdragslinje))
 
@@ -59,45 +59,48 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             dataListe.add(konsistensavstemmingsdata)
         }
         // legger til totaldata på slutten
-        dataListe.add(lagTotaldata())
+        dataListe.add(lagTotaldata(dataListe.size))
         return dataListe
     }
 
-    //TODO gjør en sjekk att antall meldinger er riktige mot antall periodeIdn?
     private fun lagDatameldingerV2(): List<Konsistensavstemmingsdata> {
-        val dataListe = mutableListOf<Konsistensavstemmingsdata>()
         val periodeIdnPaaFaksakId = periodeIdn.map { it.fagsakId to it.periodeIdn }.toMap()
-        utbetalingsoppdrag.groupBy { it.saksnummer }.values.forEach { utbetalingsoppdragListe ->
-            val konsistensavstemmingsdata = lagAksjonsmelding(KonsistensavstemmingConstants.DATA)
-            konsistensavstemmingsdata.apply {
-                oppdragsdataListe.add(lagOppdragsdata(utbetalingsoppdragListe, periodeIdnPaaFaksakId))
-
+        val utbetalingsoppdragPerFagsak = utbetalingsoppdrag.groupBy { it.saksnummer }
+        val dataListe = utbetalingsoppdragPerFagsak.map { (saksnummer, utbetalingsoppdragListe) ->
+            lagAksjonsmelding(KonsistensavstemmingConstants.DATA).apply {
+                val periodeIdn = periodeIdnPaaFaksakId[saksnummer]
+                                 ?: error("Finner ingen perioder for saksnummer=$saksnummer")
+                oppdragsdataListe.add(lagOppdragsdata(saksnummer, utbetalingsoppdragListe, periodeIdn))
             }
-            dataListe.add(konsistensavstemmingsdata)
-        }
-        // legger til totaldata på slutten
-        dataListe.add(lagTotaldata())
-        return dataListe
+        }.toMutableList()
+        return dataListe + lagTotaldata(dataListe.size)
     }
 
-    private fun lagOppdragsdata(utbetalingsoppdragListe: List<Utbetalingsoppdrag>,
-                                periodeIdnPaaFaksakId: Map<String, Set<Long>>): Oppdragsdata {
-        val senesteUtbetalingsoppdrag =
-                utbetalingsoppdragListe.maxByOrNull { oppdrag -> oppdrag.utbetalingsperiode.maxOf { it.periodeId } }!!
-        val periodeIdn = periodeIdnPaaFaksakId[senesteUtbetalingsoppdrag.saksnummer]!!
+    private fun lagOppdragsdata(saksnummer: String,
+                                utbetalingsoppdragListe: List<Utbetalingsoppdrag>,
+                                periodeIdn: Set<Long>): Oppdragsdata {
+        //Trekker ut siste utbetalingsoppdraget for å plukke ut metadata till oppdragsdata
+        val senesteUtbetalingsoppdrag = finnSenesteUtbetalingsoppdrag(utbetalingsoppdragListe, saksnummer)
 
-        val periodeInfo = utbetalingsoppdragListe.map { oppdrag ->
+        val oppdragOgPeriodePåPeriodeId = utbetalingsoppdragListe.map { oppdrag ->
             oppdrag.utbetalingsperiode.map { periode -> periode.periodeId to Pair(oppdrag, periode) }
         }.flatten().toMap()
 
-        val oppdragslinje = periodeIdn.map { periodeId ->
-            val (oppdrag, periode) = periodeInfo[periodeId]!!
-            lagOppdragsLinjeListe(utbetalingsperiode = periode, utbetalingsoppdrag = oppdrag)
+        val oppdragslinjer = periodeIdn.map { periodeId ->
+            val (oppdrag, periode) = oppdragOgPeriodePåPeriodeId[periodeId]
+                                     ?: error("Finner ikke oppdrag/periode for" +
+                                              " saksnummer=${senesteUtbetalingsoppdrag.saksnummer}" +
+                                              " periode=$periodeId ")
+            lagOppdragslinje(utbetalingsperiode = periode, utbetalingsoppdrag = oppdrag)
         }
-        return lagOppdragsdata(senesteUtbetalingsoppdrag, oppdragslinje)
+        return lagOppdragsdata(senesteUtbetalingsoppdrag, oppdragslinjer)
     }
 
-    private fun lagOppdragsdata(utbetalingsoppdrag: Utbetalingsoppdrag, oppdragslinje: List<Oppdragslinje>): Oppdragsdata {
+    private fun finnSenesteUtbetalingsoppdrag(utbetalingsoppdragListe: List<Utbetalingsoppdrag>, saksnummer: String) =
+            (utbetalingsoppdragListe.maxByOrNull { oppdrag -> oppdrag.utbetalingsperiode.maxOf { it.periodeId } }
+             ?: error("Finner ingen utbetalingsperioder for saksnummer=$saksnummer"))
+
+    private fun lagOppdragsdata(utbetalingsoppdrag: Utbetalingsoppdrag, oppdragslinjer: List<Oppdragslinje>): Oppdragsdata {
         return Oppdragsdata().apply {
             fagomradeKode = utbetalingsoppdrag.fagSystem
             fagsystemId = utbetalingsoppdrag.saksnummer
@@ -106,11 +109,12 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             oppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.format(datoFormatter)
             saksbehandlerId = utbetalingsoppdrag.saksbehandlerId
             oppdragsenhetListe.add(lagEnhet())
-            oppdragslinjeListe.addAll(oppdragslinje)
+            oppdragslinjeListe.addAll(oppdragslinjer)
         }
     }
 
-    private fun lagOppdragsLinjeListe(utbetalingsperiode: Utbetalingsperiode, utbetalingsoppdrag: Utbetalingsoppdrag): Oppdragslinje {
+    private fun lagOppdragslinje(utbetalingsperiode: Utbetalingsperiode,
+                                 utbetalingsoppdrag: Utbetalingsoppdrag): Oppdragslinje {
         akkumulerTotalbeløp(utbetalingsperiode)
         return Oppdragslinje().apply {
             vedtakId = utbetalingsperiode.datoForVedtak.format(datoFormatter)
@@ -138,8 +142,7 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         // hvis den ikke er aktiv så skal vi ikke sende selve utbetalingsperioden for avstemming?
         // utlede om utbetalingsperioden er aktuell for avstemmingsdato
         if (erPeriodenAktiv(utbetalingsperiode)) {
-            totalBeløp+=utbetalingsperiode.sats.toLong()
-            totalantall++
+            totalBeløp += utbetalingsperiode.sats.toLong()
         }
     }
 
@@ -149,7 +152,7 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         val avstemmingsdato = avstemmingsDato.toLocalDate()
 
         return (utbetalingsperiodeFom.isBefore(avstemmingsdato) && utbetalingsperiodeTom.isAfter(avstemmingsdato))
-                || utbetalingsperiodeFom.isAfter(avstemmingsdato)
+               || utbetalingsperiodeFom.isAfter(avstemmingsdato)
     }
 
     private fun lagAttestant(utbetalingsoppdrag: Utbetalingsoppdrag): Attestant {
@@ -166,11 +169,11 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         }
     }
 
-    private fun lagTotaldata(): Konsistensavstemmingsdata {
+    private fun lagTotaldata(antallOppdrag: Int): Konsistensavstemmingsdata {
         val konsistensavstemmingsdata = lagAksjonsmelding(KonsistensavstemmingConstants.DATA)
         konsistensavstemmingsdata.apply {
             totaldata = Totaldata().apply {
-                totalAntall = totalantall.toBigInteger()
+                totalAntall = antallOppdrag.toBigInteger()
                 totalBelop = BigDecimal.valueOf(totalBeløp)
                 fortegn = getFortegn(totalBeløp)
             }

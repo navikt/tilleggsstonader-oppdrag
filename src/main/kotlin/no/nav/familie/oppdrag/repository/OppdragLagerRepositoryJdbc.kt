@@ -119,12 +119,15 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
                                   OppdragLagerRowMapper())
     }
 
+    // TODO lag index på fagsystem og behandling_id ?
+    // alternativet til denne er att vi sender med en liste med behandling_idn og en liste med periode_idn
+    // slik att behandling_idn kan brukes for databasen og periode_idn for å plukke ut periodene i konsistensmapper
     override fun hentUtbetalingsoppdragForKonsistensavstemming(fagsystem: String,
                                                                fagsakId: String,
                                                                periodeIdn: Set<Long>): List<Utbetalingsoppdrag> {
         val query = """SELECT utbetalingsoppdrag FROM (
                         SELECT utbetalingsoppdrag, 
-                          row_number() OVER (PARTITION BY fagsystem, behandling_id ORDER BY versjon desc) rn
+                          row_number() OVER (PARTITION BY fagsystem, behandling_id ORDER BY versjon DESC) rn
                           FROM oppdrag_lager WHERE fagsystem=:fagsystem AND fagsak_id=:fagsakId
                           AND status IN (:status)
                           AND EXISTS(SELECT 1 FROM json_array_elements(utbetalingsoppdrag->'utbetalingsperiode') u
