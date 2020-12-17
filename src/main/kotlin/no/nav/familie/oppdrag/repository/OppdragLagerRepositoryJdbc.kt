@@ -9,23 +9,30 @@ import no.trygdeetaten.skjema.oppdrag.Mmel
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.time.LocalDateTime
 
 @Repository
-class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragLagerRepository {
+class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
+                                 val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : OppdragLagerRepository {
 
     internal var LOG = LoggerFactory.getLogger(OppdragLagerRepositoryJdbc::class.java)
 
     override fun hentOppdrag(oppdragId: OppdragId, versjon: Int): OppdragLager {
-        val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
+        val hentStatement =
+                "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
 
         val listeAvOppdrag = jdbcTemplate.query(hentStatement,
-                                  arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem, versjon),
-                                  OppdragLagerRowMapper())
+                                                arrayOf(oppdragId.behandlingsId,
+                                                        oppdragId.personIdent,
+                                                        oppdragId.fagsystem,
+                                                        versjon),
+                                                OppdragLagerRowMapper())
 
-        return when( listeAvOppdrag.size ) {
+        return when (listeAvOppdrag.size) {
             0 -> {
                 LOG.error("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
                 throw NoSuchElementException("Feil ved henting av oppdrag. Fant ingen oppdrag med id $oppdragId")
@@ -40,8 +47,8 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragLagerR
 
     override fun opprettOppdrag(oppdragLager: OppdragLager, versjon: Int) {
         val insertStatement = "INSERT INTO oppdrag_lager " +
-                "(utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +
-                " VALUES (?,?,?,?,?,?,?,?,?,?)"
+                              "(utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +
+                              " VALUES (?,?,?,?,?,?,?,?,?,?)"
 
         jdbcTemplate.update(insertStatement,
                             oppdragLager.utgåendeOppdrag,
@@ -68,30 +75,38 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragLagerR
     }
 
     override fun oppdaterKvitteringsmelding(oppdragId: OppdragId, kvittering: Mmel, versjon: Int) {
-        val updateStatement = "UPDATE oppdrag_lager SET kvitteringsmelding = ? WHERE person_ident = ? AND fagsystem = ? AND behandling_id = ? AND versjon = ?"
+        val updateStatement =
+                "UPDATE oppdrag_lager SET kvitteringsmelding = ? WHERE person_ident = ? AND fagsystem = ? AND behandling_id = ? AND versjon = ?"
 
         jdbcTemplate.update(updateStatement,
-                objectMapper.writeValueAsString(kvittering),
-                oppdragId.personIdent,
-                oppdragId.fagsystem,
-                oppdragId.behandlingsId,
-                versjon)
+                            objectMapper.writeValueAsString(kvittering),
+                            oppdragId.personIdent,
+                            oppdragId.fagsystem,
+                            oppdragId.behandlingsId,
+                            versjon)
     }
 
-    override fun hentIverksettingerForGrensesnittavstemming(fomTidspunkt: LocalDateTime, tomTidspunkt: LocalDateTime, fagOmråde: String): List<OppdragLager> {
-        val hentStatement = "SELECT * FROM oppdrag_lager WHERE avstemming_tidspunkt >= ? AND avstemming_tidspunkt < ? AND fagsystem = ?"
+    override fun hentIverksettingerForGrensesnittavstemming(fomTidspunkt: LocalDateTime,
+                                                            tomTidspunkt: LocalDateTime,
+                                                            fagOmråde: String): List<OppdragLager> {
+        val hentStatement =
+                "SELECT * FROM oppdrag_lager WHERE avstemming_tidspunkt >= ? AND avstemming_tidspunkt < ? AND fagsystem = ?"
 
         return jdbcTemplate.query(hentStatement,
-                arrayOf(fomTidspunkt, tomTidspunkt, fagOmråde),
-                OppdragLagerRowMapper())
+                                  arrayOf(fomTidspunkt, tomTidspunkt, fagOmråde),
+                                  OppdragLagerRowMapper())
     }
 
     override fun hentUtbetalingsoppdrag(oppdragId: OppdragId, versjon: Int): Utbetalingsoppdrag {
-        val hentStatement = "SELECT utbetalingsoppdrag FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
+        val hentStatement =
+                "SELECT utbetalingsoppdrag FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
 
         val jsonUtbetalingsoppdrag = jdbcTemplate.queryForObject(hentStatement,
-                arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem, versjon),
-                String::class.java)
+                                                                 arrayOf(oppdragId.behandlingsId,
+                                                                         oppdragId.personIdent,
+                                                                         oppdragId.fagsystem,
+                                                                         versjon),
+                                                                 String::class.java)
 
         return objectMapper.readValue(jsonUtbetalingsoppdrag)
     }
@@ -100,8 +115,29 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragLagerR
         val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ?"
 
         return jdbcTemplate.query(hentStatement,
-                arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
-                OppdragLagerRowMapper())
+                                  arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
+                                  OppdragLagerRowMapper())
+    }
+
+    override fun hentUtbetalingsoppdragForKonsistensavstemming(fagsystem: String,
+                                                               fagsakId: String,
+                                                               periodeIdn: Set<Long>): List<Utbetalingsoppdrag> {
+        val query = """SELECT utbetalingsoppdrag FROM (
+                        SELECT utbetalingsoppdrag, 
+                          row_number() OVER (PARTITION BY fagsystem, behandling_id ORDER BY versjon desc) rn
+                          FROM oppdrag_lager WHERE fagsystem=:fagsystem AND fagsak_id=:fagsakId
+                          AND status IN (:status)
+                          AND EXISTS(SELECT 1 FROM json_array_elements(utbetalingsoppdrag->'utbetalingsperiode') u
+                                    WHERE (u->>'periodeId')::int IN (:periodeIdn))) q 
+                        WHERE rn = 1"""
+
+        val status = setOf(OppdragStatus.KVITTERT_OK, OppdragStatus.KVITTERT_MED_MANGLER).map { it.name }
+        val values = MapSqlParameterSource()
+                .addValue("fagsystem", fagsystem)
+                .addValue("fagsakId", fagsakId)
+                .addValue("status", status)
+                .addValue("periodeIdn", periodeIdn)
+        return namedParameterJdbcTemplate.queryForList(query, values, String::class.java).map { objectMapper.readValue(it) }
     }
 }
 

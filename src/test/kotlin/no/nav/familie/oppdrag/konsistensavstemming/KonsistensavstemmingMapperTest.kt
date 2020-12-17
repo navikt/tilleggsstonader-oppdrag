@@ -25,7 +25,7 @@ class KonsistensavstemmingMapperTest {
     @Test
     fun tester_at_det_mappes_riktig_til_konsistensavstemming() {
         val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag, fagområde)
-        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag), idag)
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag), emptyList(), idag)
         val meldinger = mapper.lagAvstemmingsmeldinger()
         assertEquals(4, meldinger.size)
         // START-meldingen
@@ -44,7 +44,7 @@ class KonsistensavstemmingMapperTest {
     fun totaldata_skal_akkumuleres_riktig() {
         val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag, fagområde)
         val utbetalingsoppdrag2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag, fagområde)
-        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), idag)
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), emptyList(), idag)
         val meldinger = mapper.lagAvstemmingsmeldinger()
         assertEquals(5, meldinger.size)
         assertEquals(KonsistensavstemmingConstants.DATA, meldinger[3].aksjonsdata.aksjonsType)
@@ -56,7 +56,7 @@ class KonsistensavstemmingMapperTest {
         val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag.plusYears(7), fagområde)
         val utbetalingsoppdrag2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdragMedPeriode(idag.plusYears(7),
                 fagområde, LocalDate.now().plusYears(6).withDayOfMonth(1), LocalDate.now().plusYears(12))
-        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), idag.plusYears(7))
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), emptyList(), idag.plusYears(7))
         val meldinger = mapper.lagAvstemmingsmeldinger()
         assertEquals(5, meldinger.size)
         assertEquals(KonsistensavstemmingConstants.DATA, meldinger[3].aksjonsdata.aksjonsType)

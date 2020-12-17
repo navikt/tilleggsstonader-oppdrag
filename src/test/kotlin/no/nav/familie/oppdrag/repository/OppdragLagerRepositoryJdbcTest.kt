@@ -1,15 +1,16 @@
 package no.nav.familie.oppdrag.repository
 
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.util.Containers
 import no.nav.familie.oppdrag.util.TestConfig
 import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import no.trygdeetaten.skjema.oppdrag.Mmel
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DuplicateKeyException
@@ -19,20 +20,21 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.test.assertFailsWith
-import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 
 
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
-@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
+//@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class OppdragLagerRepositoryJdbcTest {
 
     @Autowired lateinit var oppdragLagerRepository: OppdragLagerRepository
 
     companion object {
+
         @Container var postgreSQLContainer = Containers.postgreSQLContainer
     }
 
@@ -83,7 +85,7 @@ internal class OppdragLagerRepositoryJdbcTest {
 
     private fun kvitteringsmelding(): Mmel {
         val kvitteringsmelding = Jaxb.tilOppdrag(this::class.java.getResourceAsStream("/kvittering-avvist.xml")
-                .bufferedReader().use { it.readText() })
+                                                         .bufferedReader().use { it.readText() })
         return kvitteringsmelding.mmel
     }
 
@@ -94,27 +96,31 @@ internal class OppdragLagerRepositoryJdbcTest {
 
         val avstemmingsTidspunktetSomSkalKjøres = LocalDateTime.now()
 
-        val baOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(avstemmingsTidspunktetSomSkalKjøres, "BA").somOppdragLager
-        val baOppdragLager2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now().minusDays(1), "BA").somOppdragLager
+        val baOppdragLager =
+                TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(avstemmingsTidspunktetSomSkalKjøres, "BA").somOppdragLager
+        val baOppdragLager2 =
+                TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now().minusDays(1), "BA").somOppdragLager
         val efOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now(), "EFOG").somOppdragLager
 
         oppdragLagerRepository.opprettOppdrag(baOppdragLager)
         oppdragLagerRepository.opprettOppdrag(baOppdragLager2)
         oppdragLagerRepository.opprettOppdrag(efOppdragLager)
 
-        val oppdrageneTilGrensesnittavstemming = oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(startenPåDagen, sluttenAvDagen, "BA")
+        val oppdrageneTilGrensesnittavstemming =
+                oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(startenPåDagen, sluttenAvDagen, "BA")
 
         assertEquals(1, oppdrageneTilGrensesnittavstemming.size)
         assertEquals("BA", oppdrageneTilGrensesnittavstemming.first().fagsystem)
         assertEquals(avstemmingsTidspunktetSomSkalKjøres.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")),
-                oppdrageneTilGrensesnittavstemming.first().avstemmingTidspunkt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")))
+                     oppdrageneTilGrensesnittavstemming.first().avstemmingTidspunkt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")))
     }
 
     @Test
     fun skal_hente_ut_oppdrag_for_konsistensavstemming() {
         val forrigeMåned = LocalDateTime.now().minusMonths(1)
         val baOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA").somOppdragLager
-        val baOppdragLager2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned.minusDays(1), "BA").somOppdragLager
+        val baOppdragLager2 =
+                TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned.minusDays(1), "BA").somOppdragLager
         oppdragLagerRepository.opprettOppdrag(baOppdragLager)
         oppdragLagerRepository.opprettOppdrag(baOppdragLager2)
 
@@ -123,5 +129,29 @@ internal class OppdragLagerRepositoryJdbcTest {
 
         assertEquals(baOppdragLager.utbetalingsoppdrag, objectMapper.writeValueAsString(utbetalingsoppdrag))
         assertEquals(baOppdragLager2.utbetalingsoppdrag, objectMapper.writeValueAsString(utbetalingsoppdrag2))
+    }
+
+    @Test
+    fun `hentUtbetalingsoppdragForKonsistensavstemming går fint`() {
+        val forrigeMåned = LocalDateTime.now().minusMonths(1)
+        val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA")
+        val baOppdragLager = utbetalingsoppdrag.somOppdragLager.copy(status = OppdragStatus.KVITTERT_OK)
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager)
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager, 1)
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager, 2)
+        val behandlingB = baOppdragLager.copy(behandlingId = UUID.randomUUID().toString())
+        oppdragLagerRepository.opprettOppdrag(behandlingB)
+
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager.copy(fagsakId = UUID.randomUUID().toString(),
+                                                                  behandlingId = UUID.randomUUID().toString()))
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                        baOppdragLager.fagsakId,
+                                                                                        setOf(1000L))).isEmpty()
+        val periodeIdn = utbetalingsoppdrag.utbetalingsperiode.map { it.periodeId }.toSet()
+        val forKonsistensavstemming =
+                oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                     baOppdragLager.fagsakId,
+                                                                                     periodeIdn)
+        assertThat(forKonsistensavstemming).hasSize(2)
     }
 }
