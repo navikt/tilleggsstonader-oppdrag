@@ -84,7 +84,7 @@ class AvstemmingMQSenderTest {
 
     private fun lagTestKonsistensavstemming(): List<Konsistensavstemmingsdata> {
         val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(IDAG, FAGOMRÅDE)
-        val mapper = KonsistensavstemmingMapper(FAGOMRÅDE, listOf(utbetalingsoppdrag), emptyList(), IDAG)
+        val mapper = KonsistensavstemmingMapper(FAGOMRÅDE, listOf(utbetalingsoppdrag), IDAG)
         return mapper.lagAvstemmingsmeldinger()
     }
 

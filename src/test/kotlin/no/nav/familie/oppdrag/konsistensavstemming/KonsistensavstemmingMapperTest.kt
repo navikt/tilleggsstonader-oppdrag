@@ -1,19 +1,17 @@
 package no.nav.familie.oppdrag.konsistensavstemming
 
-import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.avstemming.SystemKode
 import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
 import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
 import no.nav.familie.oppdrag.iverksetting.UtbetalingsfrekvensKode
-import no.nav.familie.oppdrag.rest.PeriodeIdnForFagsak
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato
+import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag
+import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato.lagUtbetalingsperiode
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.*
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
-import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,98 +19,16 @@ import java.time.format.DateTimeFormatter
 import kotlin.test.assertEquals
 
 class KonsistensavstemmingMapperTest {
+
     val fagområde = "BA"
     val idag = LocalDateTime.now()
     val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")
     val datoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val saksnummer = "1"
-    val saksnummer2 = "2"
-
-    val utbetalingsoppdrag1_1 = lagUtbetalingsoppdrag(saksnummer,
-                                                      lagUtbetalingsperiode(periodeId = 1,
-                                                                            forrigePeriodeId = null,
-                                                                            beløp = 100,
-                                                                            behandlingsId = 1,
-                                                                            opphør = null),
-                                                      lagUtbetalingsperiode(periodeId = 2,
-                                                                            forrigePeriodeId = 1,
-                                                                            beløp = 100,
-                                                                            behandlingsId = 1,
-                                                                            opphør = null))
-
-    // Opphør på periode 2, ny periode med annet beløp
-    val utbetalingsoppdrag1_2 = lagUtbetalingsoppdrag(saksnummer,
-                                                      lagUtbetalingsperiode(periodeId = 2,
-                                                                            forrigePeriodeId = 1,
-                                                                            beløp = 100,
-                                                                            behandlingsId = 1,
-                                                                            opphør = Opphør(LocalDate.now())),
-                                                      lagUtbetalingsperiode(periodeId = 3,
-                                                                            forrigePeriodeId = 2,
-                                                                            beløp = 400,
-                                                                            behandlingsId = 2,
-                                                                            opphør = null))
-    val utbetalingsoppdrag2_1 = lagUtbetalingsoppdrag(saksnummer2,
-                                                      lagUtbetalingsperiode(periodeId = 1,
-                                                                            forrigePeriodeId = null,
-                                                                            beløp = 20,
-                                                                            behandlingsId = 3,
-                                                                            opphør = Opphør(LocalDate.now())),
-                                                      lagUtbetalingsperiode(periodeId = 2,
-                                                                            forrigePeriodeId = 1,
-                                                                            beløp = 30,
-                                                                            behandlingsId = 3,
-                                                                            opphør = null))
-
-    @Test
-    internal fun `plukker ut periode fra ett utbetalingsoppdrag`() {
-        val mapper = KonsistensavstemmingMapper(fagområde,
-                                                listOf(utbetalingsoppdrag1_1, utbetalingsoppdrag1_2),
-                                                listOf(PeriodeIdnForFagsak(saksnummer, setOf(3))), idag)
-        val meldinger = mapper.lagAvstemmingsmeldingerV2()
-        assertThat(meldinger).hasSize(4)
-        assertThat(meldinger[1].oppdragsdataListe).hasSize(1)
-        assertThat(meldinger[1].oppdragsdataListe[0].oppdragslinjeListe).hasSize(1)
-        assertThat(meldinger[2].totaldata.totalBelop.toInt()).isEqualTo(400)
-        assertThat(meldinger[2].totaldata.totalAntall).isEqualTo(1)
-    }
-
-    @Test
-    internal fun `plukker ut perioder fra 2 utbetalingsoppdrag til en melding`() {
-        val mapper = KonsistensavstemmingMapper(fagområde,
-                                                listOf(utbetalingsoppdrag1_1, utbetalingsoppdrag1_2),
-                                                listOf(PeriodeIdnForFagsak(saksnummer, setOf(1, 3))), idag)
-        val meldinger = mapper.lagAvstemmingsmeldingerV2()
-        assertThat(meldinger).hasSize(4)
-        assertThat(meldinger[1].oppdragsdataListe).hasSize(1)
-        assertThat(meldinger[1].oppdragsdataListe[0].oppdragslinjeListe).hasSize(2)
-        assertThat(meldinger[2].totaldata.totalBelop.toInt()).isEqualTo(500)
-        assertThat(meldinger[2].totaldata.totalAntall)
-                .withFailMessage("Total antall skal være antall oppdrag")
-                .isEqualTo(1)
-    }
-
-    @Test
-    internal fun `2 ulike fagsaker med samme periodeIdn`() {
-        val mapper = KonsistensavstemmingMapper(fagområde,
-                                                listOf(utbetalingsoppdrag1_1, utbetalingsoppdrag1_2, utbetalingsoppdrag2_1),
-                                                listOf(PeriodeIdnForFagsak(saksnummer, setOf(1)),
-                                                       PeriodeIdnForFagsak(saksnummer2, setOf(1))),
-                                                idag)
-        val meldinger = mapper.lagAvstemmingsmeldingerV2()
-        assertThat(meldinger).hasSize(5)
-        listOf(1,2).forEach {
-            assertThat(meldinger[it].oppdragsdataListe).hasSize(1)
-            assertThat(meldinger[it].oppdragsdataListe[0].oppdragslinjeListe).hasSize(1)
-        }
-        assertThat(meldinger[3].totaldata.totalBelop.toInt()).isEqualTo(120)
-        assertThat(meldinger[3].totaldata.totalAntall).isEqualTo(2)
-    }
 
     @Test
     fun tester_at_det_mappes_riktig_til_konsistensavstemming() {
-        val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag, fagområde)
-        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag), emptyList(), idag)
+        val utbetalingsoppdrag = lagTestUtbetalingsoppdrag(idag, fagområde)
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag), idag)
         val meldinger = mapper.lagAvstemmingsmeldinger()
         assertEquals(4, meldinger.size)
         // START-meldingen
@@ -128,53 +44,44 @@ class KonsistensavstemmingMapperTest {
     }
 
     @Test
-    fun totaldata_skal_akkumuleres_riktig() {
-        val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag, fagområde)
-        val utbetalingsoppdrag2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag, fagområde)
-        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), emptyList(), idag)
+    fun `totaldata skal akkumulere totalbeløp på alle perioder og totalAntall på alle oppdrag`() {
+        val utbetalingsoppdrag = lagTestUtbetalingsoppdrag(idag,
+                                                           fagområde,
+                                                           "1",
+                                                           lagUtbetalingsperiode(beløp = 100),
+                                                           lagUtbetalingsperiode(beløp = 200))
+        val utbetalingsoppdrag2 = lagTestUtbetalingsoppdrag(idag, fagområde, "2", lagUtbetalingsperiode(beløp = 50))
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), idag)
         val meldinger = mapper.lagAvstemmingsmeldinger()
         assertEquals(5, meldinger.size)
         assertEquals(KonsistensavstemmingConstants.DATA, meldinger[3].aksjonsdata.aksjonsType)
         assertEquals(BigInteger.TWO, meldinger[3].totaldata.totalAntall)
+        assertEquals(350.toBigDecimal(), meldinger[3].totaldata.totalBelop)
     }
 
     @Test
-    fun totaldata_skal_ikke_akkumulere_opp_utbetalingsperioder_som_har_passert() {
-        val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(idag.plusYears(7), fagområde)
-        val utbetalingsoppdrag2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdragMedPeriode(idag.plusYears(7),
-                fagområde, LocalDate.now().plusYears(6).withDayOfMonth(1), LocalDate.now().plusYears(12))
-        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), emptyList(), idag.plusYears(7))
-        val meldinger = mapper.lagAvstemmingsmeldinger()
-        assertEquals(5, meldinger.size)
-        assertEquals(KonsistensavstemmingConstants.DATA, meldinger[3].aksjonsdata.aksjonsType)
-        assertEquals(BigInteger.TWO, meldinger[3].totaldata.totalAntall)
+    fun `skal kaste feil hvis periode ikke er aktiv`() {
+        val utbetalingsperiode = lagUtbetalingsperiode(fagområde,
+                                                       1,
+                                                       100,
+                                                       LocalDate.now().minusYears(1),
+                                                       LocalDate.now().minusYears(1))
+        val utbetalingsoppdrag = lagTestUtbetalingsoppdrag(idag.plusYears(7), fagområde, "1", utbetalingsperiode)
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag), idag)
+
+        assertThat(catchThrowable { mapper.lagAvstemmingsmeldinger() })
+                .hasMessageContaining("er etter avstemmingsdato")
     }
 
-    private fun lagUtbetalingsperiode(periodeId: Long,
-                                      forrigePeriodeId: Long?,
-                                      beløp: Int,
-                                      behandlingsId: Long,
-                                      opphør: Opphør? = null) =
-            Utbetalingsperiode(erEndringPåEksisterendePeriode = false,
-                               opphør = opphør,
-                               periodeId = periodeId,
-                               forrigePeriodeId = forrigePeriodeId,
-                               datoForVedtak = LocalDate.now(),
-                               klassifisering = "EF",
-                               vedtakdatoFom = LocalDate.now().minusYears(1),
-                               vedtakdatoTom = LocalDate.now().plusYears(1),
-                               sats = BigDecimal(beløp),
-                               satsType = Utbetalingsperiode.SatsType.MND,
-                               utbetalesTil = "meg",
-                               behandlingId = behandlingsId)
+    @Test
+    internal fun `skal kaste feil hvis det finnes 2 utbetalingsoppdrag med samme saksnummer`() {
+        val utbetalingsoppdrag = lagTestUtbetalingsoppdrag(idag.plusYears(7), fagområde, "1")
+        val utbetalingsoppdrag2 = lagTestUtbetalingsoppdrag(idag.plusYears(7), fagområde, "1")
+        val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag, utbetalingsoppdrag2), idag)
 
-    private fun lagUtbetalingsoppdrag(saksnummer: String, vararg utbetalingsperiode: Utbetalingsperiode) =
-            Utbetalingsoppdrag(kodeEndring = Utbetalingsoppdrag.KodeEndring.NY,
-                               fagSystem = fagområde,
-                               saksnummer = saksnummer,
-                               aktoer = "aktoer",
-                               saksbehandlerId = "saksbehandler",
-                               utbetalingsperiode = utbetalingsperiode.toList())
+        assertThat(catchThrowable { mapper.lagAvstemmingsmeldinger() })
+                .hasMessage("Har allerede lagt til 1 i listen over avstemminger")
+    }
 
     fun assertAksjon(expected: String, actual: Aksjonsdata) {
         assertEquals(expected, actual.aksjonsType)

@@ -2,13 +2,13 @@ package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
+import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequest
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragIdForFagsystem
 import no.nav.familie.oppdrag.common.RessursUtils.illegalState
 import no.nav.familie.oppdrag.common.RessursUtils.ok
 import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -53,33 +53,29 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
                       onSuccess = { ok("Grensesnittavstemming sendt ok") })
     }
 
-    @Deprecated("Bruk post med body")
+    @Deprecated("Bruk v2")
     @PostMapping(path = ["/konsistensavstemming/{fagsystem}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun sendKonsistensavstemming(@PathVariable("fagsystem") fagsystem: String,
                                  @RequestBody oppdragIdListe: List<OppdragIdForFagsystem>,
                                  @RequestParam("avstemmingsdato") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                  avstemmingsdato: LocalDateTime
     ): ResponseEntity<Ressurs<String>> {
-        LOG.info("Konsistensavstemming: Kjører for $fagsystem-oppdrag for $avstemmingsdato " +
-                 "med ${oppdragIdListe.size} antall utbetalingsoppdrag")
+        return konsistensavstemming(KonsistensavstemmingRequest(fagsystem, oppdragIdListe, avstemmingsdato))
+    }
+
+    @Deprecated("Bruk v2")
+    @PostMapping(path = ["/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequest): ResponseEntity<Ressurs<String>> {
+        LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
+                 "med ${request.oppdragIdListe.size} antall utbetalingsoppdrag")
 
         return Result.runCatching {
-            konsistensavstemmingService.utførKonsistensavstemming(fagsystem,
-                                                                  oppdragIdListe,
-                                                                  avstemmingsdato)
-        }
-                .fold(
-                        onFailure = {
-                            illegalState("Konsistensavstemming feilet", it)
-                        },
-                        onSuccess = {
-                            ok("Konsistensavstemming sendt ok")
-                        }
-                )
+            konsistensavstemmingService.utførKonsistensavstemming(request)
+        }.fold(onFailure = { illegalState("Konsistensavstemming feilet", it) },
+               onSuccess = { ok("Konsistensavstemming sendt ok") })
     }
 
     @PostMapping(path = ["/v2/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @Unprotected
     fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2): ResponseEntity<Ressurs<String>> {
         LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
                  "med ${request.periodeIdn.size} antall periodeIdn")
