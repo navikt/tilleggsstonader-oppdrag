@@ -91,14 +91,15 @@ internal class OppdragLagerRepositoryJdbcTest {
 
     @Test
     fun skal_kun_hente_ut_ett_BA_oppdrag_for_grensesnittavstemming() {
-        val startenPåDagen = LocalDateTime.now().withHour(0).withMinute(0)
-        val sluttenAvDagen = LocalDateTime.now().withHour(23).withMinute(59)
+        val dag = LocalDateTime.now();
+        val startenPåDagen = dag.withHour(0).withMinute(0)
+        val sluttenAvDagen = dag.withHour(23).withMinute(59)
 
-        val avstemmingsTidspunktetSomSkalKjøres = LocalDateTime.now()
+        val avstemmingsTidspunktetSomSkalKjøres = dag
 
         val baOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(avstemmingsTidspunktetSomSkalKjøres, "BA").somOppdragLager
-        val baOppdragLager2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now().minusDays(1), "BA").somOppdragLager
-        val efOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(LocalDateTime.now(), "EFOG").somOppdragLager
+        val baOppdragLager2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(dag.minusDays(1), "BA").somOppdragLager
+        val efOppdragLager = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(dag, "EFOG").somOppdragLager
 
         oppdragLagerRepository.opprettOppdrag(baOppdragLager)
         oppdragLagerRepository.opprettOppdrag(baOppdragLager2)
