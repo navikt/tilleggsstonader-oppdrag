@@ -301,6 +301,11 @@
             <id>github</id>
             <url>https://maven.pkg.github.com/navikt/familie-kontrakter</url>
         </repository>
+        <repository>
+            <id>legacy-avhengigheter</id>
+            <name>Legacy Maven Packages</name>
+            <url>https://maven.pkg.github.com/navikt/legacy-avhengigheter/</url>
+        </repository>
     </repositories>
 
     <profiles>
