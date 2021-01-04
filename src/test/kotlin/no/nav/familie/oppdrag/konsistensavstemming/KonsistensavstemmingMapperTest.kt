@@ -12,6 +12,7 @@ import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsd
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -60,7 +61,7 @@ class KonsistensavstemmingMapperTest {
     }
 
     @Test
-    fun `skal kaste feil hvis periode ikke er aktiv`() {
+    fun `skal ikke lage melding hvis periode ikke er aktiv`() {
         val utbetalingsperiode = lagUtbetalingsperiode(fagområde,
                                                        1,
                                                        100,
@@ -68,9 +69,12 @@ class KonsistensavstemmingMapperTest {
                                                        LocalDate.now().minusYears(1))
         val utbetalingsoppdrag = lagTestUtbetalingsoppdrag(idag.plusYears(7), fagområde, "1", utbetalingsperiode)
         val mapper = KonsistensavstemmingMapper(fagområde, listOf(utbetalingsoppdrag), idag)
-
-        assertThat(catchThrowable { mapper.lagAvstemmingsmeldinger() })
-                .hasMessageContaining("er etter avstemmingsdato")
+        val meldinger = mapper.lagAvstemmingsmeldinger()
+        assertThat(meldinger).hasSize(4)
+        assertThat(meldinger[1].oppdragsdataListe).hasSize(1)
+        assertThat(meldinger[1].oppdragsdataListe[0].oppdragslinjeListe).isEmpty()
+        assertEquals(BigInteger.ONE, meldinger[2].totaldata.totalAntall)
+        assertEquals(BigDecimal.ZERO, meldinger[2].totaldata.totalBelop)
     }
 
     @Test

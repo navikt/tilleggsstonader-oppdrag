@@ -8,6 +8,7 @@ import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
 import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
 import no.nav.familie.oppdrag.iverksetting.UtbetalingsfrekvensKode
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.*
+import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -62,14 +63,20 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             oppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.format(datoFormatter)
             saksbehandlerId = utbetalingsoppdrag.saksbehandlerId
             oppdragsenhetListe.add(lagEnhet())
-            utbetalingsoppdrag.utbetalingsperiode.map { periode ->
-                oppdragslinjeListe.add(lagOppdragsLinjeListe(utbetalingsperiode = periode, utbetalingsoppdrag = utbetalingsoppdrag))
-            }
+            utbetalingsoppdrag.utbetalingsperiode
+                .filter { verifiserAtPerioderErAktiv(it) }
+                .map { periode ->
+                    oppdragslinjeListe.add(
+                        lagOppdragsLinjeListe(
+                            utbetalingsperiode = periode,
+                            utbetalingsoppdrag = utbetalingsoppdrag
+                        )
+                    )
+                }
         }
     }
 
     private fun lagOppdragsLinjeListe(utbetalingsperiode: Utbetalingsperiode, utbetalingsoppdrag: Utbetalingsoppdrag): Oppdragslinje {
-        verifiserAtPerioderErAktiv(utbetalingsperiode)
         totalBeløp += utbetalingsperiode.sats.toLong()
         return Oppdragslinje().apply {
             vedtakId = utbetalingsperiode.datoForVedtak.format(datoFormatter)
@@ -93,13 +100,15 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         }
     }
 
-    private fun verifiserAtPerioderErAktiv(utbetalingsperiode: Utbetalingsperiode) {
+    private fun verifiserAtPerioderErAktiv(utbetalingsperiode: Utbetalingsperiode): Boolean {
         val avstemmingsdato = avstemmingsDato.toLocalDate()
         val vedtakdatoTom = utbetalingsperiode.vedtakdatoTom
-        if (vedtakdatoTom.isBefore(avstemmingsdato)) {
-            error("vedtakdatoTom=$vedtakdatoTom er etter avstemmingsdato=$avstemmingsdato for" +
+        val aktiv = !vedtakdatoTom.isBefore(avstemmingsdato)
+        if (!aktiv) {
+            LOG.error("fagsystem=${fagsystem} vedtakdatoTom=$vedtakdatoTom er etter avstemmingsdato=$avstemmingsdato for" +
                   " periodeId=${utbetalingsperiode.periodeId} behandlingId=${utbetalingsperiode.behandlingId}")
         }
+        return aktiv
     }
 
     private fun lagAttestant(utbetalingsoppdrag: Utbetalingsoppdrag): Attestant {
@@ -149,5 +158,9 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             this.avleverendeAvstemmingId = avstemmingId
             this.brukerId = fagsystem
         }
+    }
+
+    companion object {
+        val LOG = LoggerFactory.getLogger(KonsistensavstemmingMapper::class.java)
     }
 }

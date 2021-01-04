@@ -6,12 +6,9 @@ import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
 import no.nav.familie.oppdrag.repository.somOppdragLager
 import no.nav.familie.oppdrag.repository.somOppdragLagerMedVersjon
-import no.nav.familie.oppdrag.rest.KonsistensavstemmingRequestV2
-import no.nav.familie.oppdrag.rest.PeriodeIdnForFagsak
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
-import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Avstemmingsdata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
