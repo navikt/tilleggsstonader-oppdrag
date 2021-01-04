@@ -40,7 +40,7 @@
         <spring-cloud.version>2.2.6.RELEASE</spring-cloud.version>
         <spring.vault>2.2.2.RELEASE</spring.vault>
         <testcontainers.version>1.12.1</testcontainers.version>
-        <tjenestespesifikasjoner.version>1.2020.01.30-14.36-cdf257baea96</tjenestespesifikasjoner.version>
+        <tjenestespesifikasjoner.version>1.2020.10.07-08.40-90b3ab7bad15</tjenestespesifikasjoner.version>
 
     </properties>
 
@@ -253,10 +253,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav.oppdrag.tjenester</groupId>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
-            <version>1.0.5</version>
-            <classifier>jaxws</classifier>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
 
         <dependency>
