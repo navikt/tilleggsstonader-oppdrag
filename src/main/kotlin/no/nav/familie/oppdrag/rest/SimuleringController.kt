@@ -27,8 +27,8 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
         return ok(simuleringTjeneste.utførSimulering(utbetalingsoppdrag))
     }
 
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/hent-simulering/v1"])
-    fun hentSimulering(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/simulering/v1"])
+    fun utførSimuleringOgHentResultat(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
         return ok(simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag))
     }
 

@@ -2,6 +2,7 @@ package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.simulering.repository.*
+import no.nav.sbl.util.StringUtils
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
@@ -65,7 +66,9 @@ class SimuleringResultatTransformer {
     }
 
     private fun erOrgNr(verdi: String): Boolean {
-        Objects.requireNonNull(verdi, "org.nr verdi er null")
+        if(StringUtils.nullOrEmpty(verdi)){
+            throw IllegalArgumentException("org.nr verdi er tom")
+        }
         // orgNr i responsen fra økonomi starter med "00"
         return "00" == verdi.substring(0, 2)
     }

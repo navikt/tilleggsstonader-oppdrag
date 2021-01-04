@@ -15,9 +15,6 @@ object Jaxb {
     val jaxbContext = JAXBContext.newInstance(Oppdrag::class.java,
                                               SimulerBeregningRequest::class.java,
                                               SimulerBeregningResponse::class.java)
-    val marshaller = jaxbContext.createMarshaller().apply {
-        setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-    }
     val unmarshaller = jaxbContext.createUnmarshaller()
     val xmlInputFactory = XMLInputFactory.newInstance()
 
@@ -32,18 +29,27 @@ object Jaxb {
 
     fun tilXml(oppdrag: Oppdrag): String {
         val stringWriter = StringWriter()
+        val marshaller = jaxbContext.createMarshaller().apply {
+            setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+        }
         marshaller.marshal(oppdrag, stringWriter)
         return stringWriter.toString()
     }
 
     fun tilXml(request: SimulerBeregningRequest): String {
         val stringWriter = StringWriter()
+        val marshaller = jaxbContext.createMarshaller().apply {
+            setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+        }
         marshaller.marshal(request, stringWriter)
         return stringWriter.toString()
     }
 
     fun tilXml(response: SimulerBeregningResponse): String {
         val stringWriter = StringWriter()
+        val marshaller = jaxbContext.createMarshaller().apply {
+            setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+        }
         marshaller.marshal(response, stringWriter)
         return stringWriter.toString()
     }
