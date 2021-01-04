@@ -253,12 +253,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav.oppdrag.tjenester</groupId>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>nav-system-os-simuler-fp-service-tjenestespesifikasjon</artifactId>
-            <version>1.0.5</version>
-            <classifier>jaxws</classifier>
+            <version>1.2020.10.07-08.40-90b3ab7bad15</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-core</artifactId>
@@ -299,13 +297,9 @@
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/navikt/familie-kontrakter</url>
+            <url>https://maven.pkg.github.com/navikt/familie-oppdrag</url>
         </repository>
-        <repository>
-            <id>legacy-avhengigheter</id>
-            <name>Legacy Maven Packages</name>
-            <url>https://maven.pkg.github.com/navikt/legacy-avhengigheter/</url>
-        </repository>
+
     </repositories>
 
     <profiles>
