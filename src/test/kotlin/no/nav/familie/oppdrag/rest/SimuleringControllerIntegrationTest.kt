@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.rest
 
+import no.nav.familie.oppdrag.repository.SimuleringLagerTjenesteE2E
 import no.nav.familie.oppdrag.simulering.SimulerBeregningRequestMapper
 import no.nav.familie.oppdrag.simulering.SimuleringSender
 import no.nav.familie.oppdrag.simulering.SimuleringTjenesteImpl
@@ -13,7 +14,7 @@ import kotlin.test.assertEquals
 
 
 @ActiveProfiles("dev")
-@SpringBootTest(classes = [SimuleringController::class, SimuleringSender::class, SimuleringTjenesteImpl::class, SimulerBeregningRequestMapper::class, ClientMocks::class],
+@SpringBootTest(classes = [SimuleringController::class, SimuleringSender::class, SimuleringTjenesteImpl::class, SimulerBeregningRequestMapper::class, ClientMocks::class, SimuleringLagerTjenesteE2E::class],
                 properties = ["spring.cloud.vault.enabled=false"])
 internal class SimuleringControllerIntegrasjonTest {
 
