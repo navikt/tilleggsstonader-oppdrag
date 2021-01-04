@@ -1,9 +1,9 @@
 CREATE TABLE simulering_lager
 (
   id                    UUID PRIMARY KEY,
-  fagsak_id             VARCHAR(50) NOT NULL,
-  behandling_id         VARCHAR(50) NOT NULL,
-  fagsystem             VARCHAR(10) NOT NULL,
+  fagsak_id             text NOT NULL,
+  behandling_id         text NOT NULL,
+  fagsystem             text NOT NULL,
   opprettet_tidspunkt   timestamp(3) NOT NULL DEFAULT localtimestamp,
   utbetalingsoppdrag    text NOT NULL,
   request_xml           text NOT NULL,
