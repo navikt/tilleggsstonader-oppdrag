@@ -1,12 +1,14 @@
 package no.nav.familie.oppdrag.repository
 
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.util.Containers
 import no.nav.familie.oppdrag.util.TestConfig
 import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato
 import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import no.trygdeetaten.skjema.oppdrag.Mmel
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
@@ -19,8 +21,8 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.test.assertFailsWith
-import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 
 
 @ActiveProfiles("dev")
@@ -124,5 +126,32 @@ internal class OppdragLagerRepositoryJdbcTest {
 
         assertEquals(baOppdragLager.utbetalingsoppdrag, objectMapper.writeValueAsString(utbetalingsoppdrag))
         assertEquals(baOppdragLager2.utbetalingsoppdrag, objectMapper.writeValueAsString(utbetalingsoppdrag2))
+    }
+
+    @Test
+    fun `hentUtbetalingsoppdragForKonsistensavstemming går fint`() {
+        val forrigeMåned = LocalDateTime.now().minusMonths(1)
+        val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA")
+        val baOppdragLager = utbetalingsoppdrag.somOppdragLager.copy(status = OppdragStatus.KVITTERT_OK)
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager)
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager, 1)
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager, 2)
+        val behandlingB = baOppdragLager.copy(behandlingId = UUID.randomUUID().toString())
+        oppdragLagerRepository.opprettOppdrag(behandlingB)
+
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager.copy(fagsakId = UUID.randomUUID().toString(),
+                                                                  behandlingId = UUID.randomUUID().toString()))
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                        setOf("finnes ikke")))
+                .isEmpty()
+
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                        setOf(baOppdragLager.behandlingId)))
+                .hasSize(1)
+
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                        setOf(baOppdragLager.behandlingId,
+                                                                                              behandlingB.behandlingId)))
+                .hasSize(2)
     }
 }

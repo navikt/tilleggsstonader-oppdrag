@@ -16,25 +16,25 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/simulering")
+@RequestMapping("/api/simulering", consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(issuer = "azuread")
 class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste) {
 
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/etterbetalingsbelop"])
+    @PostMapping(path = ["/etterbetalingsbelop"])
     fun hentEtterbetalingsbeløp(@Valid @RequestBody
                                 utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<RestSimulerResultat>> {
         LOG.info("Hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}")
         return ok(simuleringTjeneste.utførSimulering(utbetalingsoppdrag))
     }
 
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/simulering/v1"])
+    @PostMapping(path = ["/v1"])
     fun utførSimuleringOgHentResultat(@Valid @RequestBody utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
         return ok(simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag))
     }
 
     //Temporær funksjon som skal brukes for å teste responser fra oppdrag.
     //TODO: skal fjernes når den ikke mer er i bruk.
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/direktesimulering"])
+    @PostMapping(path = ["/direktesimulering"])
     fun direkteSimulering(@Valid @RequestBody
                           utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<SimulerBeregningResponse>> =
             ok(simuleringTjeneste.hentSimulerBeregningResponse(utbetalingsoppdrag))
