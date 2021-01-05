@@ -9,12 +9,15 @@ import no.trygdeetaten.skjema.oppdrag.Mmel
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.time.LocalDateTime
 
 @Repository
-class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragLagerRepository {
+class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
+                                 val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : OppdragLagerRepository {
 
     internal var LOG = LoggerFactory.getLogger(OppdragLagerRepositoryJdbc::class.java)
 
@@ -102,6 +105,31 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate) : OppdragLagerR
         return jdbcTemplate.query(hentStatement,
                 arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
                 OppdragLagerRowMapper())
+    }
+
+    override fun hentUtbetalingsoppdragForKonsistensavstemming(fagsystem: String,
+                                                               behandlingIder: Set<String>)
+    : List<UtbetalingsoppdragForKonsistensavstemming> {
+
+        val query = """SELECT fagsak_id, behandling_id, utbetalingsoppdrag FROM (
+                        SELECT fagsak_id, behandling_id, utbetalingsoppdrag, 
+                          row_number() OVER (PARTITION BY fagsak_id, behandling_id ORDER BY versjon DESC) rn
+                          FROM oppdrag_lager WHERE fagsystem=:fagsystem AND behandling_id IN (:behandlingIder)
+                          AND status IN (:status)) q 
+                        WHERE rn = 1"""
+
+        val status = setOf(OppdragStatus.KVITTERT_OK, OppdragStatus.KVITTERT_MED_MANGLER).map { it.name }
+        val values = MapSqlParameterSource()
+                .addValue("fagsystem", fagsystem)
+                .addValue("behandlingIder", behandlingIder)
+                .addValue("status", status)
+        return namedParameterJdbcTemplate.query(query, values) { resultSet, _ ->
+            UtbetalingsoppdragForKonsistensavstemming(
+                    resultSet.getString("fagsak_id"),
+                resultSet.getString("behandling_id"),
+                objectMapper.readValue(resultSet.getString("utbetalingsoppdrag"))
+            )
+        }
     }
 }
 
