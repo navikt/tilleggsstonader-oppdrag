@@ -17,6 +17,5 @@ interface OppdragLagerRepository {
     fun hentIverksettingerForGrensesnittavstemming(fomTidspunkt: LocalDateTime, tomTidspunkt: LocalDateTime, fagOmråde: String): List<OppdragLager>
 
     fun hentUtbetalingsoppdragForKonsistensavstemming(fagsystem: String,
-                                                      fagsakId: String,
-                                                      periodeIdn: Set<Long>): List<Utbetalingsoppdrag>
+                                                      behandlingIder: Set<String>): List<UtbetalingsoppdragForKonsistensavstemming>
 }

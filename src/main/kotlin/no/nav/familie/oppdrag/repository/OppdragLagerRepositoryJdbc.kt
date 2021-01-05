@@ -107,28 +107,29 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
                 OppdragLagerRowMapper())
     }
 
-    // TODO lag index på fagsystem og behandling_id ?
-    // alternativet til denne er att vi sender med en liste med behandling_idn og en liste med periode_idn
-    // slik att behandling_idn kan brukes for databasen og periode_idn for å plukke ut periodene i konsistensmapper
     override fun hentUtbetalingsoppdragForKonsistensavstemming(fagsystem: String,
-                                                               fagsakId: String,
-                                                               periodeIdn: Set<Long>): List<Utbetalingsoppdrag> {
-        val query = """SELECT utbetalingsoppdrag FROM (
-                        SELECT utbetalingsoppdrag, 
-                          row_number() OVER (PARTITION BY fagsystem, behandling_id ORDER BY versjon DESC) rn
-                          FROM oppdrag_lager WHERE fagsystem=:fagsystem AND fagsak_id=:fagsakId
-                          AND status IN (:status)
-                          AND EXISTS(SELECT 1 FROM json_array_elements(utbetalingsoppdrag->'utbetalingsperiode') u
-                                    WHERE (u->>'periodeId')::int IN (:periodeIdn))) q 
+                                                               behandlingIder: Set<String>)
+    : List<UtbetalingsoppdragForKonsistensavstemming> {
+
+        val query = """SELECT fagsak_id, behandling_id, utbetalingsoppdrag FROM (
+                        SELECT fagsak_id, behandling_id, utbetalingsoppdrag, 
+                          row_number() OVER (PARTITION BY fagsak_id, behandling_id ORDER BY versjon DESC) rn
+                          FROM oppdrag_lager WHERE fagsystem=:fagsystem AND behandling_id IN (:behandlingIder)
+                          AND status IN (:status)) q 
                         WHERE rn = 1"""
 
         val status = setOf(OppdragStatus.KVITTERT_OK, OppdragStatus.KVITTERT_MED_MANGLER).map { it.name }
         val values = MapSqlParameterSource()
                 .addValue("fagsystem", fagsystem)
-                .addValue("fagsakId", fagsakId)
+                .addValue("behandlingIder", behandlingIder)
                 .addValue("status", status)
-                .addValue("periodeIdn", periodeIdn)
-        return namedParameterJdbcTemplate.queryForList(query, values, String::class.java).map { objectMapper.readValue(it) }
+        return namedParameterJdbcTemplate.query(query, values) { resultSet, _ ->
+            UtbetalingsoppdragForKonsistensavstemming(
+                    resultSet.getString("fagsak_id"),
+                resultSet.getString("behandling_id"),
+                objectMapper.readValue(resultSet.getString("utbetalingsoppdrag"))
+            )
+        }
     }
 }
 

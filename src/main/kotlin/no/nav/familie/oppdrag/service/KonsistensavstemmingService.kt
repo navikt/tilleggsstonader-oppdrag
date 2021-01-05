@@ -4,6 +4,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.*
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
+import no.nav.familie.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -61,44 +62,50 @@ class KonsistensavstemmingService(
         val fagsystem = request.fagsystem
         val avstemmingstidspunkt = request.avstemmingstidspunkt
 
-        val periodeIdnPaaFagsak = request.periodeIdn.map { it.fagsakId to it.periodeIdn }.toMap()
-        verifyUnikeFagsaker(periodeIdnPaaFagsak, request)
+        val perioderPåBehandling = request.perioderForBehandlinger.map { it.behandlingId to it.perioder }.toMap()
+        verifyUnikeBehandlinger(perioderPåBehandling, request)
 
-        val utbetalingsoppdragPaaFagsak = request.periodeIdn.mapNotNull { id ->
-            if (id.periodeIdn.isNotEmpty()) {
-                val utbetalingsoppdrag = oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(fagsystem,
-                                                                                                              id.fagsakId,
-                                                                                                              id.periodeIdn)
-                id.fagsakId to utbetalingsoppdrag
-            } else {
-                LOG.warn("Sendt en tom liste for fagsak={}", id.fagsakId)
-                null
-            }
-        }
+        val utbetalingsoppdragForKonsistensavstemming =
+            oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(fagsystem, perioderPåBehandling.keys)
 
-        val utbetalingsoppdrag = leggAktuellePerioderISisteUtbetalingsoppdraget(utbetalingsoppdragPaaFagsak, periodeIdnPaaFagsak)
+        val utbetalingsoppdrag = leggAktuellePerioderISisteUtbetalingsoppdraget(utbetalingsoppdragForKonsistensavstemming,
+                                                                                perioderPåBehandling)
 
         utførKonsistensavstemming(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt)
     }
 
+    /**
+     * Legger inn alle (filtrerte) perioder for en gitt fagsak i det siste utbetalingsoppdraget
+     */
     private fun leggAktuellePerioderISisteUtbetalingsoppdraget(
-            utbetalingsoppdragPaaFagsak: List<Pair<String, List<Utbetalingsoppdrag>>>,
-            periodeIdnPaaFagsak: Map<String, Set<Long>>,
+            utbetalingsoppdrag: List<UtbetalingsoppdragForKonsistensavstemming>,
+            perioderPåBehandling: Map<String, Set<Long>>,
     ): List<Utbetalingsoppdrag> {
-        return utbetalingsoppdragPaaFagsak.map { (saksnummer, utbetalingsoppdragListe) ->
-            val periodeIdn = periodeIdnPaaFagsak[saksnummer] ?: error("Finner ikke periodeIdn for fagsak=$saksnummer")
-            val senesteUtbetalingsoppdrag =
-                    utbetalingsoppdragListe.maxByOrNull { oppdrag -> oppdrag.utbetalingsperiode.maxOf { it.periodeId } }!!
-            val perioderTilKonsistensavstemming =
-                    utbetalingsoppdragListe.flatMap { it.utbetalingsperiode.filter { periodeIdn.contains(it.periodeId) } }
+        val utbetalingsoppdragPåFagsak = utbetalingsoppdrag.groupBy { it.fagsakId }
+
+        return utbetalingsoppdragPåFagsak.map { (saksnummer, utbetalingsoppdragListe) ->
+            val senesteUtbetalingsoppdrag = utbetalingsoppdragListe.maxByOrNull { oppdrag ->
+                oppdrag.utbetalingsoppdrag.utbetalingsperiode.maxOf { it.periodeId }
+            }?.utbetalingsoppdrag ?: error("Finner ikke seneste behandling for fagsak=$saksnummer")
+
+            val behandlingsIderForFagsak = utbetalingsoppdragListe.map { it.behandlingId }.toSet()
+
+            val aktuellePeriodeIderForFagsak =
+                    perioderPåBehandling.filter { behandlingsIderForFagsak.contains(it.key) }.values.flatten()
+
+            val perioderTilKonsistensavstemming = utbetalingsoppdragListe.flatMap { it.utbetalingsoppdrag.utbetalingsperiode
+                    .filter { utbetalingsperiode -> aktuellePeriodeIderForFagsak.contains(utbetalingsperiode.periodeId) }
+            }
+
             senesteUtbetalingsoppdrag.copy(utbetalingsperiode = perioderTilKonsistensavstemming)
         }
     }
 
-    private fun verifyUnikeFagsaker(periodeIdnPaaFagsak: Map<String, Set<Long>>, request: KonsistensavstemmingRequestV2) {
-        if (periodeIdnPaaFagsak.size != request.periodeIdn.size) {
-            val duplikateFagsaker = request.periodeIdn.map { it.fagsakId }.groupingBy { it }.eachCount().filter { it.value > 1 }
-            error("Fagsaker finnes flere ganger i requesten: ${duplikateFagsaker.keys}")
+    private fun verifyUnikeBehandlinger(periodeIderPåBehandling: Map<String, Set<Long>>, request: KonsistensavstemmingRequestV2) {
+        if (periodeIderPåBehandling.size != request.perioderForBehandlinger.size) {
+            val duplikateBehandlinger =
+                request.perioderForBehandlinger.map { it.behandlingId }.groupingBy { it }.eachCount().filter { it.value > 1 }
+            error("Behandling finnes flere ganger i requesten: ${duplikateBehandlinger.keys}")
         }
     }
 

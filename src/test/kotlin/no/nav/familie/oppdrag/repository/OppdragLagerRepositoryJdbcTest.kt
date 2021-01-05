@@ -142,13 +142,16 @@ internal class OppdragLagerRepositoryJdbcTest {
         oppdragLagerRepository.opprettOppdrag(baOppdragLager.copy(fagsakId = UUID.randomUUID().toString(),
                                                                   behandlingId = UUID.randomUUID().toString()))
         assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
-                                                                                        baOppdragLager.fagsakId,
-                                                                                        setOf(1000L))).isEmpty()
-        val periodeIdn = utbetalingsoppdrag.utbetalingsperiode.map { it.periodeId }.toSet()
-        val forKonsistensavstemming =
-                oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
-                                                                                     baOppdragLager.fagsakId,
-                                                                                     periodeIdn)
-        assertThat(forKonsistensavstemming).hasSize(2)
+                                                                                        setOf("finnes ikke")))
+                .isEmpty()
+
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                        setOf(baOppdragLager.behandlingId)))
+                .hasSize(1)
+
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem,
+                                                                                        setOf(baOppdragLager.behandlingId,
+                                                                                              behandlingB.behandlingId)))
+                .hasSize(2)
     }
 }
