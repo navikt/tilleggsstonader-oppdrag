@@ -1,7 +1,6 @@
-package no.nav.familie.oppdrag.simulering.util
+package no.nav.familie.oppdrag.simulering.mock
 
 import java.math.BigDecimal
-import no.nav.familie.oppdrag.simulering.util.PeriodeType
 import java.time.DayOfWeek
 import java.time.LocalDate
 

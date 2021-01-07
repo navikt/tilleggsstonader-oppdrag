@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering.util
+package no.nav.familie.oppdrag.simulering.mock
 
 import no.nav.system.os.entiteter.typer.simpletypes.KodeStatusLinje
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdragslinje

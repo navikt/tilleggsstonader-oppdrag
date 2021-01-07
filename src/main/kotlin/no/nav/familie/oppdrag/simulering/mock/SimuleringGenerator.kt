@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering.util
+package no.nav.familie.oppdrag.simulering.mock
 
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import java.math.BigDecimal
@@ -210,14 +210,14 @@ class SimuleringGenerator {
         stoppnivaaDetaljer.faktiskTom = dateTimeFormatter.format(periode.tom)
         stoppnivaaDetaljer.kontoStreng = "1235432"
         stoppnivaaDetaljer.behandlingskode = "2"
-        stoppnivaaDetaljer.belop = oppdragsperiode.sats!!.multiply(BigDecimal.valueOf(periode.antallVirkedager.toLong()))
+        stoppnivaaDetaljer.belop = oppdragsperiode.sats
         stoppnivaaDetaljer.trekkVedtakId = 0L
         stoppnivaaDetaljer.stonadId = "1234"
         stoppnivaaDetaljer.korrigering = ""
         stoppnivaaDetaljer.isTilbakeforing = false
         stoppnivaaDetaljer.linjeId = BigInteger.valueOf(21423L)
         stoppnivaaDetaljer.sats = oppdragsperiode.sats
-        stoppnivaaDetaljer.typeSats = "DAG"
+        stoppnivaaDetaljer.typeSats = "MND"
         stoppnivaaDetaljer.antallSats = BigDecimal.valueOf(periode.antallVirkedager.toLong())
         stoppnivaaDetaljer.saksbehId = "5323"
         stoppnivaaDetaljer.uforeGrad = BigInteger.valueOf(100L)
