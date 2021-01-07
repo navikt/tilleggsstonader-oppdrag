@@ -23,7 +23,7 @@ import kotlin.test.assertEquals
 internal class SimuleringTjenesteImplTest {
 
     @Autowired lateinit var simuleringLagerTjeneste: SimuleringLagerTjeneste
-    @Autowired lateinit var simuleringTjeneste: SimuleringTjeneste
+    @Autowired lateinit var simuleringTjeneste: SimuleringTjenesteImpl
 
     companion object {
         @Container var postgreSQLContainer = Containers.postgreSQLContainer
