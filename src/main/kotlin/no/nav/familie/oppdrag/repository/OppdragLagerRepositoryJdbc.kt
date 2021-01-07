@@ -142,6 +142,7 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
 class OppdragLagerRowMapper : RowMapper<OppdragLager> {
 
     override fun mapRow(resultSet: ResultSet, rowNumbers: Int): OppdragLager? {
+        val kvittering = resultSet.getString(10)
         return OppdragLager(
                 UUID.fromString(resultSet.getString (12) ?: UUID.randomUUID().toString()),
                 resultSet.getString(7),
@@ -153,7 +154,7 @@ class OppdragLagerRowMapper : RowMapper<OppdragLager> {
                 OppdragStatus.valueOf(resultSet.getString(2)),
                 resultSet.getTimestamp(8).toLocalDateTime(),
                 resultSet.getTimestamp(3).toLocalDateTime(),
-                objectMapper.readValue(resultSet.getString(10)),
+                if (kvittering == null) null else  objectMapper.readValue(kvittering),
                 resultSet.getInt(11))
     }
 }

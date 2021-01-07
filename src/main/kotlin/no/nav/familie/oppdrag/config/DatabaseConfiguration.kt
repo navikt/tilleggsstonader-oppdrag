@@ -23,7 +23,7 @@ import javax.sql.DataSource
 class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
     @Bean
-    fun operations(dataSource: DataSource): NamedParameterJdbcOperations {
+    fun operations(dataSource: DataSource): NamedParameterJdbcTemplate {
         return NamedParameterJdbcTemplate(dataSource)
     }
 
