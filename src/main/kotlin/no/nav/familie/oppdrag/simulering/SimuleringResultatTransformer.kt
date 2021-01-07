@@ -1,7 +1,7 @@
 package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.simulering.repository.*
+import no.nav.familie.kontrakter.felles.simulering.*
 import no.nav.sbl.util.StringUtils
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa
@@ -9,7 +9,6 @@ import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class SimuleringResultatTransformer {
 
@@ -66,7 +65,7 @@ class SimuleringResultatTransformer {
     }
 
     private fun erOrgNr(verdi: String): Boolean {
-        if(StringUtils.nullOrEmpty(verdi)){
+        if (StringUtils.nullOrEmpty(verdi)) {
             throw IllegalArgumentException("org.nr verdi er tom")
         }
         // orgNr i responsen fra økonomi starter med "00"
