@@ -19,7 +19,7 @@ import org.springframework.web.context.annotation.ApplicationScope
 
 @Service
 @ApplicationScope
-@Profile("!e2e", "!dev")
+@Profile("!e2e")
 class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                              @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
                              @Autowired val simuleringLagerTjeneste: SimuleringLagerTjeneste) : SimuleringTjeneste {
