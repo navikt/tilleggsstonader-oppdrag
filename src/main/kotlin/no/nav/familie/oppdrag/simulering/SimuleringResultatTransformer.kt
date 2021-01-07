@@ -1,7 +1,7 @@
 package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.simulering.repository.*
+import no.nav.familie.kontrakter.felles.simulering.*
 import no.nav.sbl.util.StringUtils
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaa
@@ -9,7 +9,6 @@ import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class SimuleringResultatTransformer {
 
@@ -38,14 +37,14 @@ class SimuleringResultatTransformer {
                              stoppnivaa: BeregningStoppnivaa,
                              detaljer: BeregningStoppnivaaDetaljer): SimulertPostering {
         return SimulertPostering(
-                betalingType = utledBetalingType(detaljer.belop),
-                beløp = detaljer.belop,
-                fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade),
-                fom = parseDato(detaljer.faktiskFom),
-                tom = parseDato(detaljer.faktiskTom),
-                forfallsdato = parseDato(stoppnivaa.forfall),
-                posteringType = PosteringType.fraKode(detaljer.typeKlasse),
-                utenInntrekk = utenInntrekk)
+            betalingType = utledBetalingType(detaljer.belop),
+            beløp = detaljer.belop,
+            fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade),
+            fom = parseDato(detaljer.faktiskFom),
+            tom = parseDato(detaljer.faktiskTom),
+            forfallsdato = parseDato(stoppnivaa.forfall),
+            posteringType = PosteringType.fraKode(detaljer.typeKlasse),
+            utenInntrekk = utenInntrekk)
     }
 
     private fun hentOrgNrEllerFnr(orgNrEllerFnr: String): String {
