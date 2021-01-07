@@ -1,9 +1,9 @@
 package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
+import no.nav.familie.oppdrag.simulering.util.lagTestUtbetalingsoppdragForFGBMedEttBarn
 import no.nav.familie.oppdrag.util.Containers
 import no.nav.familie.oppdrag.util.TestConfig
-import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
@@ -32,7 +32,7 @@ internal class SimuleringTjenesteImplTest {
 
     @Test
     fun skal_lagre_request_og_respons() {
-        val utbetalingsoppdrag = utbetalingsoppdragMedTilfeldigAktoer()
+        val utbetalingsoppdrag = lagTestUtbetalingsoppdragForFGBMedEttBarn()
 
         val simuleringResultat = simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag)
 

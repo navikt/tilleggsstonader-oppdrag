@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.context.annotation.ApplicationScope
 
-@Service
-@ApplicationScope
-@Profile("dev")
-@Primary
+//@Service
+//@ApplicationScope
+//@Profile("dev")
+//@Primary
 class SimuleringTjenesteMock(@Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper): SimuleringTjeneste {
 
     override fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat {
