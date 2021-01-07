@@ -37,14 +37,14 @@ class SimuleringResultatTransformer {
                              stoppnivaa: BeregningStoppnivaa,
                              detaljer: BeregningStoppnivaaDetaljer): SimulertPostering {
         return SimulertPostering(
-            betalingType = utledBetalingType(detaljer.belop),
-            beløp = detaljer.belop,
-            fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade),
-            fom = parseDato(detaljer.faktiskFom),
-            tom = parseDato(detaljer.faktiskTom),
-            forfallsdato = parseDato(stoppnivaa.forfall),
-            posteringType = PosteringType.fraKode(detaljer.typeKlasse),
-            utenInntrekk = utenInntrekk)
+                betalingType = utledBetalingType(detaljer.belop),
+                beløp = detaljer.belop,
+                fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade),
+                fom = parseDato(detaljer.faktiskFom),
+                tom = parseDato(detaljer.faktiskTom),
+                forfallsdato = parseDato(stoppnivaa.forfall),
+                posteringType = PosteringType.fraKode(detaljer.typeKlasse),
+                utenInntrekk = utenInntrekk)
     }
 
     private fun hentOrgNrEllerFnr(orgNrEllerFnr: String): String {
@@ -65,7 +65,7 @@ class SimuleringResultatTransformer {
     }
 
     private fun erOrgNr(verdi: String): Boolean {
-        if(StringUtils.nullOrEmpty(verdi)){
+        if (StringUtils.nullOrEmpty(verdi)) {
             throw IllegalArgumentException("org.nr verdi er tom")
         }
         // orgNr i responsen fra økonomi starter med "00"
