@@ -12,6 +12,7 @@ class Periode : Comparable<Periode> {
         private set
     var oldSats: BigDecimal? = null
         private set
+    var typeSats: String? = null
     var periodeType: PeriodeType? = null
     var kodeKlassifik: String? = null
         private set
@@ -21,10 +22,11 @@ class Periode : Comparable<Periode> {
         this.tom = tom
     }
 
-    internal constructor(fom: LocalDate, tom: LocalDate, sats: BigDecimal?, kodeKlassifik: String?) {
+    internal constructor(fom: LocalDate, tom: LocalDate, sats: BigDecimal?, typeSats: String?, kodeKlassifik: String?) {
         this.fom = fom
         this.tom = tom
         this.sats = sats
+        this.typeSats = typeSats
         this.kodeKlassifik = kodeKlassifik
     }
 
@@ -32,12 +34,14 @@ class Periode : Comparable<Periode> {
         fom: LocalDate,
         tom: LocalDate,
         sats: BigDecimal?,
+        typeSats: String?,
         kodeKlassifik: String?,
         periodeType: PeriodeType?
     ) {
         this.fom = fom
         this.tom = tom
         this.sats = sats
+        this.typeSats = typeSats
         this.kodeKlassifik = kodeKlassifik
         this.periodeType = periodeType
     }
@@ -47,12 +51,14 @@ class Periode : Comparable<Periode> {
         tom: LocalDate,
         oldSats: BigDecimal,
         sats: BigDecimal?,
+        typeSats: String?,
         kodeKlassifik: String?
     ) {
         this.fom = fom
         this.tom = tom
         this.oldSats = oldSats
         this.sats = sats
+        this.typeSats = typeSats
         this.kodeKlassifik = kodeKlassifik
         if (oldSats.compareTo(sats) <= 0) {
             periodeType = PeriodeType.ØKNING

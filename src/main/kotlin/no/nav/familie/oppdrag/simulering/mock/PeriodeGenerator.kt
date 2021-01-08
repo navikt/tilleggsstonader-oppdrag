@@ -51,6 +51,7 @@ class PeriodeGenerator {
                                 opphør.fom,
                                 opphør.tom,
                                 opphør.sats,
+                                opphør.typeSats,
                                 opphør.kodeKlassifik,
                                 PeriodeType.OPPH
                             )
@@ -64,6 +65,7 @@ class PeriodeGenerator {
                                 opphør.fom,
                                 opphør.tom.minusDays(1),
                                 opphør.sats,
+                                opphør.typeSats,
                                 opphør.kodeKlassifik,
                                 PeriodeType.OPPH
                             )
@@ -77,6 +79,7 @@ class PeriodeGenerator {
                                 opphør.fom,
                                 ytelse.fom.minusDays(1),
                                 opphør.sats,
+                                opphør.typeSats,
                                 opphør.kodeKlassifik,
                                 PeriodeType.OPPH
                             )
@@ -91,6 +94,7 @@ class PeriodeGenerator {
                                     ytelse.tom.plusDays(1),
                                     opphør.tom,
                                     opphør.sats,
+                                    opphør.typeSats,
                                     opphør.kodeKlassifik
                                 )
                             )
@@ -106,6 +110,7 @@ class PeriodeGenerator {
                                 ytelse.tom.plusDays(1),
                                 opphør.tom,
                                 opphør.sats,
+                                opphør.typeSats,
                                 opphør.kodeKlassifik
                             )
                         )
@@ -120,6 +125,7 @@ class PeriodeGenerator {
                                 ytelse.tom.plusDays(1),
                                 opphør.tom,
                                 opphør.sats,
+                                opphør.typeSats,
                                 opphør.kodeKlassifik
                             )
                         )
@@ -128,7 +134,13 @@ class PeriodeGenerator {
                     //Scenario 12 - sjekkes mot neste ytelsesperiode
                 }
                 //Scenario 12 - hvis den ikke treffer noen ytelsesperioder.
-                periodeList.add(Periode(opphør.fom, opphør.tom, opphør.sats, opphør.kodeKlassifik, PeriodeType.OPPH))
+                periodeList.add(Periode(
+                    opphør.fom,
+                    opphør.tom,
+                    opphør.sats,
+                    opphør.typeSats,
+                    opphør.kodeKlassifik,
+                    PeriodeType.OPPH))
                 removeOpphørPerioder.add(opphør)
             }
             opphørPerioderTemp.removeAll(removeOpphørPerioder)
@@ -158,6 +170,7 @@ class PeriodeGenerator {
                                 ytelse.fom,
                                 ytelse.tom,
                                 ytelse.sats,
+                                ytelse.typeSats,
                                 ytelse.kodeKlassifik,
                                 PeriodeType.YTEL
                             )
@@ -171,13 +184,14 @@ class PeriodeGenerator {
                                 ytelse.fom,
                                 ytelse.tom.minusDays(1),
                                 ytelse.sats,
+                                ytelse.typeSats,
                                 ytelse.kodeKlassifik,
                                 PeriodeType.YTEL
                             )
                         )
                         opphør.sats?.let {
                             Periode(ytelse.tom, ytelse.tom,
-                                it, ytelse.sats, ytelse.kodeKlassifik)
+                                it, ytelse.sats, ytelse.typeSats, ytelse.kodeKlassifik)
                         }?.let { periodeList.add(it) }
                         removeYtelsesPerioder.add(ytelse)
                         continue@ytelseloop
@@ -188,6 +202,7 @@ class PeriodeGenerator {
                                 ytelse.fom,
                                 opphør.fom.minusDays(1),
                                 ytelse.sats,
+                                ytelse.typeSats,
                                 ytelse.kodeKlassifik,
                                 PeriodeType.YTEL
                             )
@@ -200,6 +215,7 @@ class PeriodeGenerator {
                                     ytelse.tom,
                                     it,
                                     ytelse.sats,
+                                    ytelse.typeSats,
                                     ytelse.kodeKlassifik
                                 )
                             }?.let {
@@ -217,6 +233,7 @@ class PeriodeGenerator {
                                     opphør.tom,
                                     it,
                                     ytelse.sats,
+                                    ytelse.typeSats,
                                     ytelse.kodeKlassifik
                                 )
                             }?.let {
@@ -229,6 +246,7 @@ class PeriodeGenerator {
                                     opphør.tom.plusDays(1),
                                     ytelse.fom,
                                     ytelse.sats,
+                                    ytelse.typeSats,
                                     ytelse.kodeKlassifik
                                 )
                             ) //Nytt objekt på slutten til samme loop
@@ -239,7 +257,7 @@ class PeriodeGenerator {
                     } else if (ytelse.fom.isEqual(opphør.fom) && !ytelse.tom.isAfter(opphør.tom)) {
                         opphør.sats?.let {
                             Periode(ytelse.fom, ytelse.tom,
-                                it, ytelse.sats, ytelse.kodeKlassifik)
+                                it, ytelse.sats, ytelse.typeSats, ytelse.kodeKlassifik)
                         }?.let { periodeList.add(it) }
                         removeYtelsesPerioder.add(ytelse)
                         continue@ytelseloop
@@ -247,13 +265,14 @@ class PeriodeGenerator {
                     } else if (ytelse.fom.isEqual(opphør.fom) && ytelse.tom.isAfter(opphør.tom)) {
                         opphør.sats?.let {
                             Periode(ytelse.fom, opphør.tom,
-                                it, ytelse.sats, ytelse.kodeKlassifik)
+                                it, ytelse.sats, ytelse.typeSats, ytelse.kodeKlassifik)
                         }?.let { periodeList.add(it) }
                         addYtelsesPerioder.add(
                             Periode(
                                 opphør.tom.plusDays(1),
                                 ytelse.tom,
                                 ytelse.sats,
+                                ytelse.typeSats,
                                 ytelse.kodeKlassifik
                             )
                         ) ////Nytt objekt på slutten til samme loop
@@ -263,7 +282,7 @@ class PeriodeGenerator {
                     } else if (ytelse.fom.isAfter(opphør.fom) && !ytelse.tom.isAfter(opphør.tom)) { //ytelse.getFom() er implisit før opphør.getTom() da ytelse.getFom() ikke kan være etter ytelse.getTom()
                         opphør.sats?.let {
                             Periode(ytelse.fom, ytelse.tom,
-                                it, ytelse.sats, ytelse.kodeKlassifik)
+                                it, ytelse.sats, ytelse.typeSats, ytelse.kodeKlassifik)
                         }?.let { periodeList.add(it) }
                         removeYtelsesPerioder.add(ytelse)
                         continue@ytelseloop
@@ -271,13 +290,14 @@ class PeriodeGenerator {
                     } else if (ytelse.fom.isAfter(opphør.fom) && !ytelse.fom.isAfter(opphør.tom)) { //ytelse.getTom() er implisit after opphør.getTom() ellers ville den truffet forrige if-statement
                         opphør.sats?.let {
                             Periode(ytelse.fom, opphør.tom,
-                                it, ytelse.sats, ytelse.kodeKlassifik)
+                                it, ytelse.sats, ytelse.typeSats, ytelse.kodeKlassifik)
                         }?.let { periodeList.add(it) }
                         addYtelsesPerioder.add(
                             Periode(
                                 opphør.tom.plusDays(1),
                                 ytelse.tom,
                                 ytelse.sats,
+                                ytelse.typeSats,
                                 ytelse.kodeKlassifik
                             )
                         )
@@ -292,6 +312,7 @@ class PeriodeGenerator {
                         ytelse.fom,
                         ytelse.tom,
                         ytelse.sats,
+                        ytelse.typeSats,
                         ytelse.kodeKlassifik,
                         PeriodeType.YTEL
                     )
@@ -309,6 +330,7 @@ class PeriodeGenerator {
 
     private fun lagOpphørOgYtelse(oppdragslinjeList: List<Oppdragslinje>) {
         for (oppdragslinje in oppdragslinjeList) {
+            assert(oppdragslinje.typeSats == "MND" || oppdragslinje.typeSats == "DAG") { "Forventet at typeSats er enten DAG eller MND, men typeSats var: " + oppdragslinje.typeSats }
             if (oppdragslinje.kodeEndringLinje == "ENDR") {
                 assert(oppdragslinje.kodeStatusLinje == KodeStatusLinje.OPPH) { "Forventet at KodeStatusLinje er OPPH når KodeEndringLinje er ENDR" }
                 if (oppdragslinje.datoStatusFom != null) {
@@ -317,6 +339,7 @@ class PeriodeGenerator {
                             LocalDate.parse(oppdragslinje.datoStatusFom, dateTimeFormatter),
                             LocalDate.parse(oppdragslinje.datoVedtakTom, dateTimeFormatter),
                             oppdragslinje.sats,
+                            oppdragslinje.typeSats,
                             oppdragslinje.kodeKlassifik
                         )
                     )
@@ -326,6 +349,7 @@ class PeriodeGenerator {
                             LocalDate.parse(oppdragslinje.datoVedtakFom, dateTimeFormatter),
                             LocalDate.parse(oppdragslinje.datoVedtakTom, dateTimeFormatter),
                             oppdragslinje.sats,
+                            oppdragslinje.typeSats,
                             oppdragslinje.kodeKlassifik
                         )
                     )
@@ -336,6 +360,7 @@ class PeriodeGenerator {
                         LocalDate.parse(oppdragslinje.datoVedtakFom, dateTimeFormatter),
                         LocalDate.parse(oppdragslinje.datoVedtakTom, dateTimeFormatter),
                         oppdragslinje.sats,
+                        oppdragslinje.typeSats,
                         oppdragslinje.kodeKlassifik
                     )
                 )

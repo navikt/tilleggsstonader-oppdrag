@@ -210,14 +210,16 @@ class SimuleringGenerator {
         stoppnivaaDetaljer.faktiskTom = dateTimeFormatter.format(periode.tom)
         stoppnivaaDetaljer.kontoStreng = "1235432"
         stoppnivaaDetaljer.behandlingskode = "2"
-        stoppnivaaDetaljer.belop = oppdragsperiode.sats
+        if (periode.typeSats == "DAG"){
+            stoppnivaaDetaljer.belop = oppdragsperiode.sats!!.multiply(BigDecimal.valueOf(periode.antallVirkedager.toLong()))
+        } else stoppnivaaDetaljer.belop = oppdragsperiode.sats
         stoppnivaaDetaljer.trekkVedtakId = 0L
         stoppnivaaDetaljer.stonadId = "1234"
         stoppnivaaDetaljer.korrigering = ""
         stoppnivaaDetaljer.isTilbakeforing = false
         stoppnivaaDetaljer.linjeId = BigInteger.valueOf(21423L)
         stoppnivaaDetaljer.sats = oppdragsperiode.sats
-        stoppnivaaDetaljer.typeSats = "MND"
+        stoppnivaaDetaljer.typeSats = periode.typeSats
         stoppnivaaDetaljer.antallSats = BigDecimal.valueOf(periode.antallVirkedager.toLong())
         stoppnivaaDetaljer.saksbehId = "5323"
         stoppnivaaDetaljer.uforeGrad = BigInteger.valueOf(100L)
@@ -296,7 +298,11 @@ class SimuleringGenerator {
     }
 
     private fun setBeløp(antallVirkedager: Int, oppdragsperiode: Periode, sequence: Int): BigDecimal {
-        val belop = oppdragsperiode.sats!!.multiply(BigDecimal.valueOf(antallVirkedager.toLong()))
+        val belop: BigDecimal = if (oppdragsperiode.typeSats == "DAG") {
+            oppdragsperiode.sats!!.multiply(BigDecimal.valueOf(antallVirkedager.toLong()))
+        } else {
+            oppdragsperiode.sats!!
+        }
         return if (oppdragsperiode.periodeType == PeriodeType.OPPH) {
             if (sequence == 3) {
                 belop.negate()
@@ -305,9 +311,13 @@ class SimuleringGenerator {
             }
         } else {
             if (sequence == 2) {
-                belop.subtract(oppdragsperiode.oldSats!!.multiply(BigDecimal.valueOf(antallVirkedager.toLong()))).negate()
+                if (oppdragsperiode.typeSats == "DAG") {
+                belop.subtract(oppdragsperiode.oldSats!!.multiply(BigDecimal.valueOf(antallVirkedager.toLong()))).negate() }
+                else { belop.subtract(oppdragsperiode.oldSats).negate() }
             } else if (sequence == 3) {
-                oppdragsperiode.oldSats!!.multiply(BigDecimal.valueOf(antallVirkedager.toLong())).negate()
+                if (oppdragsperiode.typeSats == "DAG") {
+                oppdragsperiode.oldSats!!.multiply(BigDecimal.valueOf(antallVirkedager.toLong())).negate() }
+                else { oppdragsperiode.oldSats!!.negate() }
             } else belop
         }
     }
