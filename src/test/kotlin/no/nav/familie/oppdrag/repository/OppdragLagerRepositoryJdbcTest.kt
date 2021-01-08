@@ -80,7 +80,7 @@ internal class OppdragLagerRepositoryJdbcTest {
         oppdragLagerRepository.oppdaterKvitteringsmelding(hentetOppdrag.id, kvitteringsmelding)
 
         val hentetOppdatertOppdrag = oppdragLagerRepository.hentOppdrag(oppdragLager.id)
-        assertEquals(objectMapper.writeValueAsString(kvitteringsmelding), hentetOppdatertOppdrag.kvitteringsmelding)
+        assertThat(kvitteringsmelding).isEqualToComparingFieldByField(hentetOppdatertOppdrag.kvitteringsmelding)
     }
 
     private fun kvitteringsmelding(): Mmel {
@@ -109,8 +109,8 @@ internal class OppdragLagerRepositoryJdbcTest {
 
         assertEquals(1, oppdrageneTilGrensesnittavstemming.size)
         assertEquals("BA", oppdrageneTilGrensesnittavstemming.first().fagsystem)
-        assertEquals(avstemmingsTidspunktetSomSkalKjøres.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")),
-                oppdrageneTilGrensesnittavstemming.first().avstemmingTidspunkt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")))
+        assertEquals(avstemmingsTidspunktetSomSkalKjøres.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss")),
+                oppdrageneTilGrensesnittavstemming.first().avstemmingTidspunkt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss")))
     }
 
     @Test
@@ -124,8 +124,8 @@ internal class OppdragLagerRepositoryJdbcTest {
         val utbetalingsoppdrag = oppdragLagerRepository.hentUtbetalingsoppdrag(baOppdragLager.id)
         val utbetalingsoppdrag2 = oppdragLagerRepository.hentUtbetalingsoppdrag(baOppdragLager2.id)
 
-        assertEquals(baOppdragLager.utbetalingsoppdrag, objectMapper.writeValueAsString(utbetalingsoppdrag))
-        assertEquals(baOppdragLager2.utbetalingsoppdrag, objectMapper.writeValueAsString(utbetalingsoppdrag2))
+        assertEquals(baOppdragLager.utbetalingsoppdrag, utbetalingsoppdrag)
+        assertEquals(baOppdragLager2.utbetalingsoppdrag, utbetalingsoppdrag2)
     }
 
     @Test
