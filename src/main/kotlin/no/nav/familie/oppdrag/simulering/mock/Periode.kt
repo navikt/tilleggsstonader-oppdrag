@@ -4,73 +4,79 @@ import java.math.BigDecimal
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-class Periode : Comparable<Periode> {
-    var fom: LocalDate
-        private set
-    var tom: LocalDate
-    var sats: BigDecimal? = null
-        private set
-    var oldSats: BigDecimal? = null
-        private set
-    var typeSats: String? = null
-    var periodeType: PeriodeType? = null
-    var kodeKlassifik: String? = null
-        private set
+data class Periode constructor(val fom: LocalDate,
+                               var tom: LocalDate,
+                               val sats: BigDecimal?,
+                               val oldSats: BigDecimal?,
+                               val typeSats: String?,
+                               var periodeType: PeriodeType?,
+                               val kodeKlassifik: String?): Comparable<Periode> {
+//    var fom: LocalDate
+//        private set
+//    var tom: LocalDate
+//    var sats: BigDecimal? = null
+//        private set
+//    var oldSats: BigDecimal? = null
+//        private set
+//    var typeSats: String? = null
+//    var periodeType: PeriodeType? = null
+//    var kodeKlassifik: String? = null
+//        private set
 
-    internal constructor(fom: LocalDate, tom: LocalDate) {
-        this.fom = fom
-        this.tom = tom
-    }
+//    internal constructor(fom: LocalDate, tom: LocalDate) {
+//        this.fom = fom
+//        this.tom = tom
+//    }
+//
+//    internal constructor(fom: LocalDate, tom: LocalDate, sats: BigDecimal?, typeSats: String?, kodeKlassifik: String?) {
+//        this.fom = fom
+//        this.tom = tom
+//        this.sats = sats
+//        this.typeSats = typeSats
+//        this.kodeKlassifik = kodeKlassifik
+//    }
 
-    internal constructor(fom: LocalDate, tom: LocalDate, sats: BigDecimal?, typeSats: String?, kodeKlassifik: String?) {
-        this.fom = fom
-        this.tom = tom
-        this.sats = sats
-        this.typeSats = typeSats
-        this.kodeKlassifik = kodeKlassifik
-    }
-
-    internal constructor(
+    constructor(
         fom: LocalDate,
         tom: LocalDate,
-        sats: BigDecimal?,
-        typeSats: String?,
-        kodeKlassifik: String?,
-        periodeType: PeriodeType?
-    ) {
-        this.fom = fom
-        this.tom = tom
-        this.sats = sats
-        this.typeSats = typeSats
-        this.kodeKlassifik = kodeKlassifik
-        this.periodeType = periodeType
-    }
+        sats: BigDecimal? = null,
+        typeSats: String? = null,
+        kodeKlassifik: String? = null,
+        periodeType: PeriodeType? = null) :
+            this(
+                fom = fom,
+                tom = tom,
+                sats = sats,
+                oldSats = null,
+                typeSats = typeSats,
+                kodeKlassifik = kodeKlassifik,
+                periodeType = periodeType)
 
-    internal constructor(
+    constructor(
         fom: LocalDate,
         tom: LocalDate,
         oldSats: BigDecimal,
         sats: BigDecimal?,
         typeSats: String?,
-        kodeKlassifik: String?
-    ) {
-        this.fom = fom
-        this.tom = tom
-        this.oldSats = oldSats
-        this.sats = sats
-        this.typeSats = typeSats
-        this.kodeKlassifik = kodeKlassifik
-        if (oldSats.compareTo(sats) <= 0) {
-            periodeType = PeriodeType.ØKNING
-        } else {
-            periodeType = PeriodeType.REDUKSJON
-        }
+        kodeKlassifik: String?) :
+            this(
+                fom = fom,
+                tom = tom,
+                oldSats = oldSats,
+                sats = sats,
+                typeSats = typeSats,
+                kodeKlassifik = kodeKlassifik,
+                periodeType = if (oldSats <= sats) {
+                    PeriodeType.ØKNING
+                } else {
+                    PeriodeType.REDUKSJON
+                }
+            )
+
+    override fun compareTo(other: Periode): Int {
+        return fom.compareTo(other.fom)
     }
 
-    val feilSats: BigDecimal
-        get() = if (periodeType != PeriodeType.OPPH) {
-            BigDecimal.ZERO
-        } else oldSats!!.subtract(sats)
     val antallVirkedager: Int
         get() {
             var startDato = fom
@@ -83,8 +89,4 @@ class Periode : Comparable<Periode> {
             }
             return antallVirkedager
         }
-
-    override fun compareTo(comparePeriode: Periode): Int {
-        return fom.compareTo(comparePeriode.fom)
-    }
 }
