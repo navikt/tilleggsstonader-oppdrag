@@ -100,7 +100,7 @@ class PeriodeGenerator {
                             )
                             continue@opphørloop
                         }
-                    } else if (opphør.fom.isEqual(ytelse.fom) && !opphør.tom.isAfter(ytelse.tom)) {
+                    } else if (!opphør.fom.isBefore(ytelse.fom) && !opphør.tom.isAfter(ytelse.tom)) {
                         removeOpphørPerioder.add(opphør)
                         continue@opphørloop
                     } else if (opphør.fom.isEqual(ytelse.fom) && opphør.tom.isAfter(ytelse.tom)) {
@@ -114,9 +114,6 @@ class PeriodeGenerator {
                                 opphør.kodeKlassifik
                             )
                         )
-                        continue@opphørloop
-                    } else if (opphør.fom.isAfter(ytelse.fom) && !opphør.tom.isAfter(ytelse.tom)) {
-                        removeOpphørPerioder.add(opphør)
                         continue@opphørloop
                     } else if (opphør.fom.isAfter(ytelse.fom) && !opphør.fom.isAfter(ytelse.tom)) {
                         removeOpphørPerioder.add(opphør)
