@@ -11,7 +11,7 @@ class DbMigreringService(private val oppdragRepository: OppdragRepository) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(initialDelay = 12000, fixedDelay = 60000)
+    @Scheduled(initialDelay = 120000, fixedDelay = 3600000)
     @Transactional
     fun dbMigrering() {
 
