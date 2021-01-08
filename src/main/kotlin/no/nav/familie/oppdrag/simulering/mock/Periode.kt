@@ -11,31 +11,6 @@ data class Periode constructor(val fom: LocalDate,
                                val typeSats: String?,
                                var periodeType: PeriodeType?,
                                val kodeKlassifik: String?): Comparable<Periode> {
-//    var fom: LocalDate
-//        private set
-//    var tom: LocalDate
-//    var sats: BigDecimal? = null
-//        private set
-//    var oldSats: BigDecimal? = null
-//        private set
-//    var typeSats: String? = null
-//    var periodeType: PeriodeType? = null
-//    var kodeKlassifik: String? = null
-//        private set
-
-//    internal constructor(fom: LocalDate, tom: LocalDate) {
-//        this.fom = fom
-//        this.tom = tom
-//    }
-//
-//    internal constructor(fom: LocalDate, tom: LocalDate, sats: BigDecimal?, typeSats: String?, kodeKlassifik: String?) {
-//        this.fom = fom
-//        this.tom = tom
-//        this.sats = sats
-//        this.typeSats = typeSats
-//        this.kodeKlassifik = kodeKlassifik
-//    }
-
     constructor(
         fom: LocalDate,
         tom: LocalDate,
