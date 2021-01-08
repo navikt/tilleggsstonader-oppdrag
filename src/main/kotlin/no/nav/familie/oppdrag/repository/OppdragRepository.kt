@@ -1,6 +1,5 @@
 package no.nav.familie.oppdrag.repository
 
-import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import java.util.*
@@ -9,7 +8,7 @@ import java.util.*
 interface OppdragRepository : RepositoryInterface<OppdragLager, UUID>, InsertUpdateRepository<OppdragLager> {
 
     @Query("""select * from oppdrag_lager where id is null limit 10000""")
-        fun findWhereUuidIsNull(): Iterable<OppdragLager>
+    fun findWhereUuidIsNull(): Iterable<OppdragLager>
 
 
     @Modifying
