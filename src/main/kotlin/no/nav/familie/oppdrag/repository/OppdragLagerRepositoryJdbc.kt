@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.time.LocalDateTime
+import java.util.*
+import kotlin.NoSuchElementException
 
 @Repository
 class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
@@ -25,7 +27,10 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
         val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
 
         val listeAvOppdrag = jdbcTemplate.query(hentStatement,
-                                  arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem, versjon),
+                                  arrayOf(oppdragId.behandlingsId,
+                                          oppdragId.personIdent,
+                                          oppdragId.fagsystem,
+                                          versjon),
                                   OppdragLagerRowMapper())
 
         return when( listeAvOppdrag.size ) {
@@ -43,10 +48,11 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
 
     override fun opprettOppdrag(oppdragLager: OppdragLager, versjon: Int) {
         val insertStatement = "INSERT INTO oppdrag_lager " +
-                "(utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +
-                " VALUES (?,?,?,?,?,?,?,?,?,?)"
+                "(id, utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?)"
 
         jdbcTemplate.update(insertStatement,
+                            UUID.randomUUID(),
                             oppdragLager.utgåendeOppdrag,
                             oppdragLager.status.name,
                             oppdragLager.opprettetTidspunkt,
@@ -55,7 +61,7 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
                             oppdragLager.behandlingId,
                             oppdragLager.fagsystem,
                             oppdragLager.avstemmingTidspunkt,
-                            oppdragLager.utbetalingsoppdrag,
+                            objectMapper.writeValueAsString(oppdragLager.utbetalingsoppdrag),
                             versjon)
     }
 
@@ -136,17 +142,19 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
 class OppdragLagerRowMapper : RowMapper<OppdragLager> {
 
     override fun mapRow(resultSet: ResultSet, rowNumbers: Int): OppdragLager? {
+        val kvittering = resultSet.getString(10)
         return OppdragLager(
+                UUID.fromString(resultSet.getString (12) ?: UUID.randomUUID().toString()),
                 resultSet.getString(7),
                 resultSet.getString(4),
                 resultSet.getString(5),
                 resultSet.getString(6),
-                resultSet.getString(9),
+                objectMapper.readValue(resultSet.getString(9)),
                 resultSet.getString(1),
                 OppdragStatus.valueOf(resultSet.getString(2)),
                 resultSet.getTimestamp(8).toLocalDateTime(),
                 resultSet.getTimestamp(3).toLocalDateTime(),
-                resultSet.getString(10),
+                if (kvittering == null) null else  objectMapper.readValue(kvittering),
                 resultSet.getInt(11))
     }
 }
