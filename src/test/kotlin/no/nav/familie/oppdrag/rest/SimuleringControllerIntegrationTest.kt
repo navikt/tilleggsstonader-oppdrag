@@ -2,10 +2,8 @@ package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjenesteE2E
 import no.nav.familie.oppdrag.simulering.SimulerBeregningRequestMapper
-import no.nav.familie.oppdrag.simulering.SimuleringSender
-import no.nav.familie.oppdrag.simulering.SimuleringSenderMock
 import no.nav.familie.oppdrag.simulering.SimuleringTjenesteImpl
-import no.nav.familie.oppdrag.simulering.util.ClientMocks
+import no.nav.familie.oppdrag.simulering.mock.SimuleringSenderMock
 import no.nav.familie.oppdrag.simulering.util.lagTestUtbetalingsoppdragForFGBMedEttBarn
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
