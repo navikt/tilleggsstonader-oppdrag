@@ -11,7 +11,7 @@ import java.math.BigDecimal
 
 internal class SimuleringGeneratorTest {
 
-    var simuleringGenerator = SimuleringGenerator()
+    val simuleringGenerator = SimuleringGenerator()
 
     @Test
     fun SimuleringTestPositiv() {
