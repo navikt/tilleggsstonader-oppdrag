@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 
 
 @ActiveProfiles("dev")
-@SpringBootTest(classes = [SimuleringController::class, SimuleringSenderMock::class, SimuleringTjenesteImpl::class, SimulerBeregningRequestMapper::class, ClientMocks::class, SimuleringLagerTjenesteE2E::class],
+@SpringBootTest(classes = [SimuleringController::class, SimuleringSenderMock::class, SimuleringTjenesteImpl::class, SimulerBeregningRequestMapper::class, SimuleringLagerTjenesteE2E::class],
                 properties = ["spring.cloud.vault.enabled=false"])
 internal class SimuleringControllerIntegrasjonTest {
 
