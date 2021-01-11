@@ -1,6 +1,6 @@
 # Dokumentasjon PeriodeGenerator
 Oppdraget som kommer inn via Simulering WS inneholder oppdragslinjer av typen OPPH eller YTEL.
-Først leses alle disse oppdragslinjene gjennom for fordeler OPPH og YTEL linjer på hver sin liste
+Først leses alle disse oppdragslinjene gjennom og fordeler OPPH og YTEL linjer på hver sin liste
 (opphørsPerioder og ytelsesPerioder). Deretter sorteres listene for sikkerhetsskyld etter fom-dato.
 
 Det sjekkes om oppdragene kun inneholder opphør eller kun ytelse og returnerer fullstendig utbetaling
