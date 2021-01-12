@@ -11,7 +11,7 @@ import java.math.BigDecimal
 
 internal class SimuleringGeneratorTest {
 
-    val simuleringGenerator = SimuleringGenerator()
+    private val simuleringGenerator = SimuleringGenerator()
 
     @Test
     fun `Simulering av ny ytelse med positivt resultat over 6 måneder`() {
@@ -32,7 +32,7 @@ internal class SimuleringGeneratorTest {
             .isEqualTo(6)
             .withFailMessage("Perioden fom 01.06.2020 - tom 30.11.2020 skal være på totat 5 måneder. Antall måneder i resultatet var: " + response.response.simulering.beregningsPeriode[0].beregningStoppnivaa.size)
         val detaljer: List<BeregningStoppnivaaDetaljer> =
-                response.response.simulering.beregningsPeriode[0].beregningStoppnivaa[0].beregningStoppnivaaDetaljer;
+                response.response.simulering.beregningsPeriode[0].beregningStoppnivaa[0].beregningStoppnivaaDetaljer
         detaljer.sortedBy { beregningStoppnivaaDetaljer -> beregningStoppnivaaDetaljer.behandlingskode }
         assertThat(detaljer.size)
             .isEqualTo(1)
