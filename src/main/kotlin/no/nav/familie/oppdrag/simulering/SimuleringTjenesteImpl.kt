@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.remoting.soap.SoapFaultException
 import org.springframework.stereotype.Service
 import org.springframework.web.context.annotation.ApplicationScope
+import javax.xml.ws.soap.SOAPFaultException
 
 @Service
 @ApplicationScope
@@ -53,8 +54,9 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
 
             LOG.info(feilmelding)
             throw Exception(feilmelding, ex)
-        } catch (ex: SoapFaultException) {
-            LOG.info(ex.stackTraceToString())
+        } catch (ex: SOAPFaultException) {
+            LOG.info("SOAPFaultException skjedde med feil ",ex.stackTrace)
+            ex.fault.detail.detailEntries.forEachRemaining { it -> LOG.info("Feil skjedde med ", it.value) }
             throw Exception(ex.message, ex)
         }catch (ex: Throwable) {
             throw Exception(ex.message, ex)
