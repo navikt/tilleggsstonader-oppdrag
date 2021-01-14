@@ -55,8 +55,8 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
             LOG.info(feilmelding)
             throw Exception(feilmelding, ex)
         } catch (ex: SOAPFaultException) {
-            LOG.info("SOAPFaultException skjedde med feil ",ex.stackTrace)
-            ex.fault.detail.detailEntries.forEachRemaining { it -> LOG.info("Feil skjedde med ", it.value) }
+            LOG.info(ex.fault.faultCode)
+            LOG.info(ex.fault.faultString)
             throw Exception(ex.message, ex)
         }catch (ex: Throwable) {
             throw Exception(ex.message, ex)

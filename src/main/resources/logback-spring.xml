@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="ROOT_LOG_LEVEL" value="INFO"/>
+    <property name="ROOT_LOG_LEVEL" value="DEBUG"/>
 
     <!-- Logger for sensitive data -->
     <appender name="secureLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -25,7 +25,7 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
-    <root level="${ROOT_LOG_LEVEL:-INFO}">
+    <root level="${ROOT_LOG_LEVEL:-DEBUG}">
         <!-- nais+local -->
         <appender-ref ref="stdout_json"/>
     </root>
@@ -33,10 +33,10 @@
     <logger name="secureLogger" level="WARN"/>
     <logger name="no.nav" level="WARN"/>
     <logger name="no.nav.familie" level="INFO"/>
-    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework" level="DEBUG"/>
     <logger name="org.apache" level="INFO"/>
-    <logger name="org.apache.cxf" level="ERROR"/>
-    <logger name="org.apache.cxf.service" level="INFO"/>
+    <logger name="org.apache.cxf" level="TRACE"/>
+    <logger name="org.apache.cxf.service" level="TRACE"/>
     <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR"/>
     <logger name="org.apache.wss4j.common.crypto.CryptoBase" level="ERROR"/>
 
