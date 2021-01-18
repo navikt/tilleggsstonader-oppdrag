@@ -42,7 +42,7 @@ class SimuleringResultatTransformer {
         return SimulertPostering(
                 betalingType = utledBetalingType(detaljer.belop),
                 beløp = detaljer.belop,
-                fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade),
+                fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade.trim()),
                 fom = parseDato(detaljer.faktiskFom),
                 tom = parseDato(detaljer.faktiskTom),
                 forfallsdato = parseDato(stoppnivaa.forfall),
