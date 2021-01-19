@@ -42,7 +42,7 @@ class SimuleringResultatTransformer {
         return SimulertPostering(
                 betalingType = utledBetalingType(detaljer.belop),
                 beløp = detaljer.belop,
-                fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade.trim()),
+                fagOmrådeKode = FagOmrådeKode.fraKode(stoppnivaa.kodeFagomraade.trim()), //Todo: fjerne.trim() når TØB har rettet trailing spaces-feilen (jira: TOB-1509)
                 fom = parseDato(detaljer.faktiskFom),
                 tom = parseDato(detaljer.faktiskTom),
                 forfallsdato = parseDato(stoppnivaa.forfall),
