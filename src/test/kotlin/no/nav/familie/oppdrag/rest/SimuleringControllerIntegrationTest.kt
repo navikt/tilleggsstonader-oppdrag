@@ -21,9 +21,8 @@ internal class SimuleringControllerIntegrasjonTest {
     @Autowired lateinit var simuleringController: SimuleringController
 
     @Test
-    @Ignore
     fun test_etterbetalingsbelop() {
         val response = simuleringController.hentEtterbetalingsbeløp(lagTestUtbetalingsoppdragForFGBMedEttBarn())
-        assertEquals(3162, response.body?.data?.etterbetaling)
+        assertEquals(1054, response.body?.data?.etterbetaling)
     }
 }
