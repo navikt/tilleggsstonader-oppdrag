@@ -15,7 +15,6 @@ class ServiceConfig(@Value("\${SECURITYTOKENSERVICE_URL}") private val stsUrl: S
                     @Value("\${OPPDRAG_SERVICE_URL}") private val simulerFpServiceUrl: String) {
 
     init {
-        // TODO: alle disse propertiene kan sannsynligvis fjernes.
         System.setProperty("no.nav.modig.security.sts.url", stsUrl)
         System.setProperty("no.nav.modig.security.systemuser.username", systemuserUsername)
         System.setProperty("no.nav.modig.security.systemuser.password", systemuserPwd)
