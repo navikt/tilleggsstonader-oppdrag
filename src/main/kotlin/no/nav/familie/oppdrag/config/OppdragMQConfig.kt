@@ -2,6 +2,7 @@ package no.nav.familie.oppdrag.config
 
 import com.ibm.mq.constants.CMQC.MQENC_NATIVE
 import com.ibm.mq.jms.MQQueueConnectionFactory
+import com.ibm.msg.client.jms.JmsConstants
 import com.ibm.msg.client.jms.JmsConstants.JMS_IBM_CHARACTER_SET
 import com.ibm.msg.client.jms.JmsConstants.JMS_IBM_ENCODING
 import com.ibm.msg.client.wmq.common.CommonConstants.WMQ_CM_CLIENT
@@ -40,6 +41,7 @@ class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
         targetFactory.transportType = WMQ_CM_CLIENT
         targetFactory.ccsid = UTF_8_WITH_PUA
         targetFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE)
+        targetFactory.setBooleanProperty(JmsConstants.USER_AUTHENTICATION_MQCSP, false)
         targetFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA)
 
         val cf = UserCredentialsConnectionFactoryAdapter()
