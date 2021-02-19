@@ -5,16 +5,7 @@ no.nav.security.jwt:
     cookie_name: localhost-idtoken
 
 oppdrag.mq:
-  queuemanager: QM1
-  send: DEV.QUEUE.1
-  mottak: DEV.QUEUE.1
-  avstemming: DEV.QUEUE.2
-  channel: DEV.ADMIN.SVRCONN
-  hostname: localhost
-  port: 1414
-  user: admin
-  password: passw0rd
-  enabled: true
+  enabled: false
 
 spring.datasource.url: jdbc:postgresql://0.0.0.0:5432/familie-oppdrag
 spring.datasource.username: postgres

@@ -7,6 +7,7 @@ import com.ibm.msg.client.jms.JmsConstants.JMS_IBM_CHARACTER_SET
 import com.ibm.msg.client.jms.JmsConstants.JMS_IBM_ENCODING
 import com.ibm.msg.client.wmq.common.CommonConstants.WMQ_CM_CLIENT
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,6 +22,7 @@ import javax.jms.JMSException
 private const val UTF_8_WITH_PUA = 1208
 
 @Configuration
+@ConditionalOnProperty("oppdrag.mq.enabled")
 class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
                       @Value("\${oppdrag.mq.queuemanager}") val queuemanager: String,
                       @Value("\${oppdrag.mq.channel}") val channel: String,

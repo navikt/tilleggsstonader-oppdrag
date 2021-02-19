@@ -2,6 +2,8 @@ package no.nav.familie.oppdrag.simulering.util
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.oppdrag.avstemming.AvstemmingSender
+import no.nav.familie.oppdrag.service.OppdragService
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerFpService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -25,4 +27,15 @@ class ClientMocks {
 
         return simulerFpService
     }
+
+    @Bean
+    @Profile("integrasjonstest")
+    @Primary
+    fun avstemmingSenderMQ() = mockk<AvstemmingSender>()
+
+    @Bean
+    @Profile("integrasjonstest")
+    @Primary
+    fun oppdragServiceImpl() = mockk<OppdragService>()
+
 }

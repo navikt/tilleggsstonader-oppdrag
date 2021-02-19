@@ -34,15 +34,13 @@ class AuthController {
 @SpringBootTest(classes = [TestConfig::class],
                 properties = ["spring.cloud.vault.enabled=false"],
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class, Containers.MQInitializer::class])
-@EnableJms
+@ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class])
 @DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 class AuthIntegrationTest {
 
     companion object {
         @Container var postgreSQLContainer = Containers.postgreSQLContainer
-        @Container var ibmMQContainer = Containers.ibmMQContainer
     }
 
     @LocalServerPort

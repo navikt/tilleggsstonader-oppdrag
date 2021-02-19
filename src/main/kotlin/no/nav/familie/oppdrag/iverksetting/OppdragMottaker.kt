@@ -1,7 +1,7 @@
 package no.nav.familie.oppdrag.iverksetting
 
-import no.nav.familie.oppdrag.config.ApplicationConfig.Companion.LOKALE_PROFILER
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
+import no.nav.familie.oppdrag.config.ApplicationConfig.Companion.LOKALE_PROFILER
 import no.nav.familie.oppdrag.domene.id
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
 import no.nav.familie.oppdrag.repository.oppdragStatus
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 import javax.jms.TextMessage
 
 @Service
-@Profile("!e2e")
+@Profile("!e2e & !integrasjonstest")
 class OppdragMottaker(
         val oppdragLagerRepository: OppdragLagerRepository,
         val env: Environment
