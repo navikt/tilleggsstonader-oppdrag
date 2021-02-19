@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component
 class ClientMocks {
 
     @Bean
-    @Profile("dev")
+    @Profile("dev", "integrasjonstest")
     @Primary
     fun mockSimulerFpService(): SimulerFpService {
         val simulerFpService = mockk<SimulerFpService>()
 
-       every {
+        every {
             simulerFpService.simulerBeregning(any())
         } answers {
             lagTestSimuleringResponse()

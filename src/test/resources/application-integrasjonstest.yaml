@@ -1,3 +1,9 @@
+no.nav.security.jwt:
+  issuer.azuread:
+    discoveryurl: http://metadata
+    accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
+
 oppdrag.mq:
   queuemanager: QM1
   send: DEV.QUEUE.1
@@ -9,13 +15,6 @@ oppdrag.mq:
   user: admin
   password: passw0rd
   enabled: true
-
-no.nav.security.jwt:
-  issuer.azuread:
-    discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-    accepted_audience: ${CLIENT_ID}
-    cookie_name: azure_token
-
 
 spring.datasource.url: jdbc:postgresql://0.0.0.0:5432/familie-oppdrag
 spring.datasource.username: postgres
