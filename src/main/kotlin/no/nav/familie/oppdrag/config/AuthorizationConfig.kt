@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 class AuthorizationConfig {
 
     @Bean
-    fun logFilter(): FilterRegistrationBean<TokenValidationFilter> {
+    fun tokenValidationFilter(): FilterRegistrationBean<TokenValidationFilter> {
         val filterRegistration = FilterRegistrationBean<TokenValidationFilter>()
         filterRegistration.filter = TokenValidationFilter(acceptClientCredential = true)
         filterRegistration.order = 0
