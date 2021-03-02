@@ -1,0 +1,17 @@
+no.nav.security.jwt:
+  issuer.azuread:
+    discoveryurl: http://metadata
+    accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
+
+oppdrag.mq:
+  enabled: false
+
+spring.datasource.url: jdbc:postgresql://0.0.0.0:5432/familie-oppdrag
+spring.datasource.username: postgres
+spring.datasource.password: test
+
+OPPDRAG_SERVICE_URL: #Mockes ut lokalt
+SECURITYTOKENSERVICE_URL: https://localhost:8063/soap/SecurityTokenServiceProvider/
+CREDENTIAL_USERNAME: not-a-real-srvuser
+CREDENTIAL_PASSWORD: not-a-real-pw

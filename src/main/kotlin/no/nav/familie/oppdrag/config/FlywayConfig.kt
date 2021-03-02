@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
-@Profile("!dev & !dev_psql_mq")
+@Profile("!dev & !dev_psql_mq & !integrasjonstest")
 @ConditionalOnProperty("spring.flyway.enabled")
 class FlywayConfig {
 
