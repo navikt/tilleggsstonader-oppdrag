@@ -12,7 +12,7 @@ import java.lang.UnsupportedOperationException
 
 
 @Service
-@Profile("!e2e & !integrasjonstest")
+@Profile("!e2e")
 class OppdragSenderMQ(val jmsTemplateUtgående: JmsTemplate,
                       @Value("\${oppdrag.mq.enabled}") val erEnabled: String,
                       @Value("\${oppdrag.mq.mottak}") val kvitteringsKø: String) : OppdragSender {
