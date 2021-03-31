@@ -22,14 +22,14 @@
         <main-class>no.nav.familie.oppdrag.LauncherKt</main-class>
         <kotlin.version>1.4.31</kotlin.version>
         <felles.version>1.20210305114436_82a4a5e</felles.version>
-        <common-java-modules.version>2.2021.02.03_08.08-9d0c8281f06b</common-java-modules.version>
-        <kontrakter.version>2.0_20210119112648_d10ba4d</kontrakter.version>
+        <common-java-modules.version>2.2021.03.26_09.45-569ba329264c</common-java-modules.version>
+        <kontrakter.version>2.0_20210317125829_2bee9c0</kontrakter.version>
         <token-validation-spring.version>1.3.3</token-validation-spring.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jaxb-core.version>3.0.0</jaxb-core.version>
-        <jaxb-impl.version>2.3.3</jaxb-impl.version>
-        <cxf.version>3.4.2</cxf.version>
-        <mockk.version>1.9.3</mockk.version>
+        <jaxb-impl.version>3.0.0</jaxb-impl.version>
+        <cxf.version>3.4.3</cxf.version>
+        <mockk.version>1.11.0</mockk.version>
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
         <sonar.organization>navit</sonar.organization>
@@ -160,7 +160,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -361,12 +361,12 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.7.0.1746</version>
+                    <version>3.8.0.2131</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.5</version>
+                    <version>0.8.6</version>
                     <configuration>
                         <excludes>
                             <exclude>**/config/FlywayConfig.kt</exclude>
@@ -415,7 +415,7 @@
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-xjc-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>xjc</id>
