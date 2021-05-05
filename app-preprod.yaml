@@ -33,10 +33,6 @@ spec:
     requests:
       memory: 512Mi
       cpu: 500m
-  ingresses:
-    - https://familie-oppdrag.nais.preprod.local
-    - https://familie-oppdrag.dev-fss.nais.io
-    - https://familie-oppdrag.dev-fss-pub.nais.io
   secureLogs:
     enabled: true
   env:
