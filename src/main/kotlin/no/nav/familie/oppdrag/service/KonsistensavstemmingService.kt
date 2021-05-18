@@ -1,6 +1,7 @@
 package no.nav.familie.oppdrag.service
 
-import no.nav.familie.kontrakter.felles.oppdrag.*
+import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
+import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
@@ -16,25 +17,6 @@ class KonsistensavstemmingService(
         private val avstemmingSender: AvstemmingSender,
         private val oppdragLagerRepository: OppdragLagerRepository,
 ) {
-
-    @Deprecated("Bruk KonsistensavstemmingRequestV2")
-    fun utførKonsistensavstemming(request: KonsistensavstemmingRequest) {
-        val oppdragIdListe = request.oppdragIdListe
-        val fagsystem = request.fagsystem
-        val avstemmingstidspunkt = request.avstemmingstidspunkt
-
-        val utbetalingsoppdrag = oppdragIdListe.map { id ->
-            val oppdragLager = oppdragLagerRepository.hentAlleVersjonerAvOppdrag(OppdragId(fagsystem,
-                                                                                           id.personIdent,
-                                                                                           id.behandlingsId.toString()))
-                    .find { oppdragLager -> oppdragLager.status == OppdragStatus.KVITTERT_OK
-                                            || oppdragLager.status == OppdragStatus.KVITTERT_MED_MANGLER }
-            oppdragLagerRepository.hentUtbetalingsoppdrag(OppdragId(fagsystem, id.personIdent, id.behandlingsId.toString()),
-                                                          oppdragLager!!.versjon)
-        }
-
-        utførKonsistensavstemming(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt)
-    }
 
     private fun utførKonsistensavstemming(
             fagsystem: String,
