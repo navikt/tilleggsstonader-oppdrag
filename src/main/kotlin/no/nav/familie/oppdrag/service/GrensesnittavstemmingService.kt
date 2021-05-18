@@ -26,12 +26,7 @@ class GrensesnittavstemmingService(
     }
 
     fun utførGrensesnittavstemming(request: GrensesnittavstemmingRequest) {
-        utførGrensesnittavstemming(request.fagsystem,
-                                   request.fra,
-                                   request.til)
-    }
-
-    fun utførGrensesnittavstemming(fagsystem: String, fra: LocalDateTime, til: LocalDateTime) {
+        val (fagsystem: String, fra: LocalDateTime, til: LocalDateTime) = request
         val oppdragSomSkalAvstemmes = oppdragLagerRepository.hentIverksettingerForGrensesnittavstemming(fra, til, fagsystem)
         val avstemmingMapper = GrensesnittavstemmingMapper(oppdragSomSkalAvstemmes, fagsystem, fra, til)
         val meldinger = avstemmingMapper.lagAvstemmingsmeldinger()

@@ -53,29 +53,6 @@ class KonsistensavstemmingServiceTest {
     }
 
     @Test
-    fun skal_konsistensavstemme_riktig_versjon() {
-        val oppdrag = TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer().somOppdragLager
-                .apply { status = OppdragStatus.KVITTERT_FUNKSJONELL_FEIL }
-        val oppdragV1 = TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer().somOppdragLagerMedVersjon(1)
-                .apply { status = OppdragStatus.KVITTERT_OK }
-
-        every { oppdragLagerRepository.hentAlleVersjonerAvOppdrag(any()) } returns
-                listOf(oppdrag, oppdragV1)
-        every { oppdragLagerRepository.hentUtbetalingsoppdrag(any(), any()) } returns
-                TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer()
-
-        konsistensavstemmingService.utførKonsistensavstemming(KonsistensavstemmingRequest(
-                "BA",
-                listOf(OppdragIdForFagsystem(oppdrag.personIdent, oppdrag.behandlingId.toLong())),
-                LocalDateTime.now()
-        ))
-
-        verify(exactly = 4) { avstemmingSender.sendKonsistensAvstemming(any()) }
-        verify(exactly = 0) { oppdragLagerRepository.hentUtbetalingsoppdrag(any(), 0) }
-        verify(exactly = 1) { oppdragLagerRepository.hentUtbetalingsoppdrag(any(), 1) }
-    }
-
-    @Test
     internal fun `plukker ut perioder fra 2 utbetalingsoppdrag fra samme fagsak til en melding`() {
         every { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(setOf("1", "2"))) } returns
                 listOf(utbetalingsoppdrag1_1, utbetalingsoppdrag1_2)
