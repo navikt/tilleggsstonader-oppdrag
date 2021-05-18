@@ -3,6 +3,7 @@ package no.nav.familie.oppdrag.rest
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
+import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
 import no.nav.familie.oppdrag.common.RessursUtils.illegalState
 import no.nav.familie.oppdrag.common.RessursUtils.ok
 import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api")
 @ProtectedWithClaims(issuer = "azuread")
+@Validated
 class AvstemmingController(@Autowired val grensesnittavstemmingService: GrensesnittavstemmingService,
                            @Autowired val konsistensavstemmingService: KonsistensavstemmingService) {
 
@@ -44,9 +47,19 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
                onSuccess = { ok("Konsistensavstemming sendt ok") })
     }
 
+    @PostMapping(path = ["/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingUtbetalingsoppdrag): ResponseEntity<Ressurs<String>> {
+        LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
+                         "med ${request.utbetalingsoppdrag.size} antall oppdrag")
+
+        return Result.runCatching {
+            konsistensavstemmingService.utførKonsistensavstemming(request)
+        }.fold(onFailure = { illegalState("Konsistensavstemming feilet", it) },
+               onSuccess = { ok("Konsistensavstemming sendt ok") })
+    }
+
     companion object {
 
         val LOG: Logger = LoggerFactory.getLogger(AvstemmingController::class.java)
     }
-
 }
