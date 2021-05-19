@@ -1,6 +1,7 @@
 package no.nav.familie.oppdrag.service
 
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
+import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
 import no.nav.familie.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
@@ -17,6 +18,10 @@ class KonsistensavstemmingService(
         private val avstemmingSender: AvstemmingSender,
         private val oppdragLagerRepository: OppdragLagerRepository,
 ) {
+
+    fun utførKonsistensavstemming(request: KonsistensavstemmingUtbetalingsoppdrag) {
+        utførKonsistensavstemming(request.fagsystem, request.utbetalingsoppdrag, request.avstemmingstidspunkt)
+    }
 
     private fun utførKonsistensavstemming(
             fagsystem: String,
