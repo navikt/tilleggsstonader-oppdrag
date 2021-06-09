@@ -88,6 +88,13 @@ class SimulerBeregningRequestMapper {
             utbetalesTilId = utbetalingsperiode.utbetalesTil
             henvisning = utbetalingsperiode.behandlingId.toString()
             attestant.add(attest)
+
+            utbetalingsperiode.utbetalingsgrad?.let { utbetalingsgrad ->
+                grad.add(oppdragSkjemaFactory.createGrad().apply {
+                    typeGrad = GradTypeKode.UTBETALINGSGRAD.kode
+                    grad = utbetalingsgrad.toBigInteger()
+                })
+            }
         }
     }
 }

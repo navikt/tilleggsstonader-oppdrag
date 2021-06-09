@@ -4,6 +4,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.avstemming.AvstemmingMapper
 import no.nav.familie.oppdrag.avstemming.SystemKode
+import no.nav.familie.oppdrag.iverksetting.GradTypeKode
 import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
 import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
 import no.nav.familie.oppdrag.iverksetting.UtbetalingsfrekvensKode
@@ -17,6 +18,7 @@ import java.util.*
 class KonsistensavstemmingMapper(private val fagsystem: String,
                                  private val utbetalingsoppdrag: List<Utbetalingsoppdrag>,
                                  private val avstemmingsDato: LocalDateTime) {
+
     private val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")
     private val datoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val avstemmingId = AvstemmingMapper.encodeUUIDBase64(UUID.randomUUID())
@@ -97,6 +99,13 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             utbetalesTilId = utbetalingsperiode.utbetalesTil
             henvisning = utbetalingsperiode.behandlingId.toString()
             attestantListe.add(lagAttestant(utbetalingsoppdrag))
+
+            utbetalingsperiode.utbetalingsgrad?.let { utbetalingsgrad ->
+                gradListe.add(Grad().apply {
+                    gradKode = GradTypeKode.UTBETALINGSGRAD.kode
+                    grad = utbetalingsgrad
+                })
+            }
         }
     }
 
@@ -161,6 +170,7 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
     }
 
     companion object {
+
         val LOG = LoggerFactory.getLogger(KonsistensavstemmingMapper::class.java)
     }
 }

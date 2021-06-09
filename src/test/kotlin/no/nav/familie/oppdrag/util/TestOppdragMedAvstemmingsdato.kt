@@ -2,11 +2,8 @@ package no.nav.familie.oppdrag.util
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 import kotlin.random.Random
 
 object TestOppdragMedAvstemmingsdato {
@@ -20,13 +17,13 @@ object TestOppdragMedAvstemmingsdato {
             vararg utbetalingsperiode: Utbetalingsperiode = arrayOf(lagUtbetalingsperiode(fagområde)),
     ) =
             Utbetalingsoppdrag(
-                    Utbetalingsoppdrag.KodeEndring.NY,
-                    fagområde,
-                    fagsak,
-                    AKTOER,
-                    "Z999999",
-                    avstemmingstidspunkt,
-                    utbetalingsperiode.toList()
+                    kodeEndring = Utbetalingsoppdrag.KodeEndring.NY,
+                    fagSystem = fagområde,
+                    saksnummer = fagsak,
+                    aktoer = AKTOER,
+                    saksbehandlerId = "Z999999",
+                    avstemmingTidspunkt = avstemmingstidspunkt,
+                    utbetalingsperiode = utbetalingsperiode.toList()
             )
 
     fun lagUtbetalingsperiode(
@@ -36,17 +33,18 @@ object TestOppdragMedAvstemmingsdato {
             fom: LocalDate = LocalDate.now().withDayOfMonth(1),
             tom: LocalDate = LocalDate.now().plusYears(6),
     ) =
-            Utbetalingsperiode(false,
-                               null,
-                               periodeId,
-                               null,
-                               LocalDate.now(),
-                               if (fagområde.equals("BA")) "BATR" else "EF",
-                               fom,
-                               tom,
-                               beløp.toBigDecimal(),
-                               Utbetalingsperiode.SatsType.MND,
-                               AKTOER,
-                               Random.nextLong())
+            Utbetalingsperiode(erEndringPåEksisterendePeriode = false,
+                               opphør = null,
+                               periodeId = periodeId,
+                               forrigePeriodeId = null,
+                               datoForVedtak = LocalDate.now(),
+                               klassifisering = if (fagområde.equals("BA")) "BATR" else "EF",
+                               vedtakdatoFom = fom,
+                               vedtakdatoTom = tom,
+                               sats = beløp.toBigDecimal(),
+                               satsType = Utbetalingsperiode.SatsType.MND,
+                               utbetalesTil = AKTOER,
+                               behandlingId = Random.nextLong(),
+                               utbetalingsgrad = 50)
 
 }

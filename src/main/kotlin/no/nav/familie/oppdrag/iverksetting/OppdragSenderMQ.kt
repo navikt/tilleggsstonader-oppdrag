@@ -23,8 +23,10 @@ class OppdragSenderMQ(val jmsTemplateUtgående: JmsTemplate,
             throw UnsupportedOperationException("Kan ikke sende melding til oppdrag. Integrasjonen er skrudd av.")
         }
 
+        val oppdragId = oppdrag.oppdrag110?.oppdragsLinje150?.lastOrNull()?.henvisning
         val oppdragXml = Jaxb.tilXml(oppdrag)
-        LOG.info("Sender oppdrag for fagsystem ${oppdrag.oppdrag110.kodeFagomraade} og fagsak ${oppdrag.oppdrag110.fagsystemId} til Oppdragsystemet")
+        LOG.info("Sender oppdrag for fagsystem=${oppdrag.oppdrag110.kodeFagomraade} og " +
+                 "fagsak=${oppdrag.oppdrag110.fagsystemId} behandling=${oppdragId} til Oppdragsystemet")
         try {
             jmsTemplateUtgående.send { session ->
                 val msg = session.createTextMessage(oppdragXml)
