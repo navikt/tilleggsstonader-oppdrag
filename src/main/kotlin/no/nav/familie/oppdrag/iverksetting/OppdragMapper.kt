@@ -77,6 +77,13 @@ class OppdragMapper {
             utbetalesTilId = utbetalingsperiode.utbetalesTil
             henvisning = utbetalingsperiode.behandlingId.toString()
             attestant180.add(attestant)
+
+            utbetalingsperiode.utbetalingsgrad?.let { utbetalingsgrad ->
+                grad170.add(objectFactory.createGrad170().apply {
+                    typeGrad = GradTypeKode.UTBETALINGSGRAD.kode
+                    grad = utbetalingsgrad.toBigInteger()
+                })
+            }
         }
     }
 

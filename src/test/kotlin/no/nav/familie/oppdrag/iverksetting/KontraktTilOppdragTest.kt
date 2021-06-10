@@ -43,7 +43,8 @@ class KontraktTilOppdragTest {
                 sats = BigDecimal.valueOf(1054L),
                 satsType = Utbetalingsperiode.SatsType.MND,
                 utbetalesTil = "12345678911",
-                behandlingId = 987654321L
+                behandlingId = 987654321L,
+                utbetalingsgrad = 60
         )
 
         val utbetalingsoppdrag = Utbetalingsoppdrag(
@@ -127,6 +128,7 @@ class KontraktTilOppdragTest {
         Assertions.assertEquals(utbetalingsoppdrag.aktoer, oppdragsLinje150.utbetalesTilId)
         Assertions.assertEquals(utbetalingsperiode.behandlingId.toString(), oppdragsLinje150.henvisning)
         Assertions.assertEquals(utbetalingsoppdrag.saksbehandlerId, oppdragsLinje150.attestant180[0].attestantId)
+        Assertions.assertEquals(utbetalingsperiode.utbetalingsgrad, oppdragsLinje150.grad170.firstOrNull()?.grad?.toInt())
 
         if (utbetalingsperiode.forrigePeriodeId !== null && !utbetalingsperiode.erEndringPåEksisterendePeriode) Assertions.assertEquals(utbetalingsoppdrag.saksnummer + utbetalingsperiode.forrigePeriodeId.toString(), oppdragsLinje150.refDelytelseId)
     }

@@ -18,6 +18,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class KonsistensavstemmingMapperTest {
 
@@ -128,6 +129,9 @@ class KonsistensavstemmingMapperTest {
         assertEquals(utbetalingsperiode.utbetalesTil, actual.utbetalesTilId)
         assertEquals(utbetalingsperiode.behandlingId.toString(), actual.henvisning)
         assertEquals(saksbehandler, actual.attestantListe.first().attestantId)
+
+        assertNotNull(utbetalingsperiode.utbetalingsgrad)
+        assertEquals(utbetalingsperiode.utbetalingsgrad, actual.gradListe.firstOrNull()?.grad)
     }
 
     fun assertEnhet(enhet: Enhet) {
