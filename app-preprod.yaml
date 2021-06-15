@@ -23,7 +23,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /serviceuser/data/dev/familie-oppdrag
+      - kvPath: /var/run/secrets/nais.io/serviceuser
         mountPath: /secret/serviceuser
   replicas:
     min: 2
