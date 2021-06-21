@@ -6,6 +6,7 @@ import com.ibm.msg.client.jms.JmsConstants
 import com.ibm.msg.client.jms.JmsConstants.JMS_IBM_CHARACTER_SET
 import com.ibm.msg.client.jms.JmsConstants.JMS_IBM_ENCODING
 import com.ibm.msg.client.wmq.common.CommonConstants.WMQ_CM_CLIENT
+import org.apache.activemq.jms.pool.PooledConnectionFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer
 import org.springframework.context.annotation.Bean
@@ -17,6 +18,7 @@ import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapte
 import org.springframework.jms.core.JmsTemplate
 import javax.jms.ConnectionFactory
 import javax.jms.JMSException
+
 
 private const val UTF_8_WITH_PUA = 1208
 
@@ -32,7 +34,7 @@ class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
 
     @Bean
     @Throws(JMSException::class)
-    fun mqQueueConnectionFactory(): ConnectionFactory {
+    fun mqQueueConnectionFactory(): PooledConnectionFactory {
         val targetFactory = MQQueueConnectionFactory()
         targetFactory.hostName = hostname
         targetFactory.queueManager = queuemanager
@@ -44,11 +46,16 @@ class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
         targetFactory.setBooleanProperty(JmsConstants.USER_AUTHENTICATION_MQCSP, false)
         targetFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA)
 
+        val pooledFactory = PooledConnectionFactory()
+        pooledFactory.connectionFactory = targetFactory
+        pooledFactory.maxConnections = 10
+        pooledFactory.maximumActiveSessionPerConnection = 10
+
         val cf = UserCredentialsConnectionFactoryAdapter()
         cf.setUsername(user)
         cf.setPassword(password)
         cf.setTargetConnectionFactory(targetFactory)
-        return cf
+        return pooledFactory
     }
 
     @Bean
