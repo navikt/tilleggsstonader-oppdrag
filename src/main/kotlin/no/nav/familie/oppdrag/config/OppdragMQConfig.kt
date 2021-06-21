@@ -46,15 +46,17 @@ class OppdragMQConfig(@Value("\${oppdrag.mq.hostname}") val hostname: String,
         targetFactory.setBooleanProperty(JmsConstants.USER_AUTHENTICATION_MQCSP, false)
         targetFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA)
 
-        val pooledFactory = PooledConnectionFactory()
-        pooledFactory.connectionFactory = targetFactory
-        pooledFactory.maxConnections = 10
-        pooledFactory.maximumActiveSessionPerConnection = 10
 
         val cf = UserCredentialsConnectionFactoryAdapter()
         cf.setUsername(user)
         cf.setPassword(password)
         cf.setTargetConnectionFactory(targetFactory)
+
+        val pooledFactory = PooledConnectionFactory()
+        pooledFactory.connectionFactory = cf
+        pooledFactory.maxConnections = 10
+        pooledFactory.maximumActiveSessionPerConnection = 10
+
         return pooledFactory
     }
 
