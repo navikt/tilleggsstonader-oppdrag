@@ -7,6 +7,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.oppdrag.common.RessursUtils.illegalState
 import no.nav.familie.oppdrag.common.RessursUtils.notFound
 import no.nav.familie.oppdrag.common.RessursUtils.ok
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.nav.familie.oppdrag.service.OppdragService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -32,7 +33,7 @@ class OppdragController(@Autowired val oppdragService: OppdragService,
             oppdragService.opprettOppdrag(utbetalingsoppdrag, oppdrag, 0)
         }.fold(
                 onFailure = {
-                    illegalState("Klarte ikke sende oppdrag for saksnr ${utbetalingsoppdrag.saksnummer}", it)
+                    illegalState("Klarte ikke sende oppdrag for saksnr ${utbetalingsoppdrag.fagsystemId()}", it)
                 },
                 onSuccess = {
                     ok("Oppdrag sendt OK")
@@ -50,7 +51,7 @@ class OppdragController(@Autowired val oppdragService: OppdragService,
             oppdragService.opprettOppdrag(utbetalingsoppdrag, oppdrag, versjon)
         }.fold(
                 onFailure = {
-                    illegalState("Klarte ikke sende oppdrag for saksnr ${utbetalingsoppdrag.saksnummer}", it)
+                    illegalState("Klarte ikke sende oppdrag for saksnr ${utbetalingsoppdrag.fagsystemId()}", it)
                 },
                 onSuccess = {
                     ok("Oppdrag sendt OK")

@@ -2,6 +2,7 @@ package no.nav.familie.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.*
 import no.nav.system.os.entiteter.typer.simpletypes.FradragTillegg
 import no.nav.system.os.entiteter.typer.simpletypes.KodeStatusLinje
@@ -42,7 +43,7 @@ class SimulerBeregningRequestMapper {
         return fpServiceTypesFactory.createOppdrag().apply {
             kodeEndring = EndringsKode.fromKode(utbetalingsoppdrag.kodeEndring.name).kode
             kodeFagomraade = utbetalingsoppdrag.fagSystem
-            fagsystemId = utbetalingsoppdrag.saksnummer
+            fagsystemId = utbetalingsoppdrag.fagsystemId()
             utbetFrekvens = UtbetalingsfrekvensKode.MÅNEDLIG.kode
             oppdragGjelderId = utbetalingsoppdrag.aktoer
             datoOppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.toString()
@@ -71,12 +72,12 @@ class SimulerBeregningRequestMapper {
             }
             if (!utbetalingsperiode.erEndringPåEksisterendePeriode) {
                 utbetalingsperiode.forrigePeriodeId?.let {
-                    refDelytelseId = utbetalingsoppdrag.saksnummer + it
-                    refFagsystemId = utbetalingsoppdrag.saksnummer
+                    refDelytelseId = utbetalingsoppdrag.fagsystemId() + it
+                    refFagsystemId = utbetalingsoppdrag.fagsystemId()
                 }
             }
             vedtakId = utbetalingsperiode.datoForVedtak.toString()
-            delytelseId = utbetalingsoppdrag.saksnummer + utbetalingsperiode.periodeId
+            delytelseId = utbetalingsoppdrag.fagsystemId() + utbetalingsperiode.periodeId
             kodeKlassifik = utbetalingsperiode.klassifisering
             datoVedtakFom = utbetalingsperiode.vedtakdatoFom.toString()
             datoVedtakTom = utbetalingsperiode.vedtakdatoTom.toString()

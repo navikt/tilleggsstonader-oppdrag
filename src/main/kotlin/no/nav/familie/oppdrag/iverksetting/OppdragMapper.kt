@@ -3,6 +3,7 @@ package no.nav.familie.oppdrag.iverksetting
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.avstemming.AvstemmingMapper.fagområdeTilAvleverendeKomponentKode
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.trygdeetaten.skjema.oppdrag.*
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
@@ -31,7 +32,7 @@ class OppdragMapper {
             kodeAksjon = OppdragSkjemaConstants.KODE_AKSJON
             kodeEndring = EndringsKode.fromKode(utbetalingsoppdrag.kodeEndring.name).kode
             kodeFagomraade = utbetalingsoppdrag.fagSystem
-            fagsystemId = utbetalingsoppdrag.saksnummer
+            fagsystemId = utbetalingsoppdrag.fagsystemId()
             utbetFrekvens = UtbetalingsfrekvensKode.MÅNEDLIG.kode
             oppdragGjelderId = utbetalingsoppdrag.aktoer
             datoOppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.toXMLDate()
@@ -60,12 +61,12 @@ class OppdragMapper {
             }
             if (!utbetalingsperiode.erEndringPåEksisterendePeriode) {
                 utbetalingsperiode.forrigePeriodeId?.let {
-                    refDelytelseId = utbetalingsoppdrag.saksnummer + it
-                    refFagsystemId = utbetalingsoppdrag.saksnummer
+                    refDelytelseId = utbetalingsoppdrag.fagsystemId() + it
+                    refFagsystemId = utbetalingsoppdrag.fagsystemId()
                 }
             }
             vedtakId = utbetalingsperiode.datoForVedtak.toString()
-            delytelseId = utbetalingsoppdrag.saksnummer + utbetalingsperiode.periodeId
+            delytelseId = utbetalingsoppdrag.fagsystemId() + utbetalingsperiode.periodeId
             kodeKlassifik = utbetalingsperiode.klassifisering
             datoVedtakFom = utbetalingsperiode.vedtakdatoFom.toXMLDate()
             datoVedtakTom = utbetalingsperiode.vedtakdatoTom.toXMLDate()

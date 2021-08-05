@@ -6,6 +6,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
 import no.nav.familie.oppdrag.common.RessursUtils.noContent
 import no.nav.familie.oppdrag.common.RessursUtils.ok
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.simulering.SimuleringTjeneste
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
@@ -27,7 +28,7 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
     @PostMapping(path = ["/etterbetalingsbelop"])
     fun hentEtterbetalingsbeløp(@Valid @RequestBody
                                 utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<RestSimulerResultat>> {
-        LOG.info("Hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.saksnummer}")
+        LOG.info("Hente simulert etterbetaling for saksnr ${utbetalingsoppdrag.fagsystemId()}")
         return ok(simuleringTjeneste.utførSimulering(utbetalingsoppdrag))
     }
 
