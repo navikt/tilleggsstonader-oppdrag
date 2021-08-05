@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.repository.SimuleringLager
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
@@ -36,7 +37,7 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
     override fun hentSimulerBeregningResponse(utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
-        secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
+        secureLogger.info("Saksnummer: ${utbetalingsoppdrag.fagsystemId()} : " +
                           mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
 
         return hentSimulerBeregningResponse(simulerBeregningRequest, utbetalingsoppdrag)
@@ -46,7 +47,7 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                                              utbetalingsoppdrag: Utbetalingsoppdrag): SimulerBeregningResponse {
         try {
             val response = simuleringSender.hentSimulerBeregningResponse(simulerBeregningRequest)
-            secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
+            secureLogger.info("Saksnummer: ${utbetalingsoppdrag.fagsystemId()} : " +
                               mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response))
             return response
         } catch (ex: SimulerBeregningFeilUnderBehandling) {
@@ -66,7 +67,7 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
     override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat? {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
-        secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
+        secureLogger.info("Saksnummer: ${utbetalingsoppdrag.fagsystemId()} : " +
                           mapper.writerWithDefaultPrettyPrinter().writeValueAsString(simulerBeregningRequest))
 
         val simuleringsLager = SimuleringLager.lagFraOppdrag(utbetalingsoppdrag, simulerBeregningRequest)

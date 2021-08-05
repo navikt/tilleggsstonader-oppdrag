@@ -4,6 +4,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.avstemming.AvstemmingMapper
 import no.nav.familie.oppdrag.avstemming.SystemKode
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.GradTypeKode
 import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
 import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
@@ -41,8 +42,8 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         val dataListe: MutableList<Konsistensavstemmingsdata> = arrayListOf()
 
         for (utbetalingsoppdrag in utbetalingsoppdrag) {
-            if (!behandledeSaker.add(utbetalingsoppdrag.saksnummer))
-                error("Har allerede lagt til ${utbetalingsoppdrag.saksnummer} i listen over avstemminger")
+            if (!behandledeSaker.add(utbetalingsoppdrag.fagsystemId()))
+                error("Har allerede lagt til ${utbetalingsoppdrag.fagsystemId()} i listen over avstemminger")
 
             val konsistensavstemmingsdata = lagAksjonsmelding(KonsistensavstemmingConstants.DATA)
             konsistensavstemmingsdata.apply {
@@ -59,7 +60,7 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
     private fun lagOppdragsdata(utbetalingsoppdrag: Utbetalingsoppdrag): Oppdragsdata {
         return Oppdragsdata().apply {
             fagomradeKode = utbetalingsoppdrag.fagSystem
-            fagsystemId = utbetalingsoppdrag.saksnummer
+            fagsystemId = utbetalingsoppdrag.fagsystemId()
             utbetalingsfrekvens = UtbetalingsfrekvensKode.MÅNEDLIG.kode
             oppdragGjelderId = utbetalingsoppdrag.aktoer
             oppdragGjelderFom = OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.format(datoFormatter)
@@ -82,9 +83,9 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         totalBeløp += utbetalingsperiode.sats.toLong()
         return Oppdragslinje().apply {
             vedtakId = utbetalingsperiode.datoForVedtak.format(datoFormatter)
-            delytelseId = utbetalingsoppdrag.saksnummer + utbetalingsperiode.periodeId
+            delytelseId = utbetalingsoppdrag.fagsystemId() + utbetalingsperiode.periodeId
             utbetalingsperiode.forrigePeriodeId?.let {
-                refDelytelseId = utbetalingsoppdrag.saksnummer + it
+                refDelytelseId = utbetalingsoppdrag.fagsystemId() + it
             }
             klassifikasjonKode = utbetalingsperiode.klassifisering
             vedtakPeriode = Periode().apply {

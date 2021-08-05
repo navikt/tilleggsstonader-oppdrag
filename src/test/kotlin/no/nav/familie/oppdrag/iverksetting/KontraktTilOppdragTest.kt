@@ -3,6 +3,7 @@ package no.nav.familie.oppdrag.iverksetting
 import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
+import no.nav.familie.oppdrag.common.fagsystemId
 import no.trygdeetaten.skjema.oppdrag.Oppdrag110
 import no.trygdeetaten.skjema.oppdrag.OppdragsLinje150
 import org.junit.jupiter.api.Assertions
@@ -99,7 +100,7 @@ class KontraktTilOppdragTest {
         Assertions.assertEquals(OppdragSkjemaConstants.KODE_AKSJON, oppdrag110.kodeAksjon)
         Assertions.assertEquals(utbetalingsoppdrag.kodeEndring.name, oppdrag110.kodeEndring.toString())
         Assertions.assertEquals(utbetalingsoppdrag.fagSystem, oppdrag110.kodeFagomraade)
-        Assertions.assertEquals(utbetalingsoppdrag.saksnummer, oppdrag110.fagsystemId)
+        Assertions.assertEquals(utbetalingsoppdrag.fagsystemId(), oppdrag110.fagsystemId)
         Assertions.assertEquals(UtbetalingsfrekvensKode.MÅNEDLIG.kode, oppdrag110.utbetFrekvens)
         Assertions.assertEquals(utbetalingsoppdrag.aktoer, oppdrag110.oppdragGjelderId)
         Assertions.assertEquals(OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.toXMLDate(), oppdrag110.datoOppdragGjelderFom)
@@ -116,7 +117,7 @@ class KontraktTilOppdragTest {
         Assertions.assertEquals(if (utbetalingsperiode.erEndringPåEksisterendePeriode) EndringsKode.ENDRING.kode else EndringsKode.NY.kode, oppdragsLinje150.kodeEndringLinje)
         assertOpphør(utbetalingsperiode, oppdragsLinje150)
         Assertions.assertEquals(utbetalingsperiode.datoForVedtak.toString(), oppdragsLinje150.vedtakId)
-        Assertions.assertEquals(utbetalingsoppdrag.saksnummer+utbetalingsperiode.periodeId.toString(), oppdragsLinje150.delytelseId)
+        Assertions.assertEquals(utbetalingsoppdrag.fagsystemId()+utbetalingsperiode.periodeId.toString(), oppdragsLinje150.delytelseId)
         Assertions.assertEquals(utbetalingsperiode.klassifisering, oppdragsLinje150.kodeKlassifik)
         Assertions.assertEquals(utbetalingsperiode.vedtakdatoFom.toXMLDate(), oppdragsLinje150.datoVedtakFom)
         Assertions.assertEquals(utbetalingsperiode.vedtakdatoTom.toXMLDate(), oppdragsLinje150.datoVedtakTom)
@@ -130,7 +131,7 @@ class KontraktTilOppdragTest {
         Assertions.assertEquals(utbetalingsoppdrag.saksbehandlerId, oppdragsLinje150.attestant180[0].attestantId)
         Assertions.assertEquals(utbetalingsperiode.utbetalingsgrad, oppdragsLinje150.grad170.firstOrNull()?.grad?.toInt())
 
-        if (utbetalingsperiode.forrigePeriodeId !== null && !utbetalingsperiode.erEndringPåEksisterendePeriode) Assertions.assertEquals(utbetalingsoppdrag.saksnummer + utbetalingsperiode.forrigePeriodeId.toString(), oppdragsLinje150.refDelytelseId)
+        if (utbetalingsperiode.forrigePeriodeId !== null && !utbetalingsperiode.erEndringPåEksisterendePeriode) Assertions.assertEquals(utbetalingsoppdrag.fagsystemId() + utbetalingsperiode.forrigePeriodeId.toString(), oppdragsLinje150.refDelytelseId)
     }
 
     fun assertOpphør(utbetalingsperiode: Utbetalingsperiode, oppdragsLinje150: OppdragsLinje150) {
