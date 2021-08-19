@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: familie-oppdrag
-  namespace: default
+  namespace: teamfamilie
   labels:
     team: teamfamilie
 
@@ -36,6 +36,9 @@ spec:
     requests:
       memory: 512Mi
       cpu: 500m
+  ingresses:
+    - https://familie-oppdrag.dev-fss-pub.nais.io
+    - https://familie-oppdrag.dev.intern.nav.no
   secureLogs:
     enabled: true
   env:
