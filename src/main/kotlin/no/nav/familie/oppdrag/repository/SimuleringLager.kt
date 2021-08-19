@@ -3,7 +3,6 @@ package no.nav.familie.oppdrag.repository
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.behandlingsIdForFørsteUtbetalingsperiode
-import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import org.springframework.data.annotation.Id
@@ -27,7 +26,7 @@ data class SimuleringLager(@Id val id: UUID = UUID.randomUUID(),
                           request: SimulerBeregningRequest): SimuleringLager {
             return SimuleringLager(
                     fagsystem = utbetalingsoppdrag.fagSystem,
-                    fagsakId = utbetalingsoppdrag.fagsystemId(),
+                    fagsakId = utbetalingsoppdrag.saksnummer,
                     behandlingId = utbetalingsoppdrag.behandlingsIdForFørsteUtbetalingsperiode(),
                     utbetalingsoppdrag = objectMapper.writeValueAsString(utbetalingsoppdrag),
                     requestXml = Jaxb.tilXml(request = request)

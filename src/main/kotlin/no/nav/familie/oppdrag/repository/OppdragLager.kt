@@ -4,7 +4,6 @@ import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.behandlingsIdForFørsteUtbetalingsperiode
-import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.iverksetting.OppdragMapper
 import no.trygdeetaten.skjema.oppdrag.Mmel
@@ -33,7 +32,7 @@ data class OppdragLager(@Id
         fun lagFraOppdrag(utbetalingsoppdrag: Utbetalingsoppdrag, oppdrag: Oppdrag, versjon: Int = 0): OppdragLager {
             return OppdragLager(personIdent = utbetalingsoppdrag.aktoer,
                                 fagsystem = utbetalingsoppdrag.fagSystem,
-                                fagsakId = utbetalingsoppdrag.fagsystemId(),
+                                fagsakId = utbetalingsoppdrag.saksnummer,
                                 behandlingId = utbetalingsoppdrag.behandlingsIdForFørsteUtbetalingsperiode(),
                                 avstemmingTidspunkt = utbetalingsoppdrag.avstemmingTidspunkt,
                                 utbetalingsoppdrag = utbetalingsoppdrag,

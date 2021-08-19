@@ -3,7 +3,6 @@ package no.nav.familie.oppdrag.konsistensavstemming
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.avstemming.SystemKode
-import no.nav.familie.oppdrag.common.fagsystemId
 import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
 import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
 import no.nav.familie.oppdrag.iverksetting.UtbetalingsfrekvensKode
@@ -108,7 +107,7 @@ class KonsistensavstemmingMapperTest {
 
     fun assertOppdragsdata(utbetalingsoppdrag: Utbetalingsoppdrag, actual: Oppdragsdata) {
         assertEquals(fagområde, actual.fagomradeKode)
-        assertEquals(utbetalingsoppdrag.fagsystemId(), actual.fagsystemId)
+        assertEquals(utbetalingsoppdrag.saksnummer, actual.fagsystemId)
         assertEquals(UtbetalingsfrekvensKode.MÅNEDLIG.kode, actual.utbetalingsfrekvens)
         assertEquals(utbetalingsoppdrag.aktoer, actual.oppdragGjelderId)
         assertEquals(OppdragSkjemaConstants.OPPDRAG_GJELDER_DATO_FOM.format(datoFormatter), actual.oppdragGjelderFom)
