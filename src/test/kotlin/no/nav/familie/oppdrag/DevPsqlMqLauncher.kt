@@ -25,7 +25,7 @@ object DevPsqlMqLauncher {
         mq.start()
 
         val properties = Properties()
-        properties["SPRING_DATASOURCE_URL_OVERRIDE"] = psql.jdbcUrl
+        properties["SPRING_DATASOURCE_URL_OVERRIDE"] = "jdbc:postgresql://localhost:5432/familie-oppdrag"
         properties["SPRING_DATASOURCE_USERNAME_OVERRIDE"] = psql.username
         properties["SPRING_DATASOURCE_PASSWORD_OVERRIDE"] = psql.password
         properties["SPRING_DATASOURCE_DRIVER_OVERRIDE"] = "org.postgresql.Driver"
