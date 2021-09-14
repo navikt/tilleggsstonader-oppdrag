@@ -14,7 +14,7 @@ import java.util.UUID
 import javax.xml.ws.soap.SOAPFaultException
 
 @Service
-class ØkonomiConsumer(private val økonomiService: TilbakekrevingPortType) {
+class ØkonomiClient(private val økonomiService: TilbakekrevingPortType) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 

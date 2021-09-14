@@ -1,7 +1,7 @@
 package no.nav.familie.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.oppdrag.tilbakekreving.ØkonomiConsumer
+import no.nav.familie.oppdrag.tilbakekreving.ØkonomiClient
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljRequest
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljResponse
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakRequest
@@ -20,20 +20,20 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/tilbakekreving")
 @ProtectedWithClaims(issuer = "azuread")
-class TilbakekrevingController(private val økonomiConsumer: ØkonomiConsumer) {
+class TilbakekrevingController(private val økonomiClient: ØkonomiClient) {
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/iverksett/{behandlingId}"])
     fun iverksettVedtak(@PathVariable("behandlingId") behandlingId: UUID,
                         @Valid @RequestBody tilbakekrevingsvedtakRequest: TilbakekrevingsvedtakRequest)
             : Ressurs<TilbakekrevingsvedtakResponse> {
-        return Ressurs.success(økonomiConsumer.iverksettVedtak(behandlingId, tilbakekrevingsvedtakRequest))
+        return Ressurs.success(økonomiClient.iverksettVedtak(behandlingId, tilbakekrevingsvedtakRequest))
     }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], path = ["/kravgrunnlag/{kravgrunnlagId}"])
     fun hentKravgrunnlag(@PathVariable("kravgrunnlagId") kravgrunnlagId: BigInteger,
                          @Valid @RequestBody hentKravgrunnlagRequest: KravgrunnlagHentDetaljRequest)
             : Ressurs<KravgrunnlagHentDetaljResponse> {
-        return Ressurs.success(økonomiConsumer.hentKravgrunnlag(kravgrunnlagId, hentKravgrunnlagRequest))
+        return Ressurs.success(økonomiClient.hentKravgrunnlag(kravgrunnlagId, hentKravgrunnlagRequest))
     }
 
 }

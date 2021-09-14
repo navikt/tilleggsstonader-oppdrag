@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Profile
 import javax.xml.namespace.QName
 
 @Configuration
-class ØkonomiConsumerConfig(
+class ØkonomiClientConfig(
         @Value("\${SECURITYTOKENSERVICE_URL}") private val stsUrl: String,
         @Value("\${CREDENTIAL_USERNAME}") private val systemuserUsername: String,
         @Value("\${CREDENTIAL_PASSWORD}") private val systemuserPwd: String,

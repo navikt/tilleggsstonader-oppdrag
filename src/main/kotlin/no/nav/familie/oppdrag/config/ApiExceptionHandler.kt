@@ -31,8 +31,8 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(IntegrasjonException::class)
     fun handleThrowable(feil: IntegrasjonException): ResponseEntity<Ressurs<Nothing>> {
-        secureLogger.error("Feil mot integrasjonsclienten har oppstått: uri={} data={}", feil.uri, feil.data, feil)
-        logger.error("Feil mot integrasjonsclienten har oppstått exception=${getMostSpecificCause(feil)}")
+        secureLogger.error("Feil i kall mot uri=${feil.uri} data=${feil.data}")
+        logger.error("Feil i kall mot uri=${feil.uri} har oppstått exception=${getMostSpecificCause(feil)}")
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Ressurs.failure(frontendFeilmelding = feil.message,
                                       errorMessage = feil.message,
