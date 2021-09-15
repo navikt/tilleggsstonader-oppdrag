@@ -17,21 +17,16 @@ import javax.xml.ws.soap.SOAPFaultException
 class ØkonomiClient(private val økonomiService: TilbakekrevingPortType) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+
 
     fun iverksettVedtak(behandlingId: UUID,
-                        tilbakekrevingsvedtakRequest: TilbakekrevingsvedtakRequest)
-            : TilbakekrevingsvedtakResponse {
+                        tilbakekrevingsvedtakRequest: TilbakekrevingsvedtakRequest): TilbakekrevingsvedtakResponse {
         logger.info("Iverksetter vedtak for tilbakekrevingsbehandling $behandlingId")
         try {
             return økonomiService.tilbakekrevingsvedtak(tilbakekrevingsvedtakRequest)
-        } catch (exception: SOAPFaultException) {
-            logger.error("tilbakekrevingsvedtak kan ikke sende til økonomi for tilbakekrevingsbehandling=$behandlingId. " +
-                         "Feiler med ${exception.message}")
-            throw IntegrasjonException(msg = "Fikk feil fra økonomi ved iverksetting av tilbakekrevingsbehandling=$behandlingId",
-                                       throwable = exception)
         } catch (exception: Exception) {
-            logger.error("tilbakekrevingsvedtak kan ikke sende til økonomi for tilbakekrevingsbehandling=$behandlingId. " +
-                         "Feiler med ${exception.message}")
+            logSoapFaultException(exception)
             throw IntegrasjonException(msg = "Noe gikk galt ved iverksetting av tilbakekrevingsbehandling=$behandlingId",
                                        throwable = exception)
         }
@@ -43,16 +38,19 @@ class ØkonomiClient(private val økonomiService: TilbakekrevingPortType) {
         logger.info("Henter kravgrunnlag for kravgrunnlagId $kravgrunnlagId")
         try {
             return økonomiService.kravgrunnlagHentDetalj(hentKravgrunnlagRequest)
-        } catch (exception: SOAPFaultException) {
-            logger.error("Kravgrunnlag kan ikke hentes fra økonomi for behandling=$kravgrunnlagId. " +
-                         "Feiler med ${exception.fault.detail.firstChild.textContent}")
-            throw IntegrasjonException(msg = "Kravgrunnlag kan ikke hentes fra økonomi for kravgrunnlagId=$kravgrunnlagId",
-                                       throwable = exception)
         } catch (exception: Exception) {
-            logger.error("Kravgrunnlag kan ikke hentes fra økonomi for behandling=$kravgrunnlagId. " +
-                         "Feiler med ${exception.message}")
+            logSoapFaultException(exception)
             throw IntegrasjonException(msg = "Noe gikk galt ved henting av kravgrunnlag for kravgrunnlagId=$kravgrunnlagId",
                                        throwable = exception)
+        }
+    }
+
+    private fun logSoapFaultException(e: Exception) {
+        if (e is SOAPFaultException) {
+            secureLogger.error("SOAPFaultException -" +
+                               " faultCode=${e.fault.faultCode}" +
+                               " faultString=${e.fault.faultString}"
+            )
         }
     }
 
