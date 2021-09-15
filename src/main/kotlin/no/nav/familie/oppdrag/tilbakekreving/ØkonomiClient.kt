@@ -45,7 +45,7 @@ class ØkonomiClient(private val økonomiService: TilbakekrevingPortType) {
             return økonomiService.kravgrunnlagHentDetalj(hentKravgrunnlagRequest)
         } catch (exception: SOAPFaultException) {
             logger.error("Kravgrunnlag kan ikke hentes fra økonomi for behandling=$kravgrunnlagId. " +
-                         "Feiler med ${exception.stackTrace}")
+                         "Feiler med ${exception.fault.detail.firstChild.textContent}")
             throw IntegrasjonException(msg = "Kravgrunnlag kan ikke hentes fra økonomi for kravgrunnlagId=$kravgrunnlagId",
                                        throwable = exception)
         } catch (exception: Exception) {
