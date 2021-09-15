@@ -35,8 +35,7 @@ class ApiExceptionHandler {
         logger.error("Feil mot økonomiClienten har oppstått exception=${getMostSpecificCause(feil)}")
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Ressurs.failure(frontendFeilmelding = feil.message,
-                                      errorMessage = feil.message,
-                                      error = feil.cause))
+                                      errorMessage = feil.cause?.message))
     }
 
 }
