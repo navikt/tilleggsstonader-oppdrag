@@ -4,18 +4,21 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
+import no.nav.familie.oppdrag.common.logSoapFaultException
+import no.nav.familie.oppdrag.config.IntegrasjonException
+import no.nav.familie.oppdrag.config.Integrasjonssystem
 import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.repository.SimuleringLager
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.context.annotation.ApplicationScope
-import javax.xml.ws.soap.SOAPFaultException
 
 @Service
 @ApplicationScope
@@ -48,15 +51,10 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                               mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response))
             return response
         } catch (ex: SimulerBeregningFeilUnderBehandling) {
-            val feilmelding = genererFeilmelding(ex)
-            secureLogger.warn(feilmelding)
-            throw Exception(feilmelding, ex)
-        } catch (ex: SOAPFaultException) {
-            secureLogger.warn(ex.fault.faultCode)
-            secureLogger.warn(ex.fault.faultString)
-            throw Exception(ex.message, ex)
-        } catch (ex: Throwable) {
-            throw Exception(ex.message, ex)
+            throw IntegrasjonException(Integrasjonssystem.SIMULERING, genererFeilmelding(ex), ex)
+        } catch (ex: Exception) {
+            logSoapFaultException(ex)
+            throw IntegrasjonException(Integrasjonssystem.SIMULERING, "Ukjent feil mot simulering", ex)
         }
     }
 
@@ -90,6 +88,6 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
 
     companion object {
 
-        val secureLogger = LoggerFactory.getLogger("secureLogger")
+        val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
     }
 }

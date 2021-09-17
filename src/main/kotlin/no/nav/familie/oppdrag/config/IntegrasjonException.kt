@@ -1,8 +1,10 @@
 package no.nav.familie.oppdrag.config
 
-import java.net.URI
+enum class Integrasjonssystem {
+    TILBAKEKREVING,
+    SIMULERING
+}
 
-open class IntegrasjonException(msg: String,
-                                throwable: Throwable? = null,
-                                val uri: URI? = null,
-                                val data: Any? = null) : RuntimeException(msg, throwable)
+open class IntegrasjonException(val system: Integrasjonssystem,
+                                msg: String,
+                                throwable: Throwable? = null) : RuntimeException(msg, throwable)
