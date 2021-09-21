@@ -34,12 +34,7 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
     @PostMapping(path = ["/v1"])
     fun utførSimuleringOgHentResultat(@Valid @RequestBody
                                       utbetalingsoppdrag: Utbetalingsoppdrag): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
-        val detaljertSimuleringResultat: DetaljertSimuleringResultat? =
-                simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag)
-        if (detaljertSimuleringResultat != null) {
-            return ok(detaljertSimuleringResultat)
-        }
-        return noContent()
+        return ok(simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag))
     }
 
     //Temporær funksjon som skal brukes for å teste responser fra oppdrag.
