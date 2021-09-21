@@ -31,11 +31,10 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(IntegrasjonException::class)
     fun handleThrowable(feil: IntegrasjonException): ResponseEntity<Ressurs<Nothing>> {
-        secureLogger.error("Feil mot økonomiClienten har oppstått: uri={} data={}", feil.uri, feil.data, feil)
-        logger.error("Feil mot økonomiClienten har oppstått exception=${getMostSpecificCause(feil)}")
+        secureLogger.error("Feil mot ${feil.system} har oppstått", feil)
+        logger.error("Feil mot ${feil.system} har oppstått exception=${getMostSpecificCause(feil)::class}")
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Ressurs.failure(frontendFeilmelding = feil.message,
-                                      errorMessage = feil.cause?.message))
+                .body(Ressurs.failure(errorMessage = feil.message))
     }
 
 }
