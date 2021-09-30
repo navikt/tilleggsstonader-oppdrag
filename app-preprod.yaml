@@ -48,7 +48,7 @@ spec:
     inbound:
       rules:
         - application: familie-ks-sak
-          cluster: default
+          namespace: default
         - application: familie-ba-sak
         - application: familie-tilbake
           cluster: dev-gcp
