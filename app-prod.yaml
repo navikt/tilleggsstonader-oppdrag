@@ -44,17 +44,17 @@ spec:
   azure:
     application:
       enabled: true
-    accessPolicy:
-      inbound:
-        rules:
-          - application: familie-ks-sak
-          - application: familie-ba-sak
-          - application: familie-tilbake
-            cluster: prod-gcp
-          - application: familie-ef-sak
-            cluster: prod-gcp
-          - application: familie-ef-iverksett
-            cluster: prod-gcp
+  accessPolicy:
+    inbound:
+      rules:
+        - application: familie-ks-sak
+        - application: familie-ba-sak
+        - application: familie-tilbake
+          cluster: prod-gcp
+        - application: familie-ef-sak
+          cluster: prod-gcp
+        - application: familie-ef-iverksett
+          cluster: prod-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
