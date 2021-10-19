@@ -21,10 +21,10 @@
         <jvmTarget>11</jvmTarget>
         <main-class>no.nav.familie.oppdrag.LauncherKt</main-class>
         <kotlin.version>1.5.31</kotlin.version>
-        <common-java-modules.version>2.2021.09.13_10.34-f267beb49e1e</common-java-modules.version>        <felles.version>1.20210419103325_d044927</felles.version>
+        <common-java-modules.version>2.2021.09.13_10.34-f267beb49e1e</common-java-modules.version>        <felles.version>1.20211008153542_d279663</felles.version>
         <felles.version>1.20210419103325_d044927</felles.version>
-        <kontrakter.version>2.0_20210929164534_3b83335</kontrakter.version>
-        <token-validation-spring.version>1.3.8</token-validation-spring.version>
+        <kontrakter.version>2.0_20211015081925_ef6cd67</kontrakter.version>
+        <token-validation-spring.version>1.3.9</token-validation-spring.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jaxb-core.version>3.0.2</jaxb-core.version>
         <jaxb-impl.version>3.0.2</jaxb-impl.version>
@@ -165,7 +165,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>7.15.0</version>
+            <version>8.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
