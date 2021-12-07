@@ -11,9 +11,10 @@ jobs:
     name: Bygg app/image, push til github, deploy til prod-fss og dev-fss
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v1
-      - uses: actions/setup-java@v2.4.0
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v2
         with:
           java-version: 11
           distribution: 'temurin'
