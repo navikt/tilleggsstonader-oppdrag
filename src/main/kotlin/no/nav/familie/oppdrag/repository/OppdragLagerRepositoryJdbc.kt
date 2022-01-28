@@ -46,6 +46,23 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
         }
     }
 
+    override fun finnOppdrag(oppdragId: OppdragId, versjon: Int): OppdragLager? {
+        val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ? AND versjon = ?"
+
+        val listeAvOppdrag = jdbcTemplate.query(
+            hentStatement,
+            arrayOf(
+                oppdragId.behandlingsId,
+                oppdragId.personIdent,
+                oppdragId.fagsystem,
+                versjon
+            ),
+            OppdragLagerRowMapper()
+        )
+
+        return listeAvOppdrag.singleOrNull()
+    }
+
     override fun opprettOppdrag(oppdragLager: OppdragLager, versjon: Int) {
         val insertStatement = "INSERT INTO oppdrag_lager " +
                 "(id, utgaaende_oppdrag, status, opprettet_tidspunkt, person_ident, fagsak_id, behandling_id, fagsystem, avstemming_tidspunkt, utbetalingsoppdrag, versjon)" +

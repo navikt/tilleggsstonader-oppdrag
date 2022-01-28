@@ -22,6 +22,9 @@ object RessursUtils {
     fun <T> forbidden(errorMessage: String): ResponseEntity<Ressurs<T>> =
             errorResponse(HttpStatus.FORBIDDEN, errorMessage, null)
 
+    fun <T> conflict(errorMessage: String): ResponseEntity<Ressurs<T>> =
+        errorResponse(HttpStatus.CONFLICT, errorMessage, null)
+
     fun <T> illegalState(errorMessage: String, throwable: Throwable): ResponseEntity<Ressurs<T>> =
             errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, throwable)
 
