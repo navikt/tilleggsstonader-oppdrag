@@ -48,6 +48,8 @@ spec:
     inbound:
       rules:
         - application: familie-ks-sak
+        - application: familie-ba-sak-local
+          cluster: dev-gcp
         - application: familie-ba-sak
           cluster: dev-gcp
         - application: familie-tilbake
