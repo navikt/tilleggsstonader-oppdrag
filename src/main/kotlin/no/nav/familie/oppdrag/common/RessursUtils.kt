@@ -11,32 +11,27 @@ object RessursUtils {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun <T> unauthorized(errorMessage: String): ResponseEntity<Ressurs<T>> =
-        ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Ressurs.failure(errorMessage))
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Ressurs.failure(errorMessage))
 
     fun <T> notFound(errorMessage: String): ResponseEntity<Ressurs<T>> =
-        errorResponse(HttpStatus.NOT_FOUND, errorMessage, null)
+            errorResponse(HttpStatus.NOT_FOUND, errorMessage, null)
 
     fun <T> badRequest(errorMessage: String, throwable: Throwable?): ResponseEntity<Ressurs<T>> =
-        errorResponse(HttpStatus.BAD_REQUEST, errorMessage, throwable)
+            errorResponse(HttpStatus.BAD_REQUEST, errorMessage, throwable)
 
     fun <T> forbidden(errorMessage: String): ResponseEntity<Ressurs<T>> =
-        errorResponse(HttpStatus.FORBIDDEN, errorMessage, null)
-
-    fun <T> conflict(errorMessage: String): ResponseEntity<Ressurs<T>> =
-        errorResponse(HttpStatus.CONFLICT, errorMessage, null)
+            errorResponse(HttpStatus.FORBIDDEN, errorMessage, null)
 
     fun <T> illegalState(errorMessage: String, throwable: Throwable): ResponseEntity<Ressurs<T>> =
-        errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, throwable)
+            errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, throwable)
 
     fun <T> ok(data: T, melding: String? = null): ResponseEntity<Ressurs<T>> = ResponseEntity.ok(Ressurs.success(data, melding))
 
     fun <T> noContent(): ResponseEntity<Ressurs<T>> = ResponseEntity.noContent().build()
 
-    private fun <T> errorResponse(
-        httpStatus: HttpStatus,
-        errorMessage: String,
-        throwable: Throwable?
-    ): ResponseEntity<Ressurs<T>> {
+    private fun <T> errorResponse(httpStatus: HttpStatus,
+                                  errorMessage: String,
+                                  throwable: Throwable?): ResponseEntity<Ressurs<T>> {
         val className = if (throwable != null) "[${throwable::class.java.name}] " else ""
 
         secureLogger.error("$className En feil har oppstått: $errorMessage", throwable)
