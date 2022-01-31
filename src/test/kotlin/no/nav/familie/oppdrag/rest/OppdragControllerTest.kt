@@ -22,23 +22,6 @@ internal class OppdragControllerTest {
 
     val localDateTimeNow = LocalDateTime.now()
     val localDateNow = LocalDate.now()
-    val oppdragLager = OppdragLager(
-        fagsystem = "BA",
-        personIdent = "12345678910",
-        fagsakId = "1234",
-        behandlingId = "1234",
-        utbetalingsoppdrag = Utbetalingsoppdrag(
-            aktoer = "1234567891012",
-            fagSystem = "BA",
-            kodeEndring = Utbetalingsoppdrag.KodeEndring.NY,
-            saksbehandlerId = "Z123", saksnummer = "9999991",
-            utbetalingsperiode = emptyList()
-        ),
-        utgåendeOppdrag = "999992",
-        status = OppdragStatus.KVITTERT_OK,
-        avstemmingTidspunkt = LocalDateTime.now(),
-        kvitteringsmelding = null,
-    )
 
     val utbetalingsoppdrag = Utbetalingsoppdrag(
         Utbetalingsoppdrag.KodeEndring.NY,
@@ -68,7 +51,7 @@ internal class OppdragControllerTest {
     @Test
     fun `Skal lagre oppdrag for utbetalingoppdrag`() {
 
-        val (oppdragLagerRepository, oppdragController) = mockkOppdragController(null)
+        val (oppdragLagerRepository, oppdragController) = mockkOppdragController(false)
 
         oppdragController.sendOppdrag(utbetalingsoppdrag)
 
@@ -85,24 +68,26 @@ internal class OppdragControllerTest {
 
     @Test
     fun `Skal kaste feil om oppdrag er lagret fra før`() {
-        val (oppdragLagerRepository, oppdragController) = mockkOppdragController(oppdragLager)
+        val (oppdragLagerRepository, oppdragController) = mockkOppdragController(true)
 
         val response = oppdragController.sendOppdrag(utbetalingsoppdrag)
 
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
         assertEquals(Ressurs.Status.FEILET, response.body?.status)
 
-        verify(exactly = 1) { oppdragLagerRepository.finnOppdrag(any(), 0) }
-        verify(exactly = 0) { oppdragLagerRepository.opprettOppdrag(any()) }
+        verify(exactly = 1) { oppdragLagerRepository.opprettOppdrag(any()) }
     }
 
-    private fun mockkOppdragController(persistertOppdragLager: OppdragLager?): Pair<OppdragLagerRepository, OppdragController> {
+    private fun mockkOppdragController(alleredeOpprettet: Boolean = false): Pair<OppdragLagerRepository, OppdragController> {
         val mapper = OppdragMapper()
         val oppdragSender = mockk<OppdragSender>(relaxed = true)
 
         val oppdragLagerRepository = mockk<OppdragLagerRepository>()
-        every { oppdragLagerRepository.opprettOppdrag(any()) } just Runs
-        every { oppdragLagerRepository.finnOppdrag(any(), 0) } returns persistertOppdragLager
+        if(alleredeOpprettet) {
+            every { oppdragLagerRepository.opprettOppdrag(any()) } throws org.springframework.dao.DuplicateKeyException("Duplicate key exception")
+        } else {
+            every { oppdragLagerRepository.opprettOppdrag(any()) } just Runs
+        }
 
         val oppdragService = OppdragServiceImpl(oppdragSender, oppdragLagerRepository)
 

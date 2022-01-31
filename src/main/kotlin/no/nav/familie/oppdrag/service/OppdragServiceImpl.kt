@@ -6,7 +6,6 @@ import no.nav.familie.oppdrag.domene.id
 import no.nav.familie.oppdrag.iverksetting.OppdragSender
 import no.nav.familie.oppdrag.repository.OppdragLager
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.repository.id
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,23 +22,17 @@ class OppdragServiceImpl(
 
     @Transactional(rollbackFor = [Throwable::class])
     override fun opprettOppdrag(utbetalingsoppdrag: Utbetalingsoppdrag, oppdrag: Oppdrag, versjon: Int) {
-        if (oppdragErAlleredeSendt(utbetalingsoppdrag, oppdrag, versjon)) {
+
+        LOG.debug("Lagrer oppdrag i databasen " + oppdrag.id)
+        try {
+            oppdragLagerRepository.opprettOppdrag(OppdragLager.lagFraOppdrag(utbetalingsoppdrag, oppdrag), versjon)
+        } catch (e: org.springframework.dao.DuplicateKeyException) {
             LOG.info("Oppdrag ${oppdrag.id} er allerede sendt.")
             throw OppdragAlleredeSendtException()
         }
 
-        LOG.debug("Lagrer oppdrag i databasen " + oppdrag.id)
-        oppdragLagerRepository.opprettOppdrag(OppdragLager.lagFraOppdrag(utbetalingsoppdrag, oppdrag), versjon)
-
         LOG.debug("Legger oppdrag på kø " + oppdrag.id)
         oppdragSender.sendOppdrag(oppdrag)
-    }
-
-    private fun oppdragErAlleredeSendt(utbetalingsoppdrag: Utbetalingsoppdrag, oppdrag: Oppdrag, versjon: Int): Boolean {
-        val oppdragLager = OppdragLager.lagFraOppdrag(utbetalingsoppdrag, oppdrag)
-        val oppdragIdPersistert = oppdragLagerRepository.finnOppdrag(oppdragId = oppdragLager.id, versjon = versjon)
-
-        return oppdragIdPersistert != null
     }
 
     override fun hentStatusForOppdrag(oppdragId: OppdragId): OppdragLager {
