@@ -22,8 +22,14 @@ class OppdragServiceImpl(
 
     @Transactional(rollbackFor = [Throwable::class])
     override fun opprettOppdrag(utbetalingsoppdrag: Utbetalingsoppdrag, oppdrag: Oppdrag, versjon: Int) {
+
         LOG.debug("Lagrer oppdrag i databasen " + oppdrag.id)
-        oppdragLagerRepository.opprettOppdrag(OppdragLager.lagFraOppdrag(utbetalingsoppdrag, oppdrag), versjon)
+        try {
+            oppdragLagerRepository.opprettOppdrag(OppdragLager.lagFraOppdrag(utbetalingsoppdrag, oppdrag), versjon)
+        } catch (e: org.springframework.dao.DuplicateKeyException) {
+            LOG.info("Oppdrag ${oppdrag.id} er allerede sendt.")
+            throw OppdragAlleredeSendtException()
+        }
 
         LOG.debug("Legger oppdrag på kø " + oppdrag.id)
         oppdragSender.sendOppdrag(oppdrag)
@@ -37,3 +43,5 @@ class OppdragServiceImpl(
         val LOG = LoggerFactory.getLogger(OppdragServiceImpl::class.java)
     }
 }
+
+class OppdragAlleredeSendtException() : RuntimeException()
