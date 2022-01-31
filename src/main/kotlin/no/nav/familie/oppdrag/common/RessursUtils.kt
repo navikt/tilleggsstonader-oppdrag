@@ -22,6 +22,9 @@ object RessursUtils {
     fun <T> forbidden(errorMessage: String): ResponseEntity<Ressurs<T>> =
             errorResponse(HttpStatus.FORBIDDEN, errorMessage, null)
 
+    fun <T> conflict(errorMessage: String): ResponseEntity<Ressurs<T>> =
+        errorResponse(HttpStatus.CONFLICT, errorMessage, null, true)
+
     fun <T> illegalState(errorMessage: String, throwable: Throwable): ResponseEntity<Ressurs<T>> =
             errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, throwable)
 
@@ -31,11 +34,17 @@ object RessursUtils {
 
     private fun <T> errorResponse(httpStatus: HttpStatus,
                                   errorMessage: String,
-                                  throwable: Throwable?): ResponseEntity<Ressurs<T>> {
+                                  throwable: Throwable?,
+                                  logSomWarning: Boolean = false): ResponseEntity<Ressurs<T>> {
         val className = if (throwable != null) "[${throwable::class.java.name}] " else ""
 
         secureLogger.error("$className En feil har oppstått: $errorMessage", throwable)
-        LOG.error("$className En feil har oppstått: $errorMessage")
+
+        if(logSomWarning) {
+            LOG.warn("$className En feil har oppstått: $errorMessage")
+        } else {
+            LOG.error("$className En feil har oppstått: $errorMessage")
+        }
         return ResponseEntity.status(httpStatus).body(Ressurs.failure(errorMessage))
     }
 }
