@@ -127,7 +127,7 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
 
         val status = setOf(OppdragStatus.KVITTERT_OK, OppdragStatus.KVITTERT_MED_MANGLER).map { it.name }
 
-        return behandlingIder.chunked(400).map { behandlingIderChunked ->
+        return behandlingIder.chunked(3000).map { behandlingIderChunked ->
             val values = MapSqlParameterSource()
                 .addValue("fagsystem", fagsystem)
                 .addValue("behandlingIder", behandlingIderChunked)

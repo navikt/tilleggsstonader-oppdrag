@@ -163,13 +163,13 @@ internal class OppdragLagerRepositoryJdbcTest {
 
         oppdragLagerRepository.opprettOppdrag(baOppdragLager)
         val behandlingIder = mutableSetOf<String>()
-        for (i in 1..600) {
+        for (i in 1..5000) {
             val behandlingB = baOppdragLager.copy(behandlingId = baOppdragLager.behandlingId + i)
             behandlingIder.add(behandlingB.behandlingId)
             oppdragLagerRepository.opprettOppdrag(behandlingB)
         }
 
         assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem, behandlingIder))
-            .hasSize(600)
+            .hasSize(5000)
     }
 }
