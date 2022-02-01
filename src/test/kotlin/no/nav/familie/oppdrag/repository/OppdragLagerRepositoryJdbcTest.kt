@@ -154,4 +154,22 @@ internal class OppdragLagerRepositoryJdbcTest {
                                                                                               behandlingB.behandlingId)))
                 .hasSize(2)
     }
+
+    @Test
+    fun `hentUtbetalingsoppdragForKonsistensavstemming test at oppdeling av spørring går fint`() {
+        val forrigeMåned = LocalDateTime.now().minusMonths(1)
+        val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA")
+        val baOppdragLager = utbetalingsoppdrag.somOppdragLager.copy(status = OppdragStatus.KVITTERT_OK)
+
+        oppdragLagerRepository.opprettOppdrag(baOppdragLager)
+        val behandlingIder = mutableSetOf<String>()
+        for (i in 1..5000) {
+            val behandlingB = baOppdragLager.copy(behandlingId = baOppdragLager.behandlingId + i)
+            behandlingIder.add(behandlingB.behandlingId)
+            oppdragLagerRepository.opprettOppdrag(behandlingB)
+        }
+
+        assertThat(oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(baOppdragLager.fagsystem, behandlingIder))
+            .hasSize(5000)
+    }
 }
