@@ -5,7 +5,10 @@ Generell proxy mot Oppdragsystemet (OS) for familie-ytelsene
 Bygging gjøres med `mvn clean install`. 
 
 ## Kjøring lokalt
-
+#### Sett environment variabel
+```
+AZURE_APP_CLIENT_ID=<client id i familie-oppdrag i preprod>
+```
 ### Kjøring der app'en starter containere for postgres og MQ
 For å kjøre opp appen lokalt kan en kjøre `DevPsqlMqLauncher`, som har spring-profilen `dev_psql_mq` satt.
 Appen vil starte containere for siste versjoner av PostgresSql og IBM MQ.
