@@ -124,18 +124,23 @@ class OppdragLagerRepositoryJdbc(val jdbcTemplate: JdbcTemplate,
                           AND status IN (:status)) q 
                         WHERE rn = 1"""
 
+
         val status = setOf(OppdragStatus.KVITTERT_OK, OppdragStatus.KVITTERT_MED_MANGLER).map { it.name }
-        val values = MapSqlParameterSource()
+
+        return behandlingIder.chunked(400).map { behandlingIderChunked ->
+            val values = MapSqlParameterSource()
                 .addValue("fagsystem", fagsystem)
-                .addValue("behandlingIder", behandlingIder)
+                .addValue("behandlingIder", behandlingIderChunked)
                 .addValue("status", status)
-        return namedParameterJdbcTemplate.query(query, values) { resultSet, _ ->
-            UtbetalingsoppdragForKonsistensavstemming(
+
+            namedParameterJdbcTemplate.query(query, values) { resultSet, _ ->
+                UtbetalingsoppdragForKonsistensavstemming(
                     resultSet.getString("fagsak_id"),
-                resultSet.getString("behandling_id"),
-                objectMapper.readValue(resultSet.getString("utbetalingsoppdrag"))
-            )
-        }
+                    resultSet.getString("behandling_id"),
+                    objectMapper.readValue(resultSet.getString("utbetalingsoppdrag"))
+                )
+            }
+        }.flatten()
     }
 }
 
