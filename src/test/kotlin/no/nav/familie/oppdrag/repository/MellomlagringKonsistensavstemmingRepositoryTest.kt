@@ -2,11 +2,13 @@ package no.nav.familie.oppdrag.repository
 
 import no.nav.familie.oppdrag.service.Fagsystem
 import no.nav.familie.oppdrag.util.Containers
-import no.nav.familie.oppdrag.util.TestConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.FilterType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Container
@@ -16,7 +18,7 @@ import kotlin.test.assertEquals
 
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
-@SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
+@SpringBootTest(classes = [MellomlagringKonsistensavstemmingRepositoryTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class MellomlagringKonsistensavstemmingRepositoryTest {
@@ -72,4 +74,10 @@ internal class MellomlagringKonsistensavstemmingRepositoryTest {
         antallOppdrag = antallOppdrag,
         totalBeløp = totalBeløp
     )
+    @Configuration
+    @ComponentScan(basePackages = ["no.nav.familie.oppdrag"],
+                   excludeFilters = [ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*[MQ].*"])])
+    class TestConfig
 }
+
+
