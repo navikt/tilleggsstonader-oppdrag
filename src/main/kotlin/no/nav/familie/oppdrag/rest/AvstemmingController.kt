@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -37,12 +38,15 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
     }
 
     @PostMapping(path = ["/v2/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2): ResponseEntity<Ressurs<String>> {
+    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2,
+                             @RequestParam(name = "sendStartmelding") sendStartmelding: Boolean = true,
+                             @RequestParam(name = "sendAvsluttmelding") sendAvsluttmelding: Boolean = true
+    ): ResponseEntity<Ressurs<String>> {
         LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
                  "med ${request.perioderForBehandlinger.sumOf { it.perioder.size }} antall periodeIder")
 
         return Result.runCatching {
-            konsistensavstemmingService.utførKonsistensavstemming(request)
+            konsistensavstemmingService.utførKonsistensavstemming(request, sendStartmelding, sendAvsluttmelding)
         }.fold(onFailure = { illegalState("Konsistensavstemming feilet", it) },
                onSuccess = { ok("Konsistensavstemming sendt ok") })
     }
