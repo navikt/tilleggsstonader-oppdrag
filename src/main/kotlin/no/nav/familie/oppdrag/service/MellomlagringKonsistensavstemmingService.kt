@@ -16,7 +16,17 @@ class MellomlagringKonsistensavstemmingService(
     fun nullstillMellomlagring(
         metaInfo: KonsistensavstemmingMetaInfo
     ) {
-        mellomlagringKonsistensavstemmingRepository.nullstillMellomlagring(metaInfo.fagsystem, metaInfo.avstemmingstidspunkt)
+        val deaktivertMellomlagring =
+            mellomlagringKonsistensavstemmingRepository.findAllByFagsystemAndAvstemmingstidspunktAndAktiv(
+                metaInfo.fagsystem,
+                metaInfo.avstemmingstidspunkt.format(
+                    MellomlagringKonsistensavstemming.avstemingstidspunktFormater
+                ),
+                true
+            ).map { mk -> mk.also { it.aktiv = false } }
+
+        mellomlagringKonsistensavstemmingRepository.updateAll(deaktivertMellomlagring)
+
         LOG.info("Nullstilt mellomlagring for avstemmingstidspunkt ${metaInfo.avstemmingstidspunkt}")
     }
 
@@ -24,9 +34,9 @@ class MellomlagringKonsistensavstemmingService(
         metaInfo: KonsistensavstemmingMetaInfo
     ): Long =
         if (metaInfo.erSisteBatchIEnSplittetBatch()) {
-            mellomlagringKonsistensavstemmingRepository.hentaggregertTotalBeløp(
+            mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(
                 metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt
+                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
             )
         } else {
             0L
@@ -38,7 +48,7 @@ class MellomlagringKonsistensavstemmingService(
         return if (metaInfo.erSisteBatchIEnSplittetBatch()) {
             mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(
                 metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt
+                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
             )
         } else {
             0
@@ -52,7 +62,7 @@ class MellomlagringKonsistensavstemmingService(
     ) {
         val mellomlagring = MellomlagringKonsistensavstemming(
             fagsystem = metaInfo.fagsystem,
-            avstemmingstidspunkt = metaInfo.avstemmingstidspunkt,
+            avstemmingstidspunkt = metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater),
             antallOppdrag = antalOppdrag,
             totalBeløp = totalBeløp,
         )

@@ -2,7 +2,7 @@ CREATE TABLE mellomlagring_konsistensavstemming
 (
   id                    UUID PRIMARY KEY,
   fagsystem             VARCHAR(4)                              NOT NULL,
-  avstemmingstidspunkt  TIMESTAMP(3)                            NOT NULL,
+  avstemmingstidspunkt  VARCHAR(20)                             NOT NULL,
   aktiv                 BOOLEAN         DEFAULT true            NOT NULL,
   antall_oppdrag        INTEGER                                 NOT NULL,
   total_belop           BIGINT                                  NOT NULL,

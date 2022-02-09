@@ -2,6 +2,7 @@ package no.nav.familie.oppdrag.service
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemming
 import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,9 +33,9 @@ class MellomlagringKonsistensavstemmingServiceTest {
         val metaInfo = opprettMetaInfo(false, true)
 
         every {
-            mellomlagringKonsistensavstemmingRepository.hentaggregertTotalBeløp(
+            mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(
                 metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt
+                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
             )
         } returns 100L
 
@@ -53,7 +54,7 @@ class MellomlagringKonsistensavstemmingServiceTest {
         every {
             mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(
                 metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt
+                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
             )
         } returns 100
 
