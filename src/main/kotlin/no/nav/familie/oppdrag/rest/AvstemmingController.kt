@@ -37,6 +37,14 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
                       onSuccess = { ok("Grensesnittavstemming sendt ok") })
     }
 
+    /**
+     * Konsistensavstemmingen virker i to moduser; en hvor avstemmingen sendes i en batch og en hvor batchen er splittet opp i flere batcher.
+     * Første modusen gjør et kall til denne funksjonen og blir trigger hvis både sendStartmelding og sendAvsluttmelding er satt til true.
+     * Andre modusen gjør flere kalle (en per delbranch) til denne funksjonen hvor sendStartmelding og sendAvsluttmelding skal settes som følger:
+     * Første kallet: sendStartmelding=true og sendAvsluttmelding = false
+     * Siste kallet: sendStartmelding=true og sendAvsluttmelding = false
+     * Resterende kall: sendStartmelding=false og sendAvsluttmelding = false
+     */
     @PostMapping(path = ["/v2/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2,
                              @RequestParam(name = "sendStartmelding") sendStartmelding: Boolean = true,
