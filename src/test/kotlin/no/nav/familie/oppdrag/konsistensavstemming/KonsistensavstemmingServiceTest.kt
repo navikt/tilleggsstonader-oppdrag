@@ -166,12 +166,16 @@ class KonsistensavstemmingServiceTest {
 
     @Test
     internal fun `Sender avsluttmelding uten oppdrag`() {
+        val transaksjonsId = UUID.randomUUID().toString()
+
         every { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) } returns
                 emptyList()
+        every { mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(transaksjonsId)} returns 123L
+        every { mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(transaksjonsId)} returns 33
+
 
         val avstemmingstidspunkt = LocalDateTime.now()
         val request = KonsistensavstemmingRequestV2("BA", emptyList(), avstemmingstidspunkt)
-        val transaksjonsId = UUID.randomUUID().toString()
 
         konsistensavstemmingService.utførKonsistensavstemming(request, false, true, transaksjonsId)
 
@@ -188,8 +192,8 @@ class KonsistensavstemmingServiceTest {
         verify(exactly = 0) { mellomlagringKonsistensavstemmingRepository.insert(any()) }
         verify(exactly = 0) { mellomlagringKonsistensavstemmingRepository.findAllByTransaksjonsId(any()) }
 
-        assertEquals(BigInteger.valueOf(0), totalDataMeldingSlot.captured.totaldata.totalAntall)
-        assertEquals(BigDecimal.valueOf(0), totalDataMeldingSlot.captured.totaldata.totalBelop)
+        assertEquals(BigInteger.valueOf(33), totalDataMeldingSlot.captured.totaldata.totalAntall)
+        assertEquals(BigDecimal.valueOf(123), totalDataMeldingSlot.captured.totaldata.totalBelop)
         assertEquals("AVSL", avsluttmeldingSlot.captured.aksjonsdata.aksjonsType)
     }
 
