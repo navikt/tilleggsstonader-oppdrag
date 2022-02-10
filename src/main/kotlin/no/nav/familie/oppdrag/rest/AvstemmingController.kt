@@ -44,17 +44,20 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
      * Første kallet: sendStartmelding=true og sendAvsluttmelding = false
      * Siste kallet: sendStartmelding=true og sendAvsluttmelding = false
      * Resterende kall: sendStartmelding=false og sendAvsluttmelding = false
+     *
+     * transaksjonsId må være satt hvis det er en splittet batch.
      */
     @PostMapping(path = ["/v2/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2,
                              @RequestParam(name = "sendStartmelding") sendStartmelding: Boolean = true,
-                             @RequestParam(name = "sendAvsluttmelding") sendAvsluttmelding: Boolean = true
+                             @RequestParam(name = "sendAvsluttmelding") sendAvsluttmelding: Boolean = true,
+                             @RequestParam(name = "transaksjonsId") transaksjonsId: String? = null
     ): ResponseEntity<Ressurs<String>> {
         LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
                  "med ${request.perioderForBehandlinger.sumOf { it.perioder.size }} antall periodeIder")
 
         return Result.runCatching {
-            konsistensavstemmingService.utførKonsistensavstemming(request, sendStartmelding, sendAvsluttmelding)
+            konsistensavstemmingService.utførKonsistensavstemming(request, sendStartmelding, sendAvsluttmelding, transaksjonsId)
         }.fold(onFailure = { illegalState("Konsistensavstemming feilet", it) },
                onSuccess = { ok("Konsistensavstemming sendt ok") })
     }

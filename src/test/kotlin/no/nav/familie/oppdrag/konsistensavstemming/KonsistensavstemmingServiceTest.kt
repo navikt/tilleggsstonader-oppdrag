@@ -13,10 +13,10 @@ import no.nav.familie.kontrakter.felles.oppdrag.PerioderForBehandling
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.familie.oppdrag.avstemming.AvstemmingSender
+import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemming
+import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import no.nav.familie.oppdrag.repository.OppdragLagerRepository
 import no.nav.familie.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
-import no.nav.familie.oppdrag.service.Fagsystem
-import no.nav.familie.oppdrag.service.KonsistensavstemmingMetaInfo
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.familie.oppdrag.service.MellomlagringKonsistensavstemmingService
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
@@ -27,6 +27,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 import kotlin.test.assertEquals
 
 class KonsistensavstemmingServiceTest {
@@ -35,6 +36,8 @@ class KonsistensavstemmingServiceTest {
     private lateinit var oppdragLagerRepository: OppdragLagerRepository
     private lateinit var avstemmingSender: AvstemmingSender
     private lateinit var mellomlagringKonsistensavstemmingService: MellomlagringKonsistensavstemmingService
+    private lateinit var mellomlagringKonsistensavstemmingRepository: MellomlagringKonsistensavstemmingRepository
+
 
     private val saksnummer = "1"
     private val saksnummer2 = "2"
@@ -61,12 +64,16 @@ class KonsistensavstemmingServiceTest {
     fun setUp() {
         oppdragLagerRepository = mockk()
         avstemmingSender = mockk()
-        mellomlagringKonsistensavstemmingService = mockk()
+        mellomlagringKonsistensavstemmingRepository = mockk()
+        mellomlagringKonsistensavstemmingService = MellomlagringKonsistensavstemmingService(mellomlagringKonsistensavstemmingRepository)
         konsistensavstemmingService = KonsistensavstemmingService(avstemmingSender, oppdragLagerRepository, mellomlagringKonsistensavstemmingService)
         every { avstemmingSender.sendKonsistensAvstemming(any()) } just Runs
 
-        every { mellomlagringKonsistensavstemmingService.hentAggregertAntallOppdrag(any()) } returns 0
-        every { mellomlagringKonsistensavstemmingService.hentAggregertBeløp(any()) } returns 0L
+        every { mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(any()) } returns 0
+        every { mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(any()) } returns 0L
+
+        val mkSlot: MellomlagringKonsistensavstemming = mockk()
+        every { mellomlagringKonsistensavstemmingRepository.insert(any()) } returns mkSlot
     }
 
     @Test
@@ -78,7 +85,7 @@ class KonsistensavstemmingServiceTest {
                               PerioderForBehandling("2", setOf(3)))
         val request = KonsistensavstemmingRequestV2("BA", perioder, LocalDateTime.now())
 
-        konsistensavstemmingService.utførKonsistensavstemming(request, true, true)
+        konsistensavstemmingService.utførKonsistensavstemming(request, true, true, null)
 
         val oppdrag = slot<Konsistensavstemmingsdata>()
         val totalData = slot<Konsistensavstemmingsdata>()
@@ -106,7 +113,7 @@ class KonsistensavstemmingServiceTest {
 
         val request = KonsistensavstemmingRequestV2("BA", perioder, LocalDateTime.now())
 
-        konsistensavstemmingService.utførKonsistensavstemming(request, true, true)
+        konsistensavstemmingService.utførKonsistensavstemming(request, true, true, null)
 
         val oppdrag = slot<Konsistensavstemmingsdata>()
         val oppdrag2 = slot<Konsistensavstemmingsdata>()
@@ -133,30 +140,27 @@ class KonsistensavstemmingServiceTest {
     internal fun `Sender startmelding uten oppdrag`() {
         every { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) } returns
                 emptyList()
-        every { mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(any(), any(), any()) } just Runs
-        every { mellomlagringKonsistensavstemmingService.nullstillMellomlagring(any()) } just Runs
+        every { mellomlagringKonsistensavstemmingRepository.insert(any()) } returns mockk()
+        every { mellomlagringKonsistensavstemmingRepository.findAllByTransaksjonsId(any()) } returns emptyList()
 
         val avstemmingstidspunkt = LocalDateTime.now()
         val request = KonsistensavstemmingRequestV2("BA", emptyList(), avstemmingstidspunkt)
+        val transaksjonsId = UUID.randomUUID().toString()
 
-        konsistensavstemmingService.utførKonsistensavstemming(request, true, false)
+        konsistensavstemmingService.utførKonsistensavstemming(request, true, false, transaksjonsId)
 
-        val metaInfoSlot = slot<KonsistensavstemmingMetaInfo>()
+        val transaksjonsIdSlot = slot<String>()
         val startmeldingSlot = slot<Konsistensavstemmingsdata>()
-        val antalOppdragSlot = slot<Int>()
-        val totalBeløpSlot = slot<Long>()
+        val mkSlot = slot<MellomlagringKonsistensavstemming>()
 
         verify(exactly = 1) { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) }
-        verify(exactly = 1) { mellomlagringKonsistensavstemmingService.nullstillMellomlagring(capture(metaInfoSlot)) }
+        verify(exactly = 1) { mellomlagringKonsistensavstemmingRepository.findAllByTransaksjonsId(capture(transaksjonsIdSlot)) }
         verify(exactly = 1) { avstemmingSender.sendKonsistensAvstemming(capture(startmeldingSlot)) }
-        verify(exactly = 1) { mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(any(),
-                                                                           capture(antalOppdragSlot), capture(totalBeløpSlot)) }
+        verify(exactly = 1) { mellomlagringKonsistensavstemmingRepository.insert(capture(mkSlot)) }
 
-        assertEquals(Fagsystem.BA, metaInfoSlot.captured.fagsystem)
-        assertEquals(avstemmingstidspunkt, metaInfoSlot.captured.avstemmingstidspunkt)
-        assertEquals(avstemmingstidspunkt, metaInfoSlot.captured.avstemmingstidspunkt)
-        assertEquals(0, antalOppdragSlot.captured)
-        assertEquals(0L, totalBeløpSlot.captured)
+        assertEquals(transaksjonsId, transaksjonsIdSlot.captured)
+        assertEquals(0, mkSlot.captured.antallOppdrag)
+        assertEquals(0L, mkSlot.captured.totalBeløp)
         assertEquals("START", startmeldingSlot.captured.aksjonsdata.aksjonsType)
     }
 
@@ -164,31 +168,26 @@ class KonsistensavstemmingServiceTest {
     internal fun `Sender avsluttmelding uten oppdrag`() {
         every { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) } returns
                 emptyList()
-        every { mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(any(), any(), any()) } just Runs
-        every { mellomlagringKonsistensavstemmingService.nullstillMellomlagring(any()) } just Runs
 
         val avstemmingstidspunkt = LocalDateTime.now()
         val request = KonsistensavstemmingRequestV2("BA", emptyList(), avstemmingstidspunkt)
+        val transaksjonsId = UUID.randomUUID().toString()
 
-        konsistensavstemmingService.utførKonsistensavstemming(request, false, true)
+        konsistensavstemmingService.utførKonsistensavstemming(request, false, true, transaksjonsId)
 
-        val metaInfoSlot = slot<KonsistensavstemmingMetaInfo>()
         val totalDataMeldingSlot = slot<Konsistensavstemmingsdata>()
         val avsluttmeldingSlot = slot<Konsistensavstemmingsdata>()
 
         verify(exactly = 1) { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) }
-        verify(exactly = 1) { mellomlagringKonsistensavstemmingService.nullstillMellomlagring(capture(metaInfoSlot)) }
 
         verifyOrder {
             avstemmingSender.sendKonsistensAvstemming(capture(totalDataMeldingSlot))
             avstemmingSender.sendKonsistensAvstemming(capture(avsluttmeldingSlot))
         }
 
-        verify(exactly = 0) { mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(any(),any(), any()) }
+        verify(exactly = 0) { mellomlagringKonsistensavstemmingRepository.insert(any()) }
+        verify(exactly = 0) { mellomlagringKonsistensavstemmingRepository.findAllByTransaksjonsId(any()) }
 
-        assertEquals(Fagsystem.BA, metaInfoSlot.captured.fagsystem)
-        assertEquals(avstemmingstidspunkt, metaInfoSlot.captured.avstemmingstidspunkt)
-        assertEquals(avstemmingstidspunkt, metaInfoSlot.captured.avstemmingstidspunkt)
         assertEquals(BigInteger.valueOf(0), totalDataMeldingSlot.captured.totaldata.totalAntall)
         assertEquals(BigDecimal.valueOf(0), totalDataMeldingSlot.captured.totaldata.totalBelop)
         assertEquals("AVSL", avsluttmeldingSlot.captured.aksjonsdata.aksjonsType)
@@ -200,37 +199,36 @@ class KonsistensavstemmingServiceTest {
                 listOf(utbetalingsoppdrag1_1, utbetalingsoppdrag2_1)
         every { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) } returns
                 emptyList()
-        every { mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(any(), any(), any()) } just Runs
-        every { mellomlagringKonsistensavstemmingService.nullstillMellomlagring(any()) } just Runs
+        every { mellomlagringKonsistensavstemmingRepository.insert(any()) } returns mockk()
 
         val avstemmingstidspunkt = LocalDateTime.now()
         val perioder = listOf(PerioderForBehandling("1", setOf(1)),
                               PerioderForBehandling("3", setOf(1, 2)))
 
         val request = KonsistensavstemmingRequestV2("BA", perioder, avstemmingstidspunkt)
+        val transaksjonsId = UUID.randomUUID().toString()
 
-        konsistensavstemmingService.utførKonsistensavstemming(request, false, false)
+        konsistensavstemmingService.utførKonsistensavstemming(request, false, false, transaksjonsId)
 
         val oppdrag1Slot = slot<Konsistensavstemmingsdata>()
         val oppdrag3Slot = slot<Konsistensavstemmingsdata>()
-        val antalOppdragSlot = slot<Int>()
+        val mkSlot = slot<MellomlagringKonsistensavstemming>()
         val totalBeløpSlot = slot<Long>()
 
         verify(exactly = 1) { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming("BA", eq(setOf("1", "3"))) }
-        verify(exactly = 0) { mellomlagringKonsistensavstemmingService.nullstillMellomlagring(any()) }
+        verify(exactly = 0) { mellomlagringKonsistensavstemmingRepository.findAllByTransaksjonsId(any()) }
 
         verifyOrder {
             avstemmingSender.sendKonsistensAvstemming(capture(oppdrag1Slot))
             avstemmingSender.sendKonsistensAvstemming(capture(oppdrag3Slot))
         }
 
-        verify(exactly = 1) { mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(any(),
-                                                   capture(antalOppdragSlot), capture(totalBeløpSlot)) }
+        verify(exactly = 1) { mellomlagringKonsistensavstemmingRepository.insert(capture(mkSlot)) }
 
         assertEquals(1, oppdrag1Slot.captured.oppdragsdataListe.size)
         assertEquals(1, oppdrag3Slot.captured.oppdragsdataListe.size)
-        assertEquals(2, antalOppdragSlot.captured)
-        assertEquals(161, totalBeløpSlot.captured)
+        assertEquals(2, mkSlot.captured.antallOppdrag)
+        assertEquals(161, mkSlot.captured.totalBeløp)
     }
 
     private fun lagUtbetalingsperiode(

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.Objects.isNull
 
 @Service
 class KonsistensavstemmingService(
@@ -30,15 +31,16 @@ class KonsistensavstemmingService(
         utbetalingsoppdrag: List<Utbetalingsoppdrag>,
         avstemmingstidspunkt: LocalDateTime,
         sendStartmelding: Boolean = true,
-        sendAvsluttmelding: Boolean = true
+        sendAvsluttmelding: Boolean = true,
+        transaksjonsId: String? = null
     ) {
         val metaInfo = KonsistensavstemmingMetaInfo(
-            Fagsystem.valueOf(fagsystem), avstemmingstidspunkt, sendStartmelding,
+            Fagsystem.valueOf(fagsystem), transaksjonsId, avstemmingstidspunkt, sendStartmelding,
             sendAvsluttmelding, utbetalingsoppdrag
         )
 
         if (metaInfo.erFørsteBatchIEnSplittetBatch()) {
-            mellomlagringKonsistensavstemmingService.nullstillMellomlagring(metaInfo)
+            mellomlagringKonsistensavstemmingService.sjekkAtDetteErFørsteMelding(metaInfo.transaksjonsId!!)
         }
 
         val konsistensavstemmingMapper = opprettKonsistensavstemmingMapper(metaInfo)
@@ -51,8 +53,7 @@ class KonsistensavstemmingService(
         }
 
         LOG.info(
-            "Utfører konsistensavstemming for id ${konsistensavstemmingMapper.avstemmingId}, " +
-                "antall meldinger er ${meldinger.size} (inkl. de tre meldingene start, totalinfo og stopp)"
+            "Utfører konsistensavstemming for id ${konsistensavstemmingMapper.avstemmingId} antall meldinger er ${meldinger.size}"
         )
         meldinger.forEach {
             avstemmingSender.sendKonsistensAvstemming(it)
@@ -61,13 +62,9 @@ class KonsistensavstemmingService(
         if (metaInfo.erSplittetBatchMenIkkeSisteBatch()) {
             mellomlagringKonsistensavstemmingService.opprettInnslagIMellomlagring(metaInfo,
                                                                                   konsistensavstemmingMapper.antallOppdrag,
-                                                                                  konsistensavstemmingMapper.totalBeløp)
+                                                                                  konsistensavstemmingMapper.totalBeløp
+            )
         }
-
-        if (metaInfo.erSisteBatchIEnSplittetBatch()) {
-            mellomlagringKonsistensavstemmingService.nullstillMellomlagring(metaInfo)
-        }
-
         LOG.info("Fullført konsistensavstemming for id ${konsistensavstemmingMapper.avstemmingId}")
     }
 
@@ -75,8 +72,11 @@ class KonsistensavstemmingService(
     fun utførKonsistensavstemming(
         request: KonsistensavstemmingRequestV2,
         sendStartMelding: Boolean,
-        sendAvsluttmelding: Boolean
+        sendAvsluttmelding: Boolean,
+        transaksjonsId: String?
     ) {
+        sjekkAtTransaktionsIdErSattHvisSplittetBatch(sendStartMelding, sendAvsluttmelding, transaksjonsId)
+
         val fagsystem = request.fagsystem
         val avstemmingstidspunkt = request.avstemmingstidspunkt
 
@@ -91,7 +91,13 @@ class KonsistensavstemmingService(
             perioderPåBehandling
         )
 
-        utførKonsistensavstemming(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt, sendStartMelding, sendAvsluttmelding)
+        utførKonsistensavstemming(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt, sendStartMelding, sendAvsluttmelding, transaksjonsId)
+    }
+
+    private fun sjekkAtTransaktionsIdErSattHvisSplittetBatch(sendStartMelding: Boolean, sendAvsluttmelding: Boolean, transaksjonsId: String?) {
+        if (!(sendStartMelding && sendAvsluttmelding) && isNull(transaksjonsId)) {
+            throw Exception("Er sendStartmelding eller sendAvsluttmelding satt til false må transaksjonsId være definert.")
+        }
     }
 
     private fun opprettKonsistensavstemmingMapper(

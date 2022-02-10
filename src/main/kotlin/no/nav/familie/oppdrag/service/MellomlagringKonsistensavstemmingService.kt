@@ -12,32 +12,11 @@ import java.time.LocalDateTime
 class MellomlagringKonsistensavstemmingService(
     private val mellomlagringKonsistensavstemmingRepository: MellomlagringKonsistensavstemmingRepository,
 ) {
-
-    fun nullstillMellomlagring(
-        metaInfo: KonsistensavstemmingMetaInfo
-    ) {
-        val deaktivertMellomlagring =
-            mellomlagringKonsistensavstemmingRepository.findAllByFagsystemAndAvstemmingstidspunktAndAktiv(
-                metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt.format(
-                    MellomlagringKonsistensavstemming.avstemingstidspunktFormater
-                ),
-                true
-            ).map { mk -> mk.also { it.aktiv = false } }
-
-        mellomlagringKonsistensavstemmingRepository.updateAll(deaktivertMellomlagring)
-
-        LOG.info("Nullstilt mellomlagring for avstemmingstidspunkt ${metaInfo.avstemmingstidspunkt}")
-    }
-
     fun hentAggregertBeløp(
         metaInfo: KonsistensavstemmingMetaInfo
     ): Long =
         if (metaInfo.erSisteBatchIEnSplittetBatch()) {
-            mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(
-                metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
-            )
+            mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(metaInfo.transaksjonsId!!)
         } else {
             0L
         }
@@ -46,10 +25,7 @@ class MellomlagringKonsistensavstemmingService(
         metaInfo: KonsistensavstemmingMetaInfo
     ): Int {
         return if (metaInfo.erSisteBatchIEnSplittetBatch()) {
-            mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(
-                metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
-            )
+            mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(metaInfo.transaksjonsId!!)
         } else {
             0
         }
@@ -62,12 +38,18 @@ class MellomlagringKonsistensavstemmingService(
     ) {
         val mellomlagring = MellomlagringKonsistensavstemming(
             fagsystem = metaInfo.fagsystem,
-            avstemmingstidspunkt = metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater),
+            transaksjonsId = metaInfo.transaksjonsId!!,
             antallOppdrag = antalOppdrag,
             totalBeløp = totalBeløp,
         )
         mellomlagringKonsistensavstemmingRepository.insert(mellomlagring)
-        LOG.info("Opprettet mellomlagring for avstemmingstidspunkt ${metaInfo.avstemmingstidspunkt}")
+        LOG.info("Opprettet mellomlagring for transaksjonsId ${metaInfo.transaksjonsId}")
+    }
+
+    fun sjekkAtDetteErFørsteMelding(transaksjonsId: String) {
+        if (mellomlagringKonsistensavstemmingRepository.findAllByTransaksjonsId(transaksjonsId).isNotEmpty()) {
+            throw Exception("Skal sende startmelding men det er ikke første mottatte batch med transaskjsonId= $transaksjonsId")
+        }
     }
 
     companion object {
@@ -78,6 +60,7 @@ class MellomlagringKonsistensavstemmingService(
 
 data class KonsistensavstemmingMetaInfo(
     val fagsystem: Fagsystem,
+    val transaksjonsId: String?,
     val avstemmingstidspunkt: LocalDateTime,
     val sendStartmelding: Boolean,
     val sendAvsluttmelding: Boolean,

@@ -13,18 +13,20 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.time.LocalDateTime
+import java.util.*
 import kotlin.test.assertEquals
 
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
-@SpringBootTest(classes = [MellomlagringKonsistensavstemmingRepositoryTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
+@SpringBootTest(
+    classes = [MellomlagringKonsistensavstemmingRepositoryTest.TestConfig::class],
+    properties = ["spring.cloud.vault.enabled=false"]
+)
 @DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class MellomlagringKonsistensavstemmingRepositoryTest {
 
     @Autowired lateinit var repository: MellomlagringKonsistensavstemmingRepository
-    private val avstemingstidspunkt = LocalDateTime.now().format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
 
     companion object {
 
@@ -33,51 +35,46 @@ internal class MellomlagringKonsistensavstemmingRepositoryTest {
 
     @Test
     fun `Test lesing aggregert beløp og antall oppgaver fra tom tabell`() {
-        assertEquals(0, repository.hentAggregertTotalBeløp(Fagsystem.BA, avstemingstidspunkt))
-        assertEquals(0, repository.hentAggregertAntallOppdrag(Fagsystem.BA, avstemingstidspunkt))
+        val transaksjonsId = UUID.randomUUID().toString()
+        assertEquals(0, repository.hentAggregertTotalBeløp(transaksjonsId))
+        assertEquals(0, repository.hentAggregertAntallOppdrag(transaksjonsId))
     }
 
     @Test
     fun `Test lesing aggregert beløp og antall oppgaver`() {
-        repository.insert(opprettMellomlagringKonsistensavstemming(10, 161))
-        repository.insert(opprettMellomlagringKonsistensavstemming(30, 222))
+        val transaksjonsId = UUID.randomUUID().toString()
 
-        assertEquals(383, repository.hentAggregertTotalBeløp(Fagsystem.BA, avstemingstidspunkt))
-        assertEquals(40, repository.hentAggregertAntallOppdrag(Fagsystem.BA, avstemingstidspunkt))
+        repository.insert(opprettMellomlagringKonsistensavstemming(10, 161, transaksjonsId))
+        repository.insert(opprettMellomlagringKonsistensavstemming(30, 222, transaksjonsId))
+
+        assertEquals(383, repository.hentAggregertTotalBeløp(transaksjonsId))
+        assertEquals(40, repository.hentAggregertAntallOppdrag(transaksjonsId))
     }
 
     @Test
     fun `Test nullstilling`() {
+        val transaksjonsId = UUID.randomUUID().toString()
 
-        repository.insert(opprettMellomlagringKonsistensavstemming(10, 161))
-        repository.insert(opprettMellomlagringKonsistensavstemming(30, 222))
-        nullstillMellomlagring(Fagsystem.BA, avstemingstidspunkt)
+        repository.insert(opprettMellomlagringKonsistensavstemming(10, 161, transaksjonsId))
+        repository.insert(opprettMellomlagringKonsistensavstemming(30, 222, transaksjonsId))
 
-        assertEquals(0, repository.hentAggregertTotalBeløp(Fagsystem.BA, avstemingstidspunkt))
-        assertEquals(0, repository.hentAggregertAntallOppdrag(Fagsystem.BA, avstemingstidspunkt))
+        val transaksjonsId2 = UUID.randomUUID().toString()
+        assertEquals(0, repository.hentAggregertTotalBeløp(transaksjonsId2))
+        assertEquals(0, repository.hentAggregertAntallOppdrag(transaksjonsId2))
     }
 
-    fun nullstillMellomlagring(fagsystem: Fagsystem, avstemingstidspunkt: String) {
-        val deaktivertMellomlagring =
-            repository.findAllByFagsystemAndAvstemmingstidspunktAndAktiv(
-                fagsystem,
-                avstemingstidspunkt,
-                true
-            ).map { mk -> mk.also { it.aktiv = false } }
+    fun opprettMellomlagringKonsistensavstemming(antallOppdrag: Int, totalBeløp: Long, transaksjonsId: String) =
+        MellomlagringKonsistensavstemming(
+            fagsystem = Fagsystem.BA,
+            transaksjonsId = transaksjonsId,
+            antallOppdrag = antallOppdrag,
+            totalBeløp = totalBeløp
+        )
 
-        repository.updateAll(deaktivertMellomlagring)
-    }
-
-    fun opprettMellomlagringKonsistensavstemming(antallOppdrag: Int, totalBeløp: Long) = MellomlagringKonsistensavstemming(
-        fagsystem = Fagsystem.BA,
-        avstemmingstidspunkt = avstemingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater),
-        antallOppdrag = antallOppdrag,
-        totalBeløp = totalBeløp
-    )
     @Configuration
-    @ComponentScan(basePackages = ["no.nav.familie.oppdrag"],
-                   excludeFilters = [ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*[MQ].*"])])
+    @ComponentScan(
+        basePackages = ["no.nav.familie.oppdrag"],
+        excludeFilters = [ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*[MQ].*"])]
+    )
     class TestConfig
 }
-
-

@@ -2,11 +2,11 @@ package no.nav.familie.oppdrag.service
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemming
 import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.util.*
 import kotlin.test.assertEquals
 
 class MellomlagringKonsistensavstemmingServiceTest {
@@ -25,18 +25,17 @@ class MellomlagringKonsistensavstemmingServiceTest {
 
     @Test
     fun `Hent aggregert beløp hvor ikke splittet batch`() {
-        assertEquals(0, mellomlagringKonsistensavstemmingService.hentAggregertBeløp(opprettMetaInfo(true, true)))
+        val transaksjonsId = UUID.randomUUID().toString()
+        assertEquals(0, mellomlagringKonsistensavstemmingService.hentAggregertBeløp(opprettMetaInfo(true, true, transaksjonsId)))
     }
 
     @Test
     fun `Hent aggregert beløp for siste batch i splittet batch`() {
-        val metaInfo = opprettMetaInfo(false, true)
+        val transaksjonsId = UUID.randomUUID().toString()
+        val metaInfo = opprettMetaInfo(false, true, transaksjonsId)
 
         every {
-            mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(
-                metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
-            )
+            mellomlagringKonsistensavstemmingRepository.hentAggregertTotalBeløp(transaksjonsId)
         } returns 100L
 
         assertEquals(100, mellomlagringKonsistensavstemmingService.hentAggregertBeløp(metaInfo))
@@ -44,18 +43,27 @@ class MellomlagringKonsistensavstemmingServiceTest {
 
     @Test
     fun `Hent aggregert antall oppdrag hvor ikke splittet batch`() {
-        assertEquals(0, mellomlagringKonsistensavstemmingService.hentAggregertAntallOppdrag(opprettMetaInfo(true, true)))
+        val transaksjonsId = UUID.randomUUID().toString()
+        assertEquals(
+            0,
+            mellomlagringKonsistensavstemmingService.hentAggregertAntallOppdrag(
+                opprettMetaInfo(
+                    true,
+                    true,
+                    transaksjonsId
+                )
+            )
+        )
     }
 
     @Test
     fun `Hent aggregert antall oppdrag for siste batch i splittet batch`() {
-        val metaInfo = opprettMetaInfo(false, true)
+        val transaksjonsId = UUID.randomUUID().toString()
+
+        val metaInfo = opprettMetaInfo(false, true, transaksjonsId)
 
         every {
-            mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(
-                metaInfo.fagsystem,
-                metaInfo.avstemmingstidspunkt.format(MellomlagringKonsistensavstemming.avstemingstidspunktFormater)
-            )
+            mellomlagringKonsistensavstemmingRepository.hentAggregertAntallOppdrag(transaksjonsId)
         } returns 100
 
         assertEquals(100, mellomlagringKonsistensavstemmingService.hentAggregertAntallOppdrag(metaInfo))
@@ -64,6 +72,7 @@ class MellomlagringKonsistensavstemmingServiceTest {
     private fun opprettMetaInfo(
         sendStartmelding: Boolean,
         sendAvsluttmelding: Boolean,
+        transaksjonsId: String?
     ) =
-        KonsistensavstemmingMetaInfo(Fagsystem.BA, avstemmingstidspunkt, sendStartmelding, sendAvsluttmelding, emptyList())
+        KonsistensavstemmingMetaInfo(Fagsystem.BA, transaksjonsId, LocalDateTime.now(), sendStartmelding, sendAvsluttmelding, emptyList())
 }
