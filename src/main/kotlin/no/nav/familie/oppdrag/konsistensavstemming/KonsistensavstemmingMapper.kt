@@ -30,12 +30,13 @@ class KonsistensavstemmingMapper(
     private var aggregertTotalBeløp: Long,
     private var aggregertAntallOppdrag: Int,
     private val sendStartmelding: Boolean,
-    private val sendAvsluttmelding: Boolean
+    private val sendAvsluttmelding: Boolean,
+    private val transaksjonsId: UUID? = UUID.randomUUID()
 ) {
 
     private val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")
     private val datoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val avstemmingId = AvstemmingMapper.encodeUUIDBase64(UUID.randomUUID())
+    val avstemmingId = AvstemmingMapper.encodeUUIDBase64(transaksjonsId ?: UUID.randomUUID())
     var totalBeløp = 0L
     var antallOppdrag = 0
     private val behandledeSaker = mutableSetOf<String>()

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.*
 import java.util.Objects.isNull
 
 @Service
@@ -113,7 +114,8 @@ class KonsistensavstemmingService(
             sendStartmelding = metaInfo.sendStartmelding,
             sendAvsluttmelding = metaInfo.sendAvsluttmelding,
             aggregertAntallOppdrag = aggregertAntallOppdrag,
-            aggregertTotalBeløp = aggregertTotalBeløp
+            aggregertTotalBeløp = aggregertTotalBeløp,
+            transaksjonsId = metaInfo.transaksjonsId?.let { UUID.fromString(it) },
         )
     }
 
