@@ -145,11 +145,11 @@ class KonsistensavstemmingServiceTest {
 
         val avstemmingstidspunkt = LocalDateTime.now()
         val request = KonsistensavstemmingRequestV2("BA", emptyList(), avstemmingstidspunkt)
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
 
         konsistensavstemmingService.utførKonsistensavstemming(request, true, false, transaksjonsId)
 
-        val transaksjonsIdSlot = slot<String>()
+        val transaksjonsIdSlot = slot<UUID>()
         val startmeldingSlot = slot<Konsistensavstemmingsdata>()
         val mkSlot = slot<MellomlagringKonsistensavstemming>()
 
@@ -166,7 +166,7 @@ class KonsistensavstemmingServiceTest {
 
     @Test
     internal fun `Sender avsluttmelding uten oppdrag`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
 
         every { oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(any(), eq(emptySet())) } returns
                 emptyList()
@@ -210,7 +210,7 @@ class KonsistensavstemmingServiceTest {
                               PerioderForBehandling("3", setOf(1, 2)))
 
         val request = KonsistensavstemmingRequestV2("BA", perioder, avstemmingstidspunkt)
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
 
         konsistensavstemmingService.utførKonsistensavstemming(request, false, false, transaksjonsId)
 

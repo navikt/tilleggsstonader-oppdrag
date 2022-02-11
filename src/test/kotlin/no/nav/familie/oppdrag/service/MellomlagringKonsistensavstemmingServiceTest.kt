@@ -25,13 +25,13 @@ class MellomlagringKonsistensavstemmingServiceTest {
 
     @Test
     fun `Hent aggregert beløp hvor ikke splittet batch`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
         assertEquals(0, mellomlagringKonsistensavstemmingService.hentAggregertBeløp(opprettMetaInfo(true, true, transaksjonsId)))
     }
 
     @Test
     fun `Hent aggregert beløp for siste batch i splittet batch`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
         val metaInfo = opprettMetaInfo(false, true, transaksjonsId)
 
         every {
@@ -43,7 +43,7 @@ class MellomlagringKonsistensavstemmingServiceTest {
 
     @Test
     fun `Hent aggregert antall oppdrag hvor ikke splittet batch`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
         assertEquals(
             0,
             mellomlagringKonsistensavstemmingService.hentAggregertAntallOppdrag(
@@ -58,7 +58,7 @@ class MellomlagringKonsistensavstemmingServiceTest {
 
     @Test
     fun `Hent aggregert antall oppdrag for siste batch i splittet batch`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
 
         val metaInfo = opprettMetaInfo(false, true, transaksjonsId)
 
@@ -72,7 +72,7 @@ class MellomlagringKonsistensavstemmingServiceTest {
     private fun opprettMetaInfo(
         sendStartmelding: Boolean,
         sendAvsluttmelding: Boolean,
-        transaksjonsId: String?
+        transaksjonsId: UUID?
     ) =
         KonsistensavstemmingMetaInfo(Fagsystem.BA, transaksjonsId, LocalDateTime.now(), sendStartmelding, sendAvsluttmelding, emptyList())
 }

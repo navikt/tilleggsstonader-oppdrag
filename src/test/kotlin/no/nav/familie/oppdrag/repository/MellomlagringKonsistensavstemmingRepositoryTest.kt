@@ -35,14 +35,14 @@ internal class MellomlagringKonsistensavstemmingRepositoryTest {
 
     @Test
     fun `Test lesing aggregert beløp og antall oppgaver fra tom tabell`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
         assertEquals(0, repository.hentAggregertTotalBeløp(transaksjonsId))
         assertEquals(0, repository.hentAggregertAntallOppdrag(transaksjonsId))
     }
 
     @Test
     fun `Test lesing aggregert beløp og antall oppgaver`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
 
         repository.insert(opprettMellomlagringKonsistensavstemming(10, 161, transaksjonsId))
         repository.insert(opprettMellomlagringKonsistensavstemming(30, 222, transaksjonsId))
@@ -53,17 +53,17 @@ internal class MellomlagringKonsistensavstemmingRepositoryTest {
 
     @Test
     fun `Test nullstilling`() {
-        val transaksjonsId = UUID.randomUUID().toString()
+        val transaksjonsId = UUID.randomUUID()
 
         repository.insert(opprettMellomlagringKonsistensavstemming(10, 161, transaksjonsId))
         repository.insert(opprettMellomlagringKonsistensavstemming(30, 222, transaksjonsId))
 
-        val transaksjonsId2 = UUID.randomUUID().toString()
+        val transaksjonsId2 = UUID.randomUUID()
         assertEquals(0, repository.hentAggregertTotalBeløp(transaksjonsId2))
         assertEquals(0, repository.hentAggregertAntallOppdrag(transaksjonsId2))
     }
 
-    fun opprettMellomlagringKonsistensavstemming(antallOppdrag: Int, totalBeløp: Long, transaksjonsId: String) =
+    fun opprettMellomlagringKonsistensavstemming(antallOppdrag: Int, totalBeløp: Long, transaksjonsId: UUID) =
         MellomlagringKonsistensavstemming(
             fagsystem = Fagsystem.BA,
             transaksjonsId = transaksjonsId,
