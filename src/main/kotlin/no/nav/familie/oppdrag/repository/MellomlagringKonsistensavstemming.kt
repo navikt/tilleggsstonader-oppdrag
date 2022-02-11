@@ -15,6 +15,5 @@ data class MellomlagringKonsistensavstemming(
     val antallOppdrag: Int,
     @Column("total_belop") val totalBeløp: Long,
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
-    val endretTidspunkt: LocalDateTime? = null
 )
 
