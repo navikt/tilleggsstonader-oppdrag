@@ -33,7 +33,7 @@ class KonsistensavstemmingService(
         avstemmingstidspunkt: LocalDateTime,
         sendStartmelding: Boolean = true,
         sendAvsluttmelding: Boolean = true,
-        transaksjonsId: String? = null
+        transaksjonsId: UUID? = null
     ) {
         val metaInfo = KonsistensavstemmingMetaInfo(
             Fagsystem.valueOf(fagsystem), transaksjonsId, avstemmingstidspunkt, sendStartmelding,
@@ -74,7 +74,7 @@ class KonsistensavstemmingService(
         request: KonsistensavstemmingRequestV2,
         sendStartMelding: Boolean,
         sendAvsluttmelding: Boolean,
-        transaksjonsId: String?
+        transaksjonsId: UUID?
     ) {
         sjekkAtTransaktionsIdErSattHvisSplittetBatch(sendStartMelding, sendAvsluttmelding, transaksjonsId)
 
@@ -95,7 +95,7 @@ class KonsistensavstemmingService(
         utførKonsistensavstemming(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt, sendStartMelding, sendAvsluttmelding, transaksjonsId)
     }
 
-    private fun sjekkAtTransaktionsIdErSattHvisSplittetBatch(sendStartMelding: Boolean, sendAvsluttmelding: Boolean, transaksjonsId: String?) {
+    private fun sjekkAtTransaktionsIdErSattHvisSplittetBatch(sendStartMelding: Boolean, sendAvsluttmelding: Boolean, transaksjonsId: UUID?) {
         if (!(sendStartMelding && sendAvsluttmelding) && isNull(transaksjonsId)) {
             throw Exception("Er sendStartmelding eller sendAvsluttmelding satt til false må transaksjonsId være definert.")
         }
@@ -115,7 +115,7 @@ class KonsistensavstemmingService(
             sendAvsluttmelding = metaInfo.sendAvsluttmelding,
             aggregertAntallOppdrag = aggregertAntallOppdrag,
             aggregertTotalBeløp = aggregertTotalBeløp,
-            transaksjonsId = metaInfo.transaksjonsId?.let { UUID.fromString(it) },
+            transaksjonsId = metaInfo.transaksjonsId,
         )
     }
 

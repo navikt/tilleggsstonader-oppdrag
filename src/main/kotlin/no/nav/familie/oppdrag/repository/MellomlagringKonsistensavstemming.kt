@@ -11,7 +11,7 @@ import java.util.*
 data class MellomlagringKonsistensavstemming(
     @Id val id: UUID = UUID.randomUUID(),
     val fagsystem: Fagsystem,
-    val transaksjonsId: String,
+    val transaksjonsId: UUID,
     val antallOppdrag: Int,
     @Column("total_belop") val totalBeløp: Long,
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
