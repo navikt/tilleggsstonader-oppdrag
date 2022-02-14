@@ -20,7 +20,6 @@ import org.springframework.jms.core.JmsTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.lang.UnsupportedOperationException
 import java.time.LocalDateTime
 
 private const val TESTKØ = "DEV.QUEUE.2"
@@ -84,7 +83,7 @@ class AvstemmingMQSenderTest {
 
     private fun lagTestKonsistensavstemming(): List<Konsistensavstemmingsdata> {
         val utbetalingsoppdrag = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(IDAG, FAGOMRÅDE)
-        val mapper = KonsistensavstemmingMapper(FAGOMRÅDE, listOf(utbetalingsoppdrag), IDAG)
+        val mapper = KonsistensavstemmingMapper(FAGOMRÅDE, listOf(utbetalingsoppdrag), IDAG, 0, 0, true, true)
         return mapper.lagAvstemmingsmeldinger()
     }
 

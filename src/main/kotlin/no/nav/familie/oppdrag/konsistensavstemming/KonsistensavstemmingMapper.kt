@@ -8,30 +8,46 @@ import no.nav.familie.oppdrag.iverksetting.GradTypeKode
 import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
 import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
 import no.nav.familie.oppdrag.iverksetting.UtbetalingsfrekvensKode
-import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.*
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Aksjonsdata
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Attestant
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Enhet
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Grad
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Oppdragsdata
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Oppdragslinje
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Periode
+import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Totaldata
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class KonsistensavstemmingMapper(private val fagsystem: String,
-                                 private val utbetalingsoppdrag: List<Utbetalingsoppdrag>,
-                                 private val avstemmingsDato: LocalDateTime) {
+class KonsistensavstemmingMapper(
+    private val fagsystem: String,
+    private val utbetalingsoppdrag: List<Utbetalingsoppdrag>,
+    private val avstemmingsDato: LocalDateTime,
+    private var aggregertTotalBeløp: Long,
+    private var aggregertAntallOppdrag: Int,
+    private val sendStartmelding: Boolean,
+    private val sendAvsluttmelding: Boolean,
+    private val transaksjonsId: UUID? = UUID.randomUUID()
+) {
 
     private val tidspunktFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS")
     private val datoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val avstemmingId = AvstemmingMapper.encodeUUIDBase64(UUID.randomUUID())
-    private var totalBeløp = 0L
+    val avstemmingId = AvstemmingMapper.encodeUUIDBase64(transaksjonsId ?: UUID.randomUUID())
+    var totalBeløp = 0L
+    var antallOppdrag = 0
     private val behandledeSaker = mutableSetOf<String>()
 
-    fun lagAvstemmingsmeldinger(): List<Konsistensavstemmingsdata> {
-        if (utbetalingsoppdrag.isEmpty()) {
-            return emptyList()
+    fun lagAvstemmingsmeldinger(): List<Konsistensavstemmingsdata> =
+        when {
+            sendStartmelding && sendAvsluttmelding -> (listOf(lagStartmelding()) + lagDatameldinger() + listOf(lagTotaldata(), lagSluttmelding()))
+            sendStartmelding -> (listOf(lagStartmelding()) + lagDatameldinger())
+            sendAvsluttmelding -> (lagDatameldinger() + listOf(lagTotaldata(), lagSluttmelding()))
+            else -> lagDatameldinger()
         }
-
-        return (listOf(lagStartmelding()) + lagDatameldinger() + listOf(lagSluttmelding()))
-    }
 
     private fun lagStartmelding() = lagAksjonsmelding(KonsistensavstemmingConstants.START)
 
@@ -47,12 +63,10 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             val konsistensavstemmingsdata = lagAksjonsmelding(KonsistensavstemmingConstants.DATA)
             konsistensavstemmingsdata.apply {
                 oppdragsdataListe.add(lagOppdragsdata(utbetalingsoppdrag))
-
             }
             dataListe.add(konsistensavstemmingsdata)
         }
-        // legger til totaldata på slutten
-        dataListe.add(lagTotaldata(dataListe.size))
+        antallOppdrag = dataListe.size
         return dataListe
     }
 
@@ -78,7 +92,10 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         }
     }
 
-    private fun lagOppdragsLinjeListe(utbetalingsperiode: Utbetalingsperiode, utbetalingsoppdrag: Utbetalingsoppdrag): Oppdragslinje {
+    private fun lagOppdragsLinjeListe(
+        utbetalingsperiode: Utbetalingsperiode,
+        utbetalingsoppdrag: Utbetalingsoppdrag
+    ): Oppdragslinje {
         totalBeløp += utbetalingsperiode.sats.toLong()
         return Oppdragslinje().apply {
             vedtakId = utbetalingsperiode.datoForVedtak.format(datoFormatter)
@@ -101,10 +118,12 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
             attestantListe.add(lagAttestant(utbetalingsoppdrag))
 
             utbetalingsperiode.utbetalingsgrad?.let { utbetalingsgrad ->
-                gradListe.add(Grad().apply {
-                    gradKode = GradTypeKode.UTBETALINGSGRAD.kode
-                    grad = utbetalingsgrad
-                })
+                gradListe.add(
+                    Grad().apply {
+                        gradKode = GradTypeKode.UTBETALINGSGRAD.kode
+                        grad = utbetalingsgrad
+                    }
+                )
             }
         }
     }
@@ -134,13 +153,13 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
         }
     }
 
-    private fun lagTotaldata(antallOppdrag: Int): Konsistensavstemmingsdata {
+    private fun lagTotaldata(): Konsistensavstemmingsdata {
         val konsistensavstemmingsdata = lagAksjonsmelding(KonsistensavstemmingConstants.DATA)
         konsistensavstemmingsdata.apply {
             totaldata = Totaldata().apply {
-                totalAntall = antallOppdrag.toBigInteger()
-                totalBelop = BigDecimal.valueOf(totalBeløp)
-                fortegn = getFortegn(totalBeløp)
+                totalAntall = antallOppdrag.toBigInteger() + aggregertAntallOppdrag.toBigInteger()
+                totalBelop = BigDecimal.valueOf(totalBeløp) + BigDecimal.valueOf(aggregertTotalBeløp)
+                fortegn = getFortegn(totalBeløp + aggregertTotalBeløp)
             }
         }
         return konsistensavstemmingsdata
@@ -151,9 +170,9 @@ class KonsistensavstemmingMapper(private val fagsystem: String,
     }
 
     private fun lagAksjonsmelding(aksjontype: String): Konsistensavstemmingsdata =
-            Konsistensavstemmingsdata().apply {
-                aksjonsdata = opprettAksjonsdata(aksjontype)
-            }
+        Konsistensavstemmingsdata().apply {
+            aksjonsdata = opprettAksjonsdata(aksjontype)
+        }
 
     private fun opprettAksjonsdata(aksjonstype: String): Aksjonsdata {
         return Aksjonsdata().apply {

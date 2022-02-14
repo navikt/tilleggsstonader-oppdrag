@@ -18,7 +18,9 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 @RestController
 @RequestMapping("/api")
@@ -36,13 +38,27 @@ class AvstemmingController(@Autowired val grensesnittavstemmingService: Grensesn
                       onSuccess = { ok("Grensesnittavstemming sendt ok") })
     }
 
+    /**
+     * Konsistensavstemmingen virker i to moduser; en hvor avstemmingen sendes i en batch og en hvor batchen er splittet opp i flere batcher.
+     * Første modusen gjør et kall til denne funksjonen og blir trigger hvis både sendStartmelding og sendAvsluttmelding er satt til true.
+     * Andre modusen gjør flere kalle (en per delbranch) til denne funksjonen hvor sendStartmelding og sendAvsluttmelding skal settes som følger:
+     * Første kallet: sendStartmelding=true og sendAvsluttmelding = false
+     * Siste kallet: sendStartmelding=true og sendAvsluttmelding = false
+     * Resterende kall: sendStartmelding=false og sendAvsluttmelding = false
+     *
+     * transaksjonsId må være satt hvis det er en splittet batch.
+     */
     @PostMapping(path = ["/v2/konsistensavstemming"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2): ResponseEntity<Ressurs<String>> {
+    fun konsistensavstemming(@RequestBody request: KonsistensavstemmingRequestV2,
+                             @RequestParam(name = "sendStartmelding") sendStartmelding: Boolean = true,
+                             @RequestParam(name = "sendAvsluttmelding") sendAvsluttmelding: Boolean = true,
+                             @RequestParam(name = "transaksjonsId") transaksjonsId: UUID? = null
+    ): ResponseEntity<Ressurs<String>> {
         LOG.info("Konsistensavstemming: Kjører for ${request.fagsystem}-oppdrag for ${request.avstemmingstidspunkt} " +
                  "med ${request.perioderForBehandlinger.sumOf { it.perioder.size }} antall periodeIder")
 
         return Result.runCatching {
-            konsistensavstemmingService.utførKonsistensavstemming(request)
+            konsistensavstemmingService.utførKonsistensavstemming(request, sendStartmelding, sendAvsluttmelding, transaksjonsId )
         }.fold(onFailure = { illegalState("Konsistensavstemming feilet", it) },
                onSuccess = { ok("Konsistensavstemming sendt ok") })
     }
