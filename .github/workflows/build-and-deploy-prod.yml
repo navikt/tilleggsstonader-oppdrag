@@ -5,7 +5,7 @@ on:
       - 'master'
 env:
   IMAGE: ghcr.io/navikt/familie-oppdrag:${{ github.sha }}
-  IMAGE_LATEST: ghcr.io/navikt/familie-oppdrag:${{ github.sha }}:latest
+  IMAGE_LATEST: ghcr.io/navikt/familie-oppdrag:latest
 jobs:
   build:
     name: Bygg app/image, push til github
@@ -26,7 +26,7 @@ jobs:
         run: mvn -B --no-transfer-progress package --settings .m2/maven-settings.xml --file pom.xml
       - name: Bygg Docker image
         run: |
-          docker build -t ${IMAGE} -t ${IMAGE_LATEST} .
+          docker build -t $IMAGE -t $IMAGE_LATEST .
       - name: Login to Github Package Registry
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
