@@ -42,7 +42,7 @@ class TilbakekrevingController(private val økonomiClient: ØkonomiClient) {
     fun annulerKravgrunnlag(@PathVariable("kravgrunnlagId") kravgrunnlagId: BigInteger,
                             @Valid @RequestBody kravgrunnlagAnnulerRequest: KravgrunnlagAnnulerRequest)
             : Ressurs<KravgrunnlagAnnulerResponse> {
-        return Ressurs.success(økonomiClient.annulereKravgrunnlag(kravgrunnlagId, kravgrunnlagAnnulerRequest))
+        return Ressurs.success(økonomiClient.annulerKravgrunnlag(kravgrunnlagId, kravgrunnlagAnnulerRequest))
     }
 
 }

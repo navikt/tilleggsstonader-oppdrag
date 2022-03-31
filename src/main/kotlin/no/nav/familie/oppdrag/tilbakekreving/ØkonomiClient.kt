@@ -48,8 +48,8 @@ class ØkonomiClient(private val økonomiService: TilbakekrevingPortType) {
         }
     }
 
-    fun annulereKravgrunnlag(kravgrunnlagId: BigInteger,
-                             kravgrunnlagAnnulerRequest: KravgrunnlagAnnulerRequest): KravgrunnlagAnnulerResponse {
+    fun annulerKravgrunnlag(kravgrunnlagId: BigInteger,
+                            kravgrunnlagAnnulerRequest: KravgrunnlagAnnulerRequest): KravgrunnlagAnnulerResponse {
         logger.info("Annulerer kravgrunnlag for kravgrunnlagId $kravgrunnlagId")
         try {
             return økonomiService.kravgrunnlagAnnuler(kravgrunnlagAnnulerRequest)
