@@ -3,6 +3,8 @@ package no.nav.familie.oppdrag.tilbakekreving
 import no.nav.familie.oppdrag.common.logSoapFaultException
 import no.nav.familie.oppdrag.config.IntegrasjonException
 import no.nav.familie.oppdrag.config.Integrasjonssystem
+import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerRequest
+import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerResponse
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljRequest
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljResponse
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingPortType
@@ -42,6 +44,19 @@ class ØkonomiClient(private val økonomiService: TilbakekrevingPortType) {
             logSoapFaultException(exception)
             throw IntegrasjonException(system = Integrasjonssystem.TILBAKEKREVING,
                                        msg = "Noe gikk galt ved henting av kravgrunnlag for kravgrunnlagId=$kravgrunnlagId",
+                                       throwable = exception)
+        }
+    }
+
+    fun annulereKravgrunnlag(kravgrunnlagId: BigInteger,
+                             kravgrunnlagAnnulerRequest: KravgrunnlagAnnulerRequest): KravgrunnlagAnnulerResponse {
+        logger.info("Annulerer kravgrunnlag for kravgrunnlagId $kravgrunnlagId")
+        try {
+            return økonomiService.kravgrunnlagAnnuler(kravgrunnlagAnnulerRequest)
+        } catch (exception: Exception) {
+            logSoapFaultException(exception)
+            throw IntegrasjonException(system = Integrasjonssystem.TILBAKEKREVING,
+                                       msg = "Noe gikk galt ved annulering av kravgrunnlag for kravgrunnlagId=$kravgrunnlagId",
                                        throwable = exception)
         }
     }
