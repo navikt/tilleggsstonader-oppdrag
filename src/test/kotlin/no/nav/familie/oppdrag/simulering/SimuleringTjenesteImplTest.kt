@@ -7,6 +7,7 @@ import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.familie.oppdrag.simulering.util.lagTestUtbetalingsoppdragForFGBMedEttBarn
 import no.nav.familie.oppdrag.util.Containers
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.FilterType
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Container
@@ -33,9 +35,17 @@ internal class SimuleringTjenesteImplTest {
     @Autowired lateinit var simuleringLagerTjeneste: SimuleringLagerTjeneste
     @Autowired lateinit var simuleringTjeneste: SimuleringTjeneste
 
+    @Autowired
+    private lateinit var jdbcAggregateOperations: JdbcAggregateOperations
+
     companion object {
 
         @Container var postgreSQLContainer = Containers.postgreSQLContainer
+    }
+
+    @BeforeEach
+    fun setup(){
+        listOf(SimuleringLager::class).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }
 
     @Test
