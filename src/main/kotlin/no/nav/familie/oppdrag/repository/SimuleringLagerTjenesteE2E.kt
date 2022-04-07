@@ -1,5 +1,7 @@
 package no.nav.familie.oppdrag.repository
 
+import no.nav.familie.kontrakter.felles.Fagsystem
+
 class SimuleringLagerTjenesteE2E : SimuleringLagerTjeneste {
 
     override fun lagreINyTransaksjon(simuleringsLager: SimuleringLager) {
@@ -11,6 +13,10 @@ class SimuleringLagerTjenesteE2E : SimuleringLagerTjeneste {
     }
 
     override fun finnAlleSimuleringsLager(): List<SimuleringLager> {
+        TODO("")
+    }
+
+    override fun hentSisteSimuleringsresultat(fagsystem: String, fagsakId: String, behandlingId: String): SimuleringLager {
         TODO("")
     }
 }

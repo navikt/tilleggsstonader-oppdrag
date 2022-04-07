@@ -4,7 +4,8 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
-import no.nav.familie.oppdrag.common.RessursUtils.noContent
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetalingerFraSimulering
+import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
 import no.nav.familie.oppdrag.common.RessursUtils.ok
 import no.nav.familie.oppdrag.simulering.SimuleringTjeneste
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -47,5 +48,14 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
     companion object {
 
         val LOG = LoggerFactory.getLogger(SimuleringController::class.java)
+    }
+
+    @PostMapping(path = ["/feilutbetalinger"])
+    fun hentFeilutbetalinger(@Valid @RequestBody request: HentFeilutbetalingerFraSimuleringRequest)
+            : ResponseEntity<Ressurs<FeilutbetalingerFraSimulering>> {
+        LOG.info("Henter feilutbetalinger for ytelsestype=${request.ytelsestype}, " +
+                 "fagsak=${request.eksternFagsakId}," +
+                 " behandlingId=${request.eksternFagsakId}")
+        return ok(simuleringTjeneste.hentFeilutbetalinger(request))
     }
 }

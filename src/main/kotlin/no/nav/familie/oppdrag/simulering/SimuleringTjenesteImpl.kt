@@ -4,6 +4,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetalingerFraSimulering
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetaltPeriode
+import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
 import no.nav.familie.oppdrag.common.logSoapFaultException
 import no.nav.familie.oppdrag.config.FinnesIkkeITps
 import no.nav.familie.oppdrag.config.IntegrasjonException
@@ -12,6 +15,8 @@ import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.repository.SimuleringLager
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
+import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
+import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.slf4j.Logger
@@ -20,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.context.annotation.ApplicationScope
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 @ApplicationScope
@@ -63,7 +71,8 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         }
     }
 
-    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag)
+            : DetaljertSimuleringResultat {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
         secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
@@ -80,6 +89,66 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         val beregning = respons.response?.simulering ?: return DetaljertSimuleringResultat(emptyList())
         return simuleringResultatTransformer.mapSimulering(beregning = beregning, utbetalingsoppdrag = utbetalingsoppdrag)
     }
+
+    override fun hentFeilutbetalinger(request: HentFeilutbetalingerFraSimuleringRequest): FeilutbetalingerFraSimulering {
+        val simuleringLager = simuleringLagerTjeneste.hentSisteSimuleringsresultat(request.ytelsestype.kode,
+                                                                                   request.eksternFagsakId,
+                                                                                   request.fagsystemsbehandlingId)
+        val respons = Jaxb.tilSimuleringsrespons(simuleringLager.responseXml!!)
+        val simulering = respons.response.simulering
+        val feilutbetalterPerioder = mutableMapOf<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>()
+        val utbetaltePerioder = mutableMapOf<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>()
+        // Perioder med feilutbetaling postering har typeklasse FEIL og positiv beløp
+        simulering.beregningsPeriode.forEach { beregningsperiode ->
+            beregningsperiode.beregningStoppnivaa.forEach { stoppNivå ->
+                val feilPosteringer: List<BeregningStoppnivaaDetaljer>? = stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+                    detalj.typeKlasse == TypeKlasse.FEIL.name &&
+                    detalj.belop > BigDecimal.ZERO
+                }.takeIf { it.isNotEmpty() }
+                feilPosteringer?.let { feilutbetalterPerioder[beregningsperiode] = it }
+            }
+        }
+
+        // Perioder med Utbetalte postering har typeklasse YTEL
+        simulering.beregningsPeriode.forEach { beregningsperiode ->
+            beregningsperiode.beregningStoppnivaa.forEach { stoppNivå ->
+                utbetaltePerioder[beregningsperiode] = stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+                    detalj.typeKlasse == TypeKlasse.YTEL.name
+                }
+            }
+        }
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val feilutbetaltPerioder = feilutbetalterPerioder.map { entry ->
+            val periode = entry.key
+            val feilutbetaltBeløp = entry.value.sumOf { it.belop }
+            FeilutbetaltPeriode(
+                    fom = LocalDate.parse(periode.periodeFom, dateTimeFormatter),
+                    tom = LocalDate.parse(periode.periodeTom, dateTimeFormatter),
+                    feilutbetaltBeløp = feilutbetaltBeløp,
+                    //Summer alle negative YTEL posteringer
+                    tidligereUtbetaltBeløp = hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
+                        utbetaltePerioder[beregningsperiode]!!.filter { it.belop < BigDecimal.ZERO }
+                                .sumOf { detalj -> detalj.belop }
+                    }.abs(),
+                    // Summer alle positiv YTEL posteringer - feilutbetaltBeløp
+                    nyttBeløp = hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
+                        utbetaltePerioder[beregningsperiode]!!.filter { it.belop > BigDecimal.ZERO }
+                                .sumOf { detalj -> detalj.belop }
+                    } - feilutbetaltBeløp
+            )
+        }
+
+        return FeilutbetalingerFraSimulering(feilutbetaltePerioder = feilutbetaltPerioder)
+    }
+
+    private fun hentPerioder(feilutbetaltePeriode: BeregningsPeriode,
+                             utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>): List<BeregningsPeriode> {
+        return utbetaltePerioder.keys.filter { utbetaltePeriode ->
+            utbetaltePeriode.periodeFom == feilutbetaltePeriode.periodeFom &&
+            utbetaltePeriode.periodeTom == feilutbetaltePeriode.periodeTom
+        }
+    }
+
 
     private fun genererFeilmelding(ex: SimulerBeregningFeilUnderBehandling): String =
             ex.faultInfo.let {
