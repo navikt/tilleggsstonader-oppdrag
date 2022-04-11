@@ -44,7 +44,7 @@ internal class SimuleringTjenesteImplTest {
     }
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         listOf(SimuleringLager::class).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }
 
@@ -95,6 +95,78 @@ internal class SimuleringTjenesteImplTest {
         assertEquals(BigDecimal("10120.00"), feilutbetaltPeriode.feilutbetaltBeløp)
         assertEquals(BigDecimal("12570.00"), feilutbetaltPeriode.tidligereUtbetaltBeløp)
         assertEquals(BigDecimal("2450.00"), feilutbetaltPeriode.nyttBeløp)
+    }
+
+    @Test
+    fun `hentFeilutbetalinger skal hente flere feilutbetalinger`() {
+        val eksternFagsakId = "10002"
+        val fagsystemsbehandlingId = "100067052"
+        val utbetalingsoppdrag = lesFil("/simulering/testdata/utbetalingsoppdrag_fagsak_10002_BA.txt")
+        val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10002_BA.xml")
+        val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10002_BA.xml")
+
+        simuleringLagerTjeneste.lagreINyTransaksjon(SimuleringLager(
+                fagsystem = "BA",
+                fagsakId = eksternFagsakId,
+                behandlingId = fagsystemsbehandlingId,
+                utbetalingsoppdrag = utbetalingsoppdrag,
+                requestXml = requestXml,
+                responseXml = responsXml
+        ))
+
+        val feilutbetalingerFraSimulering = simuleringTjeneste
+                .hentFeilutbetalinger(HentFeilutbetalingerFraSimuleringRequest(ytelsestype = Ytelsestype.BARNETRYGD,
+                                                                               eksternFagsakId = eksternFagsakId,
+                                                                               fagsystemsbehandlingId = fagsystemsbehandlingId))
+        assertTrue {
+            feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
+            feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 3
+        }
+
+        val feilutbetaltPeriode1 = feilutbetalingerFraSimulering.feilutbetaltePerioder[0]
+        assertEquals(LocalDate.of(2022, 1, 1), feilutbetaltPeriode1.fom)
+        assertEquals(LocalDate.of(2022, 1, 31), feilutbetaltPeriode1.tom)
+        assertEquals(BigDecimal("1054.00"), feilutbetaltPeriode1.feilutbetaltBeløp)
+        assertEquals(BigDecimal("1054.00"), feilutbetaltPeriode1.tidligereUtbetaltBeløp)
+        assertEquals(BigDecimal("0.00"), feilutbetaltPeriode1.nyttBeløp)
+
+        val feilutbetaltPeriode2 = feilutbetalingerFraSimulering.feilutbetaltePerioder[1]
+        assertEquals(LocalDate.of(2022, 2, 1), feilutbetaltPeriode2.fom)
+        assertEquals(LocalDate.of(2022, 2, 28), feilutbetaltPeriode2.tom)
+        assertEquals(BigDecimal("1054.00"), feilutbetaltPeriode2.feilutbetaltBeløp)
+        assertEquals(BigDecimal("1054.00"), feilutbetaltPeriode2.tidligereUtbetaltBeløp)
+        assertEquals(BigDecimal("0.00"), feilutbetaltPeriode2.nyttBeløp)
+
+        val feilutbetaltPeriode3 = feilutbetalingerFraSimulering.feilutbetaltePerioder[2]
+        assertEquals(LocalDate.of(2022, 3, 1), feilutbetaltPeriode3.fom)
+        assertEquals(LocalDate.of(2022, 3, 31), feilutbetaltPeriode3.tom)
+        assertEquals(BigDecimal("1054.00"), feilutbetaltPeriode3.feilutbetaltBeløp)
+        assertEquals(BigDecimal("1054.00"), feilutbetaltPeriode3.tidligereUtbetaltBeløp)
+        assertEquals(BigDecimal("0.00"), feilutbetaltPeriode3.nyttBeløp)
+    }
+
+    @Test
+    fun `hentFeilutbetalinger skal ikke hente feilutbetalinger når det ikke finnes feil postering`() {
+        val eksternFagsakId = "10003"
+        val fagsystemsbehandlingId = "3814"
+        val utbetalingsoppdrag = lesFil("/simulering/testdata/utbetalingsoppdrag_fagsak_10003_EFBT.txt")
+        val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10003_EFBT.xml")
+        val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10003_EFBT.xml")
+
+        simuleringLagerTjeneste.lagreINyTransaksjon(SimuleringLager(
+                fagsystem = "EFBT",
+                fagsakId = eksternFagsakId,
+                behandlingId = fagsystemsbehandlingId,
+                utbetalingsoppdrag = utbetalingsoppdrag,
+                requestXml = requestXml,
+                responseXml = responsXml
+        ))
+
+        val feilutbetalingerFraSimulering = simuleringTjeneste
+                .hentFeilutbetalinger(HentFeilutbetalingerFraSimuleringRequest(ytelsestype = Ytelsestype.BARNETILSYN,
+                                                                               eksternFagsakId = eksternFagsakId,
+                                                                               fagsystemsbehandlingId = fagsystemsbehandlingId))
+        assertTrue { feilutbetalingerFraSimulering.feilutbetaltePerioder.isEmpty() }
     }
 
     private fun lesFil(fileName: String): String {

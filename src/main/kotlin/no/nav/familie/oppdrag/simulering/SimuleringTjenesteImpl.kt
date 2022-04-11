@@ -98,6 +98,7 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         val simulering = respons.response.simulering
         val feilutbetalterPerioder = mutableMapOf<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>()
         val utbetaltePerioder = mutableMapOf<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>()
+
         // Perioder med feilutbetaling postering har typeklasse FEIL og positiv beløp
         simulering.beregningsPeriode.forEach { beregningsperiode ->
             beregningsperiode.beregningStoppnivaa.forEach { stoppNivå ->
@@ -127,12 +128,12 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                     feilutbetaltBeløp = feilutbetaltBeløp,
                     //Summer alle negative YTEL posteringer
                     tidligereUtbetaltBeløp = hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
-                        utbetaltePerioder[beregningsperiode]!!.filter { it.belop < BigDecimal.ZERO }
+                        utbetaltePerioder.getValue(beregningsperiode).filter { it.belop < BigDecimal.ZERO }
                                 .sumOf { detalj -> detalj.belop }
                     }.abs(),
                     // Summer alle positiv YTEL posteringer - feilutbetaltBeløp
                     nyttBeløp = hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
-                        utbetaltePerioder[beregningsperiode]!!.filter { it.belop > BigDecimal.ZERO }
+                        utbetaltePerioder.getValue(beregningsperiode).filter { it.belop > BigDecimal.ZERO }
                                 .sumOf { detalj -> detalj.belop }
                     } - feilutbetaltBeløp
             )
@@ -142,7 +143,8 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
     }
 
     private fun hentPerioder(feilutbetaltePeriode: BeregningsPeriode,
-                             utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>): List<BeregningsPeriode> {
+                             utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>)
+            : List<BeregningsPeriode> {
         return utbetaltePerioder.keys.filter { utbetaltePeriode ->
             utbetaltePeriode.periodeFom == feilutbetaltePeriode.periodeFom &&
             utbetaltePeriode.periodeTom == feilutbetaltePeriode.periodeTom

@@ -1,7 +1,5 @@
 package no.nav.familie.oppdrag.repository
 
-import no.nav.familie.kontrakter.felles.Fagsystem
-
 class SimuleringLagerTjenesteE2E : SimuleringLagerTjeneste {
 
     override fun lagreINyTransaksjon(simuleringsLager: SimuleringLager) {
