@@ -15,6 +15,7 @@ import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.repository.SimuleringLager
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
+import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.context.annotation.ApplicationScope
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Service
 @ApplicationScope
@@ -96,50 +96,45 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
                                                                                    request.fagsystemsbehandlingId)
         val respons = Jaxb.tilSimuleringsrespons(simuleringLager.responseXml!!)
         val simulering = respons.response.simulering
-        val feilutbetalterPerioder = mutableMapOf<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>()
-        val utbetaltePerioder = mutableMapOf<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>()
 
-        // Perioder med feilutbetaling postering har typeklasse FEIL og positiv beløp
-        simulering.beregningsPeriode.forEach { beregningsperiode ->
-            beregningsperiode.beregningStoppnivaa.forEach { stoppNivå ->
-                val feilPosteringer: List<BeregningStoppnivaaDetaljer>? = stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
-                    detalj.typeKlasse == TypeKlasse.FEIL.name &&
-                    detalj.belop > BigDecimal.ZERO
-                }.takeIf { it.isNotEmpty() }
-                feilPosteringer?.let { feilutbetalterPerioder[beregningsperiode] = it }
-            }
-        }
+        val feilPosteringerMedPositivBeløp = finnFeilPosteringer(simulering)
 
         // Perioder med Utbetalte postering har typeklasse YTEL
-        simulering.beregningsPeriode.forEach { beregningsperiode ->
-            beregningsperiode.beregningStoppnivaa.forEach { stoppNivå ->
-                utbetaltePerioder[beregningsperiode] = stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
-                    detalj.typeKlasse == TypeKlasse.YTEL.name
-                }
-            }
-        }
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val feilutbetaltPerioder = feilutbetalterPerioder.map { entry ->
+        val ytelPosteringer = finnYtelPosteringer(simulering)
+
+        val feilutbetaltPerioder = feilPosteringerMedPositivBeløp.map { entry ->
             val periode = entry.key
             val feilutbetaltBeløp = entry.value.sumOf { it.belop }
             FeilutbetaltPeriode(
-                    fom = LocalDate.parse(periode.periodeFom, dateTimeFormatter),
-                    tom = LocalDate.parse(periode.periodeTom, dateTimeFormatter),
+                    fom = LocalDate.parse(periode.periodeFom),
+                    tom = LocalDate.parse(periode.periodeTom),
                     feilutbetaltBeløp = feilutbetaltBeløp,
-                    //Summer alle negative YTEL posteringer
-                    tidligereUtbetaltBeløp = hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
-                        utbetaltePerioder.getValue(beregningsperiode).filter { it.belop < BigDecimal.ZERO }
-                                .sumOf { detalj -> detalj.belop }
-                    }.abs(),
-                    // Summer alle positiv YTEL posteringer - feilutbetaltBeløp
-                    nyttBeløp = hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
-                        utbetaltePerioder.getValue(beregningsperiode).filter { it.belop > BigDecimal.ZERO }
-                                .sumOf { detalj -> detalj.belop }
-                    } - feilutbetaltBeløp
+                    tidligereUtbetaltBeløp = summerNegativeYtelPosteringer(periode, ytelPosteringer).abs(),
+                    nyttBeløp = summerPostiveYtelPosteringer(periode, ytelPosteringer) - feilutbetaltBeløp
             )
         }
-
         return FeilutbetalingerFraSimulering(feilutbetaltePerioder = feilutbetaltPerioder)
+    }
+
+    private fun finnFeilPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
+        return simulering.beregningsPeriode.map { beregningsperiode ->
+            beregningsperiode.beregningStoppnivaa.mapNotNull { stoppNivå ->
+                stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+                    detalj.typeKlasse == TypeKlasse.FEIL.name &&
+                    detalj.belop > BigDecimal.ZERO
+                }.takeIf { it.isNotEmpty() }?.let { beregningsperiode to it }
+            }
+        }.flatten().toMap()
+    }
+
+    private fun finnYtelPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
+        return simulering.beregningsPeriode.map { beregningsperiode ->
+            beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
+                beregningsperiode to stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+                    detalj.typeKlasse == TypeKlasse.YTEL.name
+                }
+            }
+        }.flatten().toMap()
     }
 
     private fun hentPerioder(feilutbetaltePeriode: BeregningsPeriode,
@@ -150,6 +145,20 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
             utbetaltePeriode.periodeTom == feilutbetaltePeriode.periodeTom
         }
     }
+
+    private fun summerNegativeYtelPosteringer(periode: BeregningsPeriode,
+                                              utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
+            hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
+                utbetaltePerioder.getValue(beregningsperiode).filter { it.belop < BigDecimal.ZERO }
+                        .sumOf { detalj -> detalj.belop }
+            }
+
+    private fun summerPostiveYtelPosteringer(periode: BeregningsPeriode,
+                                             utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
+            hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
+                utbetaltePerioder.getValue(beregningsperiode).filter { it.belop > BigDecimal.ZERO }
+                        .sumOf { detalj -> detalj.belop }
+            }
 
 
     private fun genererFeilmelding(ex: SimulerBeregningFeilUnderBehandling): String =
