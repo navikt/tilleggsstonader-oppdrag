@@ -98,8 +98,6 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         val simulering = respons.response.simulering
 
         val feilPosteringerMedPositivBeløp = finnFeilPosteringer(simulering)
-
-        // Perioder med Utbetalte postering har typeklasse YTEL
         val ytelPosteringer = finnYtelPosteringer(simulering)
 
         val feilutbetaltPerioder = feilPosteringerMedPositivBeløp.map { entry ->
