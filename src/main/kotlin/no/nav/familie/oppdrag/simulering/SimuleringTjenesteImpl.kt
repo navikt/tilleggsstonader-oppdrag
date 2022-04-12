@@ -116,23 +116,23 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
 
     private fun finnFeilPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
         return simulering.beregningsPeriode.map { beregningsperiode ->
-            beregningsperiode.beregningStoppnivaa.mapNotNull { stoppNivå ->
+            beregningsperiode to beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
                 stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
                     detalj.typeKlasse == TypeKlasse.FEIL.name &&
                     detalj.belop > BigDecimal.ZERO
-                }.takeIf { it.isNotEmpty() }?.let { beregningsperiode to it }
-            }
-        }.flatten().toMap()
+                }
+            }.flatten()
+        }.filter { it.second.isNotEmpty() }.toMap()
     }
 
     private fun finnYtelPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
         return simulering.beregningsPeriode.map { beregningsperiode ->
-            beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
-                beregningsperiode to stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+            beregningsperiode to beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
+                stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
                     detalj.typeKlasse == TypeKlasse.YTEL.name
                 }
-            }
-        }.flatten().toMap()
+            }.flatten()
+        }.toMap()
     }
 
     private fun hentPerioder(feilutbetaltePeriode: BeregningsPeriode,
