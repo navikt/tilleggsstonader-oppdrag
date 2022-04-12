@@ -100,9 +100,9 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         val feilPosteringerMedPositivBeløp = finnFeilPosteringer(simulering)
         val alleYtelPosteringer = finnYtelPosteringer(simulering)
 
-        val feilutbetaltPerioder = feilPosteringerMedPositivBeløp.map { entry ->
-            val periode = entry.key
-            val feilutbetaltBeløp = entry.value.sumOf { it.belop }
+        val feilutbetaltPerioder = feilPosteringerMedPositivBeløp.map { feilPostering ->
+            val periode = feilPostering.key
+            val feilutbetaltBeløp = feilPostering.value.sumOf { it.belop }
             val ytelPosteringerForPeriode = hentYtelPerioder(periode, alleYtelPosteringer )
             FeilutbetaltPeriode(
                     fom = LocalDate.parse(periode.periodeFom),
