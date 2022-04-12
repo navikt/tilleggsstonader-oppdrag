@@ -98,17 +98,18 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         val simulering = respons.response.simulering
 
         val feilPosteringerMedPositivBeløp = finnFeilPosteringer(simulering)
-        val ytelPosteringer = finnYtelPosteringer(simulering)
+        val alleYtelPosteringer = finnYtelPosteringer(simulering)
 
         val feilutbetaltPerioder = feilPosteringerMedPositivBeløp.map { entry ->
             val periode = entry.key
             val feilutbetaltBeløp = entry.value.sumOf { it.belop }
+            val ytelPosteringerForPeriode = hentYtelPerioder(periode, alleYtelPosteringer )
             FeilutbetaltPeriode(
                     fom = LocalDate.parse(periode.periodeFom),
                     tom = LocalDate.parse(periode.periodeTom),
                     feilutbetaltBeløp = feilutbetaltBeløp,
-                    tidligereUtbetaltBeløp = summerNegativeYtelPosteringer(periode, ytelPosteringer).abs(),
-                    nyttBeløp = summerPostiveYtelPosteringer(periode, ytelPosteringer) - feilutbetaltBeløp
+                    tidligereUtbetaltBeløp = summerNegativeYtelPosteringer(ytelPosteringerForPeriode, alleYtelPosteringer).abs(),
+                    nyttBeløp = summerPostiveYtelPosteringer(ytelPosteringerForPeriode, alleYtelPosteringer) - feilutbetaltBeløp
             )
         }
         return FeilutbetalingerFraSimulering(feilutbetaltePerioder = feilutbetaltPerioder)
@@ -135,26 +136,26 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         }.toMap()
     }
 
-    private fun hentPerioder(feilutbetaltePeriode: BeregningsPeriode,
-                             utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>)
+    private fun hentYtelPerioder(feilutbetaltePeriode: BeregningsPeriode,
+                                 ytelPerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>)
             : List<BeregningsPeriode> {
-        return utbetaltePerioder.keys.filter { utbetaltePeriode ->
-            utbetaltePeriode.periodeFom == feilutbetaltePeriode.periodeFom &&
-            utbetaltePeriode.periodeTom == feilutbetaltePeriode.periodeTom
+        return ytelPerioder.keys.filter { ytelPeriode ->
+            ytelPeriode.periodeFom == feilutbetaltePeriode.periodeFom &&
+            ytelPeriode.periodeTom == feilutbetaltePeriode.periodeTom
         }
     }
 
-    private fun summerNegativeYtelPosteringer(periode: BeregningsPeriode,
-                                              utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
-            hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
-                utbetaltePerioder.getValue(beregningsperiode).filter { it.belop < BigDecimal.ZERO }
+    private fun summerNegativeYtelPosteringer(perioder: List<BeregningsPeriode>,
+                                              ytelPerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
+            perioder.sumOf { beregningsperiode ->
+                ytelPerioder.getValue(beregningsperiode).filter { it.belop < BigDecimal.ZERO }
                         .sumOf { detalj -> detalj.belop }
             }
 
-    private fun summerPostiveYtelPosteringer(periode: BeregningsPeriode,
-                                             utbetaltePerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
-            hentPerioder(periode, utbetaltePerioder).sumOf { beregningsperiode ->
-                utbetaltePerioder.getValue(beregningsperiode).filter { it.belop > BigDecimal.ZERO }
+    private fun summerPostiveYtelPosteringer(perioder: List<BeregningsPeriode>,
+                                             ytelPerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
+            perioder.sumOf { beregningsperiode ->
+                ytelPerioder.getValue(beregningsperiode).filter { it.belop > BigDecimal.ZERO }
                         .sumOf { detalj -> detalj.belop }
             }
 
