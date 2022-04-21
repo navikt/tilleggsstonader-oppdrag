@@ -22,12 +22,22 @@ class OppdragMottaker(
 ) {
 
     internal var LOG = LoggerFactory.getLogger(OppdragMottaker::class.java)
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @Transactional
     @JmsListener(destination = "\${oppdrag.mq.mottak}", containerFactory = "jmsListenerContainerFactory")
     fun mottaKvitteringFraOppdrag(melding: TextMessage) {
+        try {
+            behandleMelding(melding)
+        } catch (e: Exception) {
+            secureLogger.warn("Feilet lesing av melding=${melding.jmsMessageID}", e)
+            throw e
+        }
+    }
+
+    private fun behandleMelding(melding: TextMessage) {
         var svarFraOppdrag = melding.text as String
-        if (!env.activeProfiles.any { it in LOKALE_PROFILER}) {
+        if (!env.activeProfiles.any { it in LOKALE_PROFILER }) {
             svarFraOppdrag = svarFraOppdrag.replace("oppdrag xmlns", "ns2:oppdrag xmlns:ns2")
         }
 
