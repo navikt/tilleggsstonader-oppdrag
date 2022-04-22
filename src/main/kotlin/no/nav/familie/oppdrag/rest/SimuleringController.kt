@@ -10,6 +10,7 @@ import no.nav.familie.oppdrag.common.RessursUtils.ok
 import no.nav.familie.oppdrag.simulering.SimuleringTjeneste
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -27,7 +28,7 @@ import javax.validation.Valid
 @ProtectedWithClaims(issuer = "azuread")
 class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste) {
 
-    val logger = LoggerFactory.getLogger(SimuleringController::class.java)
+    val logger: Logger = LoggerFactory.getLogger(SimuleringController::class.java)
 
 
     @PostMapping(path = ["/etterbetalingsbelop"])

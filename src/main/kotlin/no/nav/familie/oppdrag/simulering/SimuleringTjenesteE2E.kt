@@ -13,7 +13,7 @@ import org.springframework.web.context.annotation.ApplicationScope
 @Service
 @ApplicationScope
 @Profile("e2e")
-class SimuleringTjenesteE2E() : SimuleringTjeneste {
+class SimuleringTjenesteE2E : SimuleringTjeneste {
 
     override fun utførSimulering(utbetalingsoppdrag: Utbetalingsoppdrag): RestSimulerResultat = RestSimulerResultat(0)
     override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag)

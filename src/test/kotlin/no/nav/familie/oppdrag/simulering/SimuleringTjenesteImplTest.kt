@@ -25,7 +25,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @ActiveProfiles("dev")
-@ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
+@ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class])
 @SpringBootTest(classes = [SimuleringTjenesteImplTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers

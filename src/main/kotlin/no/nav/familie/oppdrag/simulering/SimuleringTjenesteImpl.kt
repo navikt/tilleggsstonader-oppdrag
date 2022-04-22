@@ -129,13 +129,13 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
     }
 
     private fun finnYtelPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
-        return simulering.beregningsPeriode.map { beregningsperiode ->
-            beregningsperiode to beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
+        return simulering.beregningsPeriode.associateWith { beregningsperiode ->
+            beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
                 stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
                     detalj.typeKlasse == TypeKlasse.YTEL.name
                 }
             }.flatten()
-        }.toMap()
+        }
     }
 
     private fun hentYtelPerioder(feilutbetaltePeriode: BeregningsPeriode,
