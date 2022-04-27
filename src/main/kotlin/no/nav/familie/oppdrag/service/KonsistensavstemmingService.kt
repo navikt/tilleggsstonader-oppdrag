@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.*
 import java.util.Objects.isNull
+import java.util.UUID
 
 @Service
 class KonsistensavstemmingService(
@@ -84,12 +84,15 @@ class KonsistensavstemmingService(
         val perioderPåBehandling = request.perioderForBehandlinger.map { it.behandlingId to it.perioder }.toMap()
         verifyUnikeBehandlinger(perioderPåBehandling, request)
 
+        val fødselsnummerPåBehandling = request.perioderForBehandlinger.map { it.behandlingId to it.aktivFødselsnummer }. toMap()
+
         val utbetalingsoppdragForKonsistensavstemming =
             oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(fagsystem, perioderPåBehandling.keys)
 
         val utbetalingsoppdrag = leggAktuellePerioderISisteUtbetalingsoppdraget(
             utbetalingsoppdragForKonsistensavstemming,
-            perioderPåBehandling
+            perioderPåBehandling,
+            fødselsnummerPåBehandling
         )
 
         utførKonsistensavstemming(fagsystem, utbetalingsoppdrag, avstemmingstidspunkt, sendStartMelding, sendAvsluttmelding, transaksjonsId)
@@ -125,6 +128,7 @@ class KonsistensavstemmingService(
     private fun leggAktuellePerioderISisteUtbetalingsoppdraget(
         utbetalingsoppdrag: List<UtbetalingsoppdragForKonsistensavstemming>,
         perioderPåBehandling: Map<String, Set<Long>>,
+        fødselsnummerPåBehandling: Map<String, String>
     ): List<Utbetalingsoppdrag> {
         val utbetalingsoppdragPåFagsak = utbetalingsoppdrag.groupBy { it.fagsakId }
 
@@ -136,14 +140,24 @@ class KonsistensavstemmingService(
             val behandlingsIderForFagsak = utbetalingsoppdragListe.map { it.behandlingId }.toSet()
 
             val aktuellePeriodeIderForFagsak =
-                perioderPåBehandling.filter { behandlingsIderForFagsak.contains(it.key) }.values.flatten()
+                    perioderPåBehandling.filter { behandlingsIderForFagsak.contains(it.key) }.values.flatten()
 
+            var aktivtFødselsnummer: String? = null
             val perioderTilKonsistensavstemming = utbetalingsoppdragListe.flatMap {
+                aktivtFødselsnummer = hentFødselsnummerForBehandling(fødselsnummerPåBehandling, it.behandlingId)
                 it.utbetalingsoppdrag.utbetalingsperiode
-                    .filter { utbetalingsperiode -> aktuellePeriodeIderForFagsak.contains(utbetalingsperiode.periodeId) }
+                        .filter { utbetalingsperiode -> aktuellePeriodeIderForFagsak.contains(utbetalingsperiode.periodeId) }
+                        // Setter aktivt fødselsnummer på behandling som mottok fra fagsystem
+                        .map { utbetalingsperiode ->
+                            utbetalingsperiode.copy(utbetalesTil = aktivtFødselsnummer ?: utbetalingsperiode.utbetalesTil)
+                        }
             }
 
-            senesteUtbetalingsoppdrag.copy(utbetalingsperiode = perioderTilKonsistensavstemming)
+            senesteUtbetalingsoppdrag.let {
+                it.copy(utbetalingsperiode = perioderTilKonsistensavstemming,
+                        // Setter aktivt fødselsnummer på behandling som mottok fra fagsystem
+                        aktoer = aktivtFødselsnummer ?: it.aktoer)
+            }
         }
     }
 
@@ -153,6 +167,11 @@ class KonsistensavstemmingService(
                 request.perioderForBehandlinger.map { it.behandlingId }.groupingBy { it }.eachCount().filter { it.value > 1 }
             error("Behandling finnes flere ganger i requesten: ${duplikateBehandlinger.keys}")
         }
+    }
+
+    private fun hentFødselsnummerForBehandling(fødselsnummerPåBehandling: Map<String, String>,behandlingId: String): String {
+        return fødselsnummerPåBehandling[behandlingId]
+               ?: error("Finnes ikke et aktivt fødselsnummer for behandlingId $behandlingId")
     }
 
     companion object {
