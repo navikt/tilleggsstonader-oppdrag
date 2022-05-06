@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.simulering
 
+import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
 import no.nav.familie.kontrakter.felles.tilbakekreving.Ytelsestype
 import no.nav.familie.oppdrag.repository.SimuleringLager
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
@@ -79,8 +80,10 @@ internal class SimuleringTjenesteImplTest {
                 responseXml = responsXml
         ))
 
-        val feilutbetalingerFraSimulering =
-                simuleringTjeneste.hentFeilutbetalinger(Ytelsestype.OVERGANGSSTØNAD, eksternFagsakId, fagsystemsbehandlingId)
+        val feilutbetalingerFraSimulering = simuleringTjeneste
+                .hentFeilutbetalinger(HentFeilutbetalingerFraSimuleringRequest(ytelsestype = Ytelsestype.OVERGANGSSTØNAD,
+                                                                               eksternFagsakId = eksternFagsakId,
+                                                                               fagsystemsbehandlingId = fagsystemsbehandlingId))
         assertTrue {
             feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
             feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 1
@@ -111,8 +114,10 @@ internal class SimuleringTjenesteImplTest {
                 responseXml = responsXml
         ))
 
-        val feilutbetalingerFraSimulering =
-                simuleringTjeneste.hentFeilutbetalinger(Ytelsestype.BARNETRYGD, eksternFagsakId, fagsystemsbehandlingId)
+        val feilutbetalingerFraSimulering = simuleringTjeneste
+                .hentFeilutbetalinger(HentFeilutbetalingerFraSimuleringRequest(ytelsestype = Ytelsestype.BARNETRYGD,
+                                                                               eksternFagsakId = eksternFagsakId,
+                                                                               fagsystemsbehandlingId = fagsystemsbehandlingId))
         assertTrue {
             feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
             feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 3
@@ -157,8 +162,10 @@ internal class SimuleringTjenesteImplTest {
                 responseXml = responsXml
         ))
 
-        val feilutbetalingerFraSimulering =
-                simuleringTjeneste.hentFeilutbetalinger(Ytelsestype.BARNETILSYN, eksternFagsakId, fagsystemsbehandlingId)
+        val feilutbetalingerFraSimulering = simuleringTjeneste
+                .hentFeilutbetalinger(HentFeilutbetalingerFraSimuleringRequest(ytelsestype = Ytelsestype.BARNETILSYN,
+                                                                               eksternFagsakId = eksternFagsakId,
+                                                                               fagsystemsbehandlingId = fagsystemsbehandlingId))
         assertTrue { feilutbetalingerFraSimulering.feilutbetaltePerioder.isEmpty() }
     }
 
