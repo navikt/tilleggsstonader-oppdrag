@@ -52,4 +52,13 @@ object Jaxb {
         marshaller.marshal(response, stringWriter)
         return stringWriter.toString()
     }
+
+    fun tilSimuleringsrespons(responsXml: String): SimulerBeregningResponse {
+        val simuleringBeregningResponse = jaxbContext.createUnmarshaller().unmarshal(
+                xmlInputFactory.createXMLStreamReader(StreamSource(StringReader(responsXml))),
+                SimulerBeregningResponse::class.java
+        )
+
+        return simuleringBeregningResponse.value
+    }
 }

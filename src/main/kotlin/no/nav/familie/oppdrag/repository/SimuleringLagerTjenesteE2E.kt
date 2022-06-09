@@ -13,4 +13,8 @@ class SimuleringLagerTjenesteE2E : SimuleringLagerTjeneste {
     override fun finnAlleSimuleringsLager(): List<SimuleringLager> {
         TODO("")
     }
+
+    override fun hentSisteSimuleringsresultat(fagsystem: String, fagsakId: String, behandlingId: String): SimuleringLager {
+        TODO("")
+    }
 }
