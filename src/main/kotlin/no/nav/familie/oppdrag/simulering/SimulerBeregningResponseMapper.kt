@@ -10,7 +10,7 @@ fun SimulerBeregningResponse.toRestSimulerResult(
         dato: LocalDate = LocalDate.now()): RestSimulerResultat {
 
     val totalEtterbetalingsBeløp =
-            this.response?.simulering?.beregningsPeriode?.sumBy { finnEtterbetalingPerPeriode(it, dato) }
+            this.response?.simulering?.beregningsPeriode?.sumOf { finnEtterbetalingPerPeriode(it, dato) }
             ?: 0
 
     return RestSimulerResultat(etterbetaling = totalEtterbetalingsBeløp)
@@ -33,7 +33,7 @@ private fun finnEtterbetalingPerPeriode(beregningsPeriode: BeregningsPeriode, da
     val sum = stoppNivaBA.filter { forfallPassert(it.forfall, dato) }
             .flatMap { it.beregningStoppnivaaDetaljer }
             .filter { it.typeKlasse?.trim() == TypeKlasse.YTEL.name }
-            .sumBy { it.belop?.toInt() ?: 0 }
+            .sumOf{ it.belop?.toInt() ?: 0 }
     return sum
 }
 

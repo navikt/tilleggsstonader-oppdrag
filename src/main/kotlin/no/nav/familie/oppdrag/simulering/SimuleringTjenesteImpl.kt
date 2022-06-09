@@ -4,6 +4,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.RestSimulerResultat
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetalingerFraSimulering
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetaltPeriode
+import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
 import no.nav.familie.oppdrag.common.logSoapFaultException
 import no.nav.familie.oppdrag.config.FinnesIkkeITps
 import no.nav.familie.oppdrag.config.IntegrasjonException
@@ -12,6 +15,9 @@ import no.nav.familie.oppdrag.iverksetting.Jaxb
 import no.nav.familie.oppdrag.repository.SimuleringLager
 import no.nav.familie.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.system.os.eksponering.simulerfpservicewsbinding.SimulerBeregningFeilUnderBehandling
+import no.nav.system.os.entiteter.beregningskjema.Beregning
+import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
+import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import org.slf4j.Logger
@@ -20,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.context.annotation.ApplicationScope
+import java.math.BigDecimal
+import java.time.LocalDate
 
 @Service
 @ApplicationScope
@@ -63,7 +71,8 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         }
     }
 
-    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
+    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag)
+            : DetaljertSimuleringResultat {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
         secureLogger.info("Saksnummer: ${utbetalingsoppdrag.saksnummer} : " +
@@ -80,6 +89,76 @@ class SimuleringTjenesteImpl(@Autowired val simuleringSender: SimuleringSender,
         val beregning = respons.response?.simulering ?: return DetaljertSimuleringResultat(emptyList())
         return simuleringResultatTransformer.mapSimulering(beregning = beregning, utbetalingsoppdrag = utbetalingsoppdrag)
     }
+
+    override fun hentFeilutbetalinger(request: HentFeilutbetalingerFraSimuleringRequest): FeilutbetalingerFraSimulering {
+        val simuleringLager = simuleringLagerTjeneste.hentSisteSimuleringsresultat(request.ytelsestype.kode,
+                                                                                   request.eksternFagsakId,
+                                                                                   request.fagsystemsbehandlingId)
+        val respons = Jaxb.tilSimuleringsrespons(simuleringLager.responseXml!!)
+        val simulering = respons.response.simulering
+
+        val feilPosteringerMedPositivBeløp = finnFeilPosteringer(simulering)
+        val alleYtelPosteringer = finnYtelPosteringer(simulering)
+
+        val feilutbetaltPerioder = feilPosteringerMedPositivBeløp.map { feilPostering ->
+            val periode = feilPostering.key
+            val feilutbetaltBeløp = feilPostering.value.sumOf { it.belop }
+            val ytelPosteringerForPeriode = hentYtelPerioder(periode, alleYtelPosteringer )
+            FeilutbetaltPeriode(
+                    fom = LocalDate.parse(periode.periodeFom),
+                    tom = LocalDate.parse(periode.periodeTom),
+                    feilutbetaltBeløp = feilutbetaltBeløp,
+                    tidligereUtbetaltBeløp = summerNegativeYtelPosteringer(ytelPosteringerForPeriode, alleYtelPosteringer).abs(),
+                    nyttBeløp = summerPostiveYtelPosteringer(ytelPosteringerForPeriode, alleYtelPosteringer) - feilutbetaltBeløp
+            )
+        }
+        return FeilutbetalingerFraSimulering(feilutbetaltePerioder = feilutbetaltPerioder)
+    }
+
+    private fun finnFeilPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
+        return simulering.beregningsPeriode.map { beregningsperiode ->
+            beregningsperiode to beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
+                stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+                    detalj.typeKlasse == TypeKlasse.FEIL.name &&
+                    detalj.belop > BigDecimal.ZERO
+                }
+            }.flatten()
+        }.filter { it.second.isNotEmpty() }.toMap()
+    }
+
+    private fun finnYtelPosteringer(simulering: Beregning): Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>> {
+        return simulering.beregningsPeriode.associateWith { beregningsperiode ->
+            beregningsperiode.beregningStoppnivaa.map { stoppNivå ->
+                stoppNivå.beregningStoppnivaaDetaljer.filter { detalj ->
+                    detalj.typeKlasse == TypeKlasse.YTEL.name
+                }
+            }.flatten()
+        }
+    }
+
+    private fun hentYtelPerioder(feilutbetaltePeriode: BeregningsPeriode,
+                                 ytelPerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>)
+            : List<BeregningsPeriode> {
+        return ytelPerioder.keys.filter { ytelPeriode ->
+            ytelPeriode.periodeFom == feilutbetaltePeriode.periodeFom &&
+            ytelPeriode.periodeTom == feilutbetaltePeriode.periodeTom
+        }
+    }
+
+    private fun summerNegativeYtelPosteringer(perioder: List<BeregningsPeriode>,
+                                              ytelPerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
+            perioder.sumOf { beregningsperiode ->
+                ytelPerioder.getValue(beregningsperiode).filter { it.belop < BigDecimal.ZERO }
+                        .sumOf { detalj -> detalj.belop }
+            }
+
+    private fun summerPostiveYtelPosteringer(perioder: List<BeregningsPeriode>,
+                                             ytelPerioder: Map<BeregningsPeriode, List<BeregningStoppnivaaDetaljer>>) =
+            perioder.sumOf { beregningsperiode ->
+                ytelPerioder.getValue(beregningsperiode).filter { it.belop > BigDecimal.ZERO }
+                        .sumOf { detalj -> detalj.belop }
+            }
+
 
     private fun genererFeilmelding(ex: SimulerBeregningFeilUnderBehandling): String =
             ex.faultInfo.let {
