@@ -5,7 +5,7 @@ oppdrag.mq:
   avstemming: QA.P234.OB29_AVSTEMMING_XML
   tss: QA.P415.AS10_SAMHANDLER_SERVICE
   channel: P_FAMILIE_OPPDRAG
-  hostname: a01apvl269.adeo.no
+  hostname: mpls02.adeo.no
   port: 1414
   user: ${SERVICEUSER_USERNAME}
   password: ${SERVICEUSER_PASSWORD}
