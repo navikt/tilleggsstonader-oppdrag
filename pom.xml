@@ -22,14 +22,15 @@
         <kotlin.version>1.7.10</kotlin.version>
         <main-class>no.nav.familie.oppdrag.LauncherKt</main-class>
         <common-java-modules.version>2.2022.06.30_06.19-0603b0416483</common-java-modules.version>
-        <felles.version>1.20220610091149_ae616c5</felles.version>
-        <kontrakter.version>2.0_20220829141845_3e75e0d</kontrakter.version>
+        <felles.version>1.20220930133126_14f75ec</felles.version>
+        <kontrakter.version>2.0_20220928092558_a8a42e4</kontrakter.version>
         <token-validation-spring.version>2.0.5</token-validation-spring.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <jaxb-core.version>3.0.2</jaxb-core.version>
-        <jaxb-impl.version>3.0.2</jaxb-impl.version>
+        <jaxb-core.version>4.0.1</jaxb-core.version>
+        <jaxb-impl.version>4.0.1</jaxb-impl.version>
+        <jaxbws-ri.version>4.0.0</jaxbws-ri.version>
         <cxf.version>3.5.3</cxf.version>
-        <mockk.version>1.12.4</mockk.version>
+        <mockk.version>1.12.5</mockk.version>
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
         <sonar.organization>navit</sonar.organization>
@@ -318,7 +319,7 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
-            <version>3.0.2</version>
+            <version>${jaxbws-ri.version}</version>
             <scope>runtime</scope>
             <type>pom</type>
         </dependency>
@@ -511,7 +512,8 @@
                                 <include>kravgrunnlag_liste.xsd</include>
                                 <include>tilbakekrevingsvedtak.xsd</include>
                             </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/kravgrunnlag</generateDirectory>
+                            <generateDirectory>${project.build.directory}/generated-sources/kravgrunnlag
+                            </generateDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -532,7 +534,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>ktlint</id>
