@@ -511,8 +511,7 @@
                                 <include>kravgrunnlag_liste.xsd</include>
                                 <include>tilbakekrevingsvedtak.xsd</include>
                             </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/kravgrunnlag
-                            </generateDirectory>
+                            <generateDirectory>${project.build.directory}/generated-sources/kravgrunnlag</generateDirectory>
                         </configuration>
                     </execution>
                     <execution>
