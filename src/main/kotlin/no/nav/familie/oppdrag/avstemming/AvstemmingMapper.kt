@@ -19,7 +19,8 @@ object AvstemmingMapper {
             "EFBT" -> "EF"
             "EFSP" -> "EF"
             "BA" -> "BA"
-            else -> throw Error("Grensesnittavstemming støttes ikke for $fagområde")
+            "KS" -> "KS"
+            else -> throw Error("$fagområde støttes ikke ennå")
         }
     }
 }
