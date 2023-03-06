@@ -6,6 +6,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
 import no.nav.familie.oppdrag.common.RessursUtils.illegalState
 import no.nav.familie.oppdrag.common.RessursUtils.ok
+import no.nav.familie.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
 import no.nav.familie.oppdrag.service.Fagsystem
 import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
@@ -101,9 +102,11 @@ class AvstemmingController(
     }
 
     @GetMapping("/{fagsystem}/behandlinger/utbetalingsoppdrag")
-    fun hentBehandligner(@RequestParam behandlingIder: Set<String>, @PathVariable fagsystem: Fagsystem) {
-        konsistensavstemmingService.hentUtbetalingsoppdrag(fagsystem.name, behandlingIder)
-    }
+    fun hentBehandligner(
+        @RequestParam behandlingIder: Set<String>,
+        @PathVariable fagsystem: Fagsystem
+    ): ResponseEntity<Ressurs<List<UtbetalingsoppdragForKonsistensavstemming>>> =
+        ok(konsistensavstemmingService.hentUtbetalingsoppdrag(fagsystem.name, behandlingIder))
 
     companion object {
 
