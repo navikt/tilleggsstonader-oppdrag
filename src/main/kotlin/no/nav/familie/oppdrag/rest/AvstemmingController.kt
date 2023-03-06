@@ -6,6 +6,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
 import no.nav.familie.oppdrag.common.RessursUtils.illegalState
 import no.nav.familie.oppdrag.common.RessursUtils.ok
+import no.nav.familie.oppdrag.service.Fagsystem
 import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
 import no.nav.familie.oppdrag.service.KonsistensavstemmingService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -95,6 +98,11 @@ class AvstemmingController(
             onFailure = { illegalState("Konsistensavstemming feilet", it) },
             onSuccess = { ok("Konsistensavstemming sendt ok") }
         )
+    }
+
+    @GetMapping("/{fagsystem}/behandlinger/utbetalingsoppdrag")
+    fun hentBehandligner(@RequestParam behandlingIder: Set<String>, @PathVariable fagsystem: Fagsystem) {
+        konsistensavstemmingService.hentUtbetalingsoppdrag(fagsystem.name, behandlingIder)
     }
 
     companion object {

@@ -74,6 +74,10 @@ class KonsistensavstemmingService(
         LOG.info("Fullført konsistensavstemming for id ${konsistensavstemmingMapper.avstemmingId}")
     }
 
+    fun hentUtbetalingsoppdrag(fagsystem: String, behandlingIder: Set<String>): List<UtbetalingsoppdragForKonsistensavstemming> {
+        return oppdragLagerRepository.hentUtbetalingsoppdragForKonsistensavstemming(fagsystem, behandlingIder)
+    }
+
     @Transactional
     fun utførKonsistensavstemming(
         request: KonsistensavstemmingRequestV2,
