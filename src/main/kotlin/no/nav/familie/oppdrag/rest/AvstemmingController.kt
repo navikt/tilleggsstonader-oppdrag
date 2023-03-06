@@ -101,12 +101,12 @@ class AvstemmingController(
         )
     }
 
-    @GetMapping("/{fagsystem}/behandlinger/utbetalingsoppdrag")
-    fun hentBehandligner(
-        @RequestParam behandlingIder: Set<String>,
-        @PathVariable fagsystem: Fagsystem
+    @GetMapping("/{fagsystem}/fagsaker/siste-utbetalingsoppdrag")
+    fun hentSisteUtbetalingsoppdragForFagsaker(
+        @RequestParam fagsakIder: Set<String>,
+        @PathVariable fagsystem: Fagsystem,
     ): ResponseEntity<Ressurs<List<UtbetalingsoppdragForKonsistensavstemming>>> =
-        ok(konsistensavstemmingService.hentUtbetalingsoppdrag(fagsystem.name, behandlingIder))
+        ok(konsistensavstemmingService.hentSisteUtbetalingsoppdragForFagsaker(fagsystem.name, fagsakIder))
 
     companion object {
 
