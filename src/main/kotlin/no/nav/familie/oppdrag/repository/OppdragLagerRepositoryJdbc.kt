@@ -173,8 +173,8 @@ class OppdragLagerRepositoryJdbc(
         val sqlSpørring = """
             SELECT fagsak_id, behandling_id, utbetalingsoppdrag
             FROM oppdrag_lager
-            WHERE (fagsak_id, opprettettidspunkt) IN (
-                SELECT fagsak_id, MAX(opprettettidspunkt)
+            WHERE (fagsak_id, opprettet_tidspunkt) IN (
+                SELECT fagsak_id, MAX(opprettet_tidspunkt)
                 FROM oppdrag_lager
                 WHERE fagsystem=:fagsystem and fagsak_id IN (:fagsakIder)
                 GROUP BY fagsak_id
