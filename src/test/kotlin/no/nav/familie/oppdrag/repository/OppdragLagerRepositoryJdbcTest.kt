@@ -195,8 +195,8 @@ internal class OppdragLagerRepositoryJdbcTest {
     @Test
     fun `hentSisteUtbetalingsoppdragForFagsaker test spørring går fint`() {
         val forrigeMåned = LocalDateTime.now().minusMonths(1)
-        val utbetalingsoppdrag1 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA")
-        val utbetalingsoppdrag2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned.minusDays(1), "BA")
+        val utbetalingsoppdrag1 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned, "BA", fagsak = "1")
+        val utbetalingsoppdrag2 = TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag(forrigeMåned.minusDays(1), "BA", fagsak = "2")
 
         val oppdragLager1 = utbetalingsoppdrag1.somOppdragLager.copy(status = OppdragStatus.KVITTERT_OK)
         val oppdragLager2 = utbetalingsoppdrag2.somOppdragLager.copy(status = OppdragStatus.KVITTERT_OK)
