@@ -1,5 +1,6 @@
 package no.nav.familie.oppdrag.iverksetting
 
+import jakarta.jms.TextMessage
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.oppdrag.config.ApplicationConfig.Companion.LOKALE_PROFILER
 import no.nav.familie.oppdrag.domene.id
@@ -12,7 +13,6 @@ import org.springframework.core.env.Environment
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import javax.jms.TextMessage
 
 @Service
 @Profile("!e2e")
@@ -38,7 +38,11 @@ class OppdragMottaker(
     private fun behandleMelding(melding: TextMessage) {
         var svarFraOppdrag = melding.text as String
         if (!env.activeProfiles.any { it in LOKALE_PROFILER }) {
-            svarFraOppdrag = svarFraOppdrag.replace("oppdrag xmlns", "ns2:oppdrag xmlns:ns2")
+            if(svarFraOppdrag.contains("ns2:oppdrag")) {
+                svarFraOppdrag = svarFraOppdrag.replace("oppdrag xmlns", "ns2:oppdrag xmlns:ns2")
+            } else if(svarFraOppdrag.contains("ns6:oppdrag")) {
+                svarFraOppdrag = svarFraOppdrag.replace("oppdrag xmlns", "ns6:oppdrag xmlns:ns6")
+            }
         }
 
         val kvittering = lesKvittering(svarFraOppdrag)
