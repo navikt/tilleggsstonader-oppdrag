@@ -75,21 +75,30 @@ class OppdragLagerRepositoryJdbc(
     }
 
     override fun oppdaterStatus(oppdragId: OppdragId, oppdragStatus: OppdragStatus, versjon: Int) {
-        val update = "UPDATE oppdrag_lager SET status = '${oppdragStatus.name}' " +
-            "WHERE person_ident = '${oppdragId.personIdent}' " +
-            "AND fagsystem = '${oppdragId.fagsystem}' " +
-            "AND behandling_id = '${oppdragId.behandlingsId}'" +
-            "AND versjon = $versjon"
+        val update = "UPDATE oppdrag_lager SET status = :status " +
+            "WHERE person_ident = :personIdent " +
+            "AND fagsystem = :fagsystem " +
+            "AND behandling_id = :behandlingId " +
+            "AND versjon = :versjon"
 
-        jdbcTemplate.execute(update)
+        val values = MapSqlParameterSource()
+            .addValue("status", oppdragStatus.name)
+            .addValue("personIdent", oppdragId.personIdent)
+            .addValue("fagsystem", oppdragId.fagsystem)
+            .addValue("behandlingId", oppdragId.behandlingsId)
+            .addValue("versjon", versjon)
+
+        namedParameterJdbcTemplate.update(update, values)
     }
 
-    override fun oppdaterKvitteringsmelding(oppdragId: OppdragId, kvittering: Mmel, versjon: Int) {
+    override fun oppdaterKvitteringsmelding(oppdragId: OppdragId, oppdragStatus: OppdragStatus, kvittering: Mmel?, versjon: Int) {
         val updateStatement =
-            "UPDATE oppdrag_lager SET kvitteringsmelding = ? WHERE person_ident = ? AND fagsystem = ? AND behandling_id = ? AND versjon = ?"
+            "UPDATE oppdrag_lager SET status = ?, kvitteringsmelding = ?" +
+                " WHERE person_ident = ? AND fagsystem = ? AND behandling_id = ? AND versjon = ?"
 
         jdbcTemplate.update(
             updateStatement,
+            oppdragStatus.name,
             objectMapper.writeValueAsString(kvittering),
             oppdragId.personIdent,
             oppdragId.fagsystem,
@@ -135,14 +144,18 @@ class OppdragLagerRepositoryJdbc(
         return objectMapper.readValue(jsonUtbetalingsoppdrag)
     }
 
-    override fun hentAlleVersjonerAvOppdrag(oppdragId: OppdragId): List<OppdragLager> {
-        val hentStatement = "SELECT * FROM oppdrag_lager WHERE behandling_id = ? AND person_ident = ? AND fagsystem = ?"
+    override fun hentKvitteringsinformasjon(oppdragId: OppdragId): List<Kvitteringsinformasjon> {
+        val hentStatement = """
+            SELECT 
+            fagsystem, person_ident, fagsak_id, behandling_id, status, avstemming_tidspunkt, opprettet_tidspunkt, kvitteringsmelding, versjon 
+            FROM oppdrag_lager WHERE behandling_id = :behandlingId AND person_ident = :personIdent AND fagsystem = :fagsystem"""
 
-        return jdbcTemplate.query(
-            hentStatement,
-            arrayOf(oppdragId.behandlingsId, oppdragId.personIdent, oppdragId.fagsystem),
-            OppdragLagerRowMapper(),
-        )
+        val values = MapSqlParameterSource()
+            .addValue("behandlingId", oppdragId.behandlingsId)
+            .addValue("personIdent", oppdragId.personIdent)
+            .addValue("fagsystem", oppdragId.fagsystem)
+
+        return namedParameterJdbcTemplate.query(hentStatement, values, KvitteringsinformasjonRowMapper)
     }
 
     override fun hentUtbetalingsoppdragForKonsistensavstemming(
