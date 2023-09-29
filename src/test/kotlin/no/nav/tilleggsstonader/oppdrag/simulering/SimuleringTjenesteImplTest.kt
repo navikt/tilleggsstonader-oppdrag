@@ -9,7 +9,6 @@ import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
@@ -28,7 +27,6 @@ import kotlin.test.assertTrue
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class])
 @SpringBootTest(classes = [SimuleringTjenesteImplTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
-@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class SimuleringTjenesteImplTest {
 

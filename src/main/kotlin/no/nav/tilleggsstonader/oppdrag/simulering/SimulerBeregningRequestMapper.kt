@@ -2,16 +2,16 @@ package no.nav.tilleggsstonader.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-import no.nav.tilleggsstonader.oppdrag.iverksetting.EndringsKode
-import no.nav.tilleggsstonader.oppdrag.iverksetting.GradTypeKode
-import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragSkjemaConstants
-import no.nav.tilleggsstonader.oppdrag.iverksetting.SatsTypeKode
-import no.nav.tilleggsstonader.oppdrag.iverksetting.UtbetalingsfrekvensKode
 import no.nav.system.os.entiteter.typer.simpletypes.FradragTillegg
 import no.nav.system.os.entiteter.typer.simpletypes.KodeStatusLinje
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdrag
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpserviceservicetypes.Oppdragslinje
+import no.nav.tilleggsstonader.oppdrag.iverksetting.EndringsKode
+import no.nav.tilleggsstonader.oppdrag.iverksetting.GradTypeKode
+import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragSkjemaConstants
+import no.nav.tilleggsstonader.oppdrag.iverksetting.SatsTypeKode
+import no.nav.tilleggsstonader.oppdrag.iverksetting.UtbetalingsfrekvensKode
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
 

@@ -3,7 +3,6 @@ package no.nav.tilleggsstonader.oppdrag.repository
 import no.nav.tilleggsstonader.oppdrag.service.Fagsystem
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
@@ -13,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertEquals
 
 @ActiveProfiles("dev")
@@ -22,7 +21,6 @@ import kotlin.test.assertEquals
     classes = [MellomlagringKonsistensavstemmingRepositoryTest.TestConfig::class],
     properties = ["spring.cloud.vault.enabled=false"],
 )
-@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class MellomlagringKonsistensavstemmingRepositoryTest {
 

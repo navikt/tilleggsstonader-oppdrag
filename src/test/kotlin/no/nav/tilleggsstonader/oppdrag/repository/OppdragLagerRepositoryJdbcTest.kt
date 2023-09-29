@@ -12,7 +12,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DuplicateKeyException
@@ -24,13 +23,12 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertFailsWith
 
 @ActiveProfiles("dev")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
-@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class OppdragLagerRepositoryJdbcTest {
 

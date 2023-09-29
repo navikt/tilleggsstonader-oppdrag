@@ -4,13 +4,13 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
+import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.illegalState
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.ok
 import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
 import no.nav.tilleggsstonader.oppdrag.service.Fagsystem
 import no.nav.tilleggsstonader.oppdrag.service.GrensesnittavstemmingService
 import no.nav.tilleggsstonader.oppdrag.service.KonsistensavstemmingService
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

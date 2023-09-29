@@ -2,7 +2,6 @@ package no.nav.tilleggsstonader.oppdrag.rest
 
 import jakarta.validation.Valid
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.tilleggsstonader.oppdrag.tilbakekreving.ØkonomiClient
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerRequest
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerResponse
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljRequest
@@ -10,6 +9,7 @@ import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljResponse
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakRequest
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakResponse
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.tilleggsstonader.oppdrag.tilbakekreving.ØkonomiClient
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping

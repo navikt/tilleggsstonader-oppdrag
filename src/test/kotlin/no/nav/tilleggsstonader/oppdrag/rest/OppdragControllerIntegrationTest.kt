@@ -12,7 +12,6 @@ import no.nav.tilleggsstonader.oppdrag.util.TestConfig
 import no.nav.tilleggsstonader.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -29,7 +28,6 @@ import kotlin.test.assertEquals
 @ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class, Containers.MQInitializer::class])
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @EnableJms
-@DisabledIfEnvironmentVariable(named = "CIRCLECI", matches = "true")
 @Testcontainers
 internal class OppdragControllerIntegrationTest {
 

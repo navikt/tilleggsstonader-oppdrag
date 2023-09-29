@@ -1,8 +1,5 @@
 package no.nav.tilleggsstonader.oppdrag.tilbakekreving
 
-import no.nav.tilleggsstonader.oppdrag.common.logSoapFaultException
-import no.nav.tilleggsstonader.oppdrag.config.IntegrasjonException
-import no.nav.tilleggsstonader.oppdrag.config.Integrasjonssystem
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerRequest
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerResponse
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljRequest
@@ -10,6 +7,9 @@ import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljResponse
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingPortType
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakRequest
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakResponse
+import no.nav.tilleggsstonader.oppdrag.common.logSoapFaultException
+import no.nav.tilleggsstonader.oppdrag.config.IntegrasjonException
+import no.nav.tilleggsstonader.oppdrag.config.Integrasjonssystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

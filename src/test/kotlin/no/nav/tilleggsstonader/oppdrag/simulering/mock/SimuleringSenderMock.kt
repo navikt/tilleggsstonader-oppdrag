@@ -1,8 +1,8 @@
 package no.nav.tilleggsstonader.oppdrag.simulering.mock
 
-import no.nav.tilleggsstonader.oppdrag.simulering.SimuleringSender
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
+import no.nav.tilleggsstonader.oppdrag.simulering.SimuleringSender
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 

@@ -1,10 +1,9 @@
 package no.nav.tilleggsstonader.oppdrag.config
 
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.illegalState
-import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.serviceUnavailable
-import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.unauthorized
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.illegalState
+import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.unauthorized
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.NestedExceptionUtils.getMostSpecificCause

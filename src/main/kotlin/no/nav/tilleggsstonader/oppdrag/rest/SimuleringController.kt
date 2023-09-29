@@ -6,9 +6,9 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
 import no.nav.familie.kontrakter.felles.simulering.FeilutbetalingerFraSimulering
 import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
+import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.ok
 import no.nav.tilleggsstonader.oppdrag.simulering.SimuleringTjeneste
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
