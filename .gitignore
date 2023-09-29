@@ -1,3 +1,6 @@
-*.iml
-target/
 .idea
+.gradle
+.run
+
+# Ignore Gradle build output directory
+build

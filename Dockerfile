@@ -1,7 +1,8 @@
-FROM ghcr.io/navikt/baseimages/temurin:17-appdynamics
+FROM ghcr.io/navikt/baseimages/temurin:17
 
-ENV APPD_ENABLED=true
-ENV APP_NAME=familie-oppdrag
+ENV APPLICATION_NAME=tilleggsstonader-oppdrag
 
-COPY init.sh /init-scripts/init.sh
-COPY ./target/familie-oppdrag.jar "app.jar"
+EXPOSE 8080
+COPY build/libs/*.jar ./
+
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75"
