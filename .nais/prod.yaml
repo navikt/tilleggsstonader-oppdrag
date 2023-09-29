@@ -1,0 +1,63 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: tilleggsstonader-oppdrag
+  namespace: tilleggsstonader
+  labels:
+    team: tilleggsstonader
+
+spec:
+  port: 8080
+  image: {{ image }}
+  ingresses:
+    - https://tilleggsstonader-oppdrag.intern.nav.no
+  liveness:
+    path: /internal/status/isAlive
+    initialDelay: 30
+    failureThreshold: 10
+  readiness:
+    path: /internal/status/isAlive
+    initialDelay: 30
+    failureThreshold: 10
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  replicas:
+    min: 2
+    max: 4
+  resources:
+    limits:
+      memory: 2048Mi
+    requests:
+      memory: 1Gi
+      cpu: 500m
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_15
+        tier: db-custom-1-3840
+        diskAutoresize: true
+        cascadingDelete: false
+        highAvailability: true
+        pointInTimeRecovery: true
+        maintenance:
+          day: 7
+          hour: 23
+        databases:
+          - name: tilleggsstonader-oppdrag
+            envVarPrefix: DB
+  secureLogs:
+    enabled: true
+  azure:
+    application:
+      enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: tilleggsstonader-sak
+        - application: tilleggsstonader-prosessering
+    #outbound:
+    #  external:
+    #    - host: TODO mq
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod
