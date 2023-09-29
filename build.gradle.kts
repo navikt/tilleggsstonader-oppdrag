@@ -29,11 +29,13 @@ plugins {
 
 repositories {
     mavenCentral()
-    mavenLocal()
-
+    maven {
+        url = uri("https://build.shibboleth.net/maven/releases/")
+    }
     maven {
         url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
     }
+    mavenLocal()
 }
 
 apply(plugin = "com.diffplug.spotless")
