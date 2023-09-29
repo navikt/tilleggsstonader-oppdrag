@@ -10,19 +10,6 @@ oppdrag.mq:
   password: ${SERVICEUSER_PASSWORD}
   enabled: true
 
-
-
-no.nav.security.jwt:
-  issuer.azuread:
-    discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
-    accepted_audience: ${AZURE_APP_CLIENT_ID}
-    proxyurl: http://webproxy-nais.nav.no:8088
-    cookie_name: azure_token
-
-spring:
-  datasource:
-    url: jdbc:postgresql://b27dbvl031.preprod.local:5432/familie-oppdrag-15
-
 OPPDRAG_SERVICE_URL: "https://cics-q1.adeo.no/oppdrag/simulerFpServiceWSBinding"
 SECURITYTOKENSERVICE_URL: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
 TILBAKEKREVING_V1_URL: https://cics-q1.adeo.no/oppdrag/K231CW80
