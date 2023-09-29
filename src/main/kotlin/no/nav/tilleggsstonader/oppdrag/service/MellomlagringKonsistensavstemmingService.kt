@@ -1,8 +1,8 @@
-package no.nav.familie.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.service
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemming
-import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
+import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.konsistensavstemming
+package no.nav.tilleggsstonader.oppdrag.konsistensavstemming
 
 import io.mockk.Runs
 import io.mockk.every
@@ -12,13 +12,13 @@ import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.PerioderForBehandling
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-import no.nav.familie.oppdrag.avstemming.AvstemmingSender
-import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemming
-import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
-import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
-import no.nav.familie.oppdrag.service.KonsistensavstemmingService
-import no.nav.familie.oppdrag.service.MellomlagringKonsistensavstemmingService
+import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
+import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.service.KonsistensavstemmingService
+import no.nav.tilleggsstonader.oppdrag.service.MellomlagringKonsistensavstemmingService
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

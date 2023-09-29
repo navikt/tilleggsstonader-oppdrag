@@ -1,7 +1,7 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
-import no.nav.familie.oppdrag.service.Fagsystem
-import no.nav.familie.oppdrag.util.Containers
+import no.nav.tilleggsstonader.oppdrag.service.Fagsystem
+import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,7 +1,7 @@
-package no.nav.familie.oppdrag.avstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming
 
-import no.nav.familie.oppdrag.grensesnittavstemming.JaxbGrensesnittAvstemmingsdata
-import no.nav.familie.oppdrag.konsistensavstemming.JaxbKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.grensesnittavstemming.JaxbGrensesnittAvstemmingsdata
+import no.nav.tilleggsstonader.oppdrag.konsistensavstemming.JaxbKonsistensavstemming
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.SendAsynkronKonsistensavstemmingsdataRequest
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Avstemmingsdata

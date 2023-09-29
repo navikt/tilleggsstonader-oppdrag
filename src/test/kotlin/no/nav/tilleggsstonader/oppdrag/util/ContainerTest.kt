@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.util
+package no.nav.tilleggsstonader.oppdrag.util
 
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer

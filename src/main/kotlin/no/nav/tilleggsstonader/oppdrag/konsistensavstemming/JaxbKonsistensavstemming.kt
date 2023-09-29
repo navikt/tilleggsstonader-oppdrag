@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.konsistensavstemming
+package no.nav.tilleggsstonader.oppdrag.konsistensavstemming
 
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller

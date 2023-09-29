@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.iverksetting
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import com.ibm.mq.jakarta.jms.MQQueue
 import no.trygdeetaten.skjema.oppdrag.Oppdrag

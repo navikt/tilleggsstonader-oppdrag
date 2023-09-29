@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.config
 
 enum class Integrasjonssystem {
     TILBAKEKREVING,

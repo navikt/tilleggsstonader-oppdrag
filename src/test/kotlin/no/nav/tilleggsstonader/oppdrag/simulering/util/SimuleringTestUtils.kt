@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering.util
+package no.nav.tilleggsstonader.oppdrag.simulering.util
 
 import io.mockk.InternalPlatformDsl.toStr
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag

@@ -1,6 +1,6 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
-import no.nav.familie.oppdrag.service.Fagsystem
+import no.nav.tilleggsstonader.oppdrag.service.Fagsystem
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table

@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.config
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

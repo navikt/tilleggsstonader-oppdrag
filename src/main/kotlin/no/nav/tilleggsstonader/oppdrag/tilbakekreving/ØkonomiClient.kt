@@ -1,8 +1,8 @@
-package no.nav.familie.oppdrag.tilbakekreving
+package no.nav.tilleggsstonader.oppdrag.tilbakekreving
 
-import no.nav.familie.oppdrag.common.logSoapFaultException
-import no.nav.familie.oppdrag.config.IntegrasjonException
-import no.nav.familie.oppdrag.config.Integrasjonssystem
+import no.nav.tilleggsstonader.oppdrag.common.logSoapFaultException
+import no.nav.tilleggsstonader.oppdrag.config.IntegrasjonException
+import no.nav.tilleggsstonader.oppdrag.config.Integrasjonssystem
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerRequest
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerResponse
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljRequest

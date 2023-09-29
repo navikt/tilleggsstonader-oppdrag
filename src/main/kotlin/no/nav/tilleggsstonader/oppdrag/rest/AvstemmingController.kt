@@ -1,15 +1,15 @@
-package no.nav.familie.oppdrag.rest
+package no.nav.tilleggsstonader.oppdrag.rest
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
-import no.nav.familie.oppdrag.common.RessursUtils.illegalState
-import no.nav.familie.oppdrag.common.RessursUtils.ok
-import no.nav.familie.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
-import no.nav.familie.oppdrag.service.Fagsystem
-import no.nav.familie.oppdrag.service.GrensesnittavstemmingService
-import no.nav.familie.oppdrag.service.KonsistensavstemmingService
+import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.illegalState
+import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.ok
+import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.service.Fagsystem
+import no.nav.tilleggsstonader.oppdrag.service.GrensesnittavstemmingService
+import no.nav.tilleggsstonader.oppdrag.service.KonsistensavstemmingService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,12 +1,12 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.familie.oppdrag.iverksetting.Jaxb
-import no.nav.familie.oppdrag.util.Containers
-import no.nav.familie.oppdrag.util.TestConfig
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato.lagUtbetalingsperiode
-import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
+import no.nav.tilleggsstonader.oppdrag.iverksetting.Jaxb
+import no.nav.tilleggsstonader.oppdrag.util.Containers
+import no.nav.tilleggsstonader.oppdrag.util.TestConfig
+import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag
+import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagUtbetalingsperiode
+import no.nav.tilleggsstonader.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import no.trygdeetaten.skjema.oppdrag.Mmel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals

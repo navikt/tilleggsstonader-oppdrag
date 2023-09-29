@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.domene
+package no.nav.tilleggsstonader.oppdrag.domene
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
 import no.trygdeetaten.skjema.oppdrag.Oppdrag

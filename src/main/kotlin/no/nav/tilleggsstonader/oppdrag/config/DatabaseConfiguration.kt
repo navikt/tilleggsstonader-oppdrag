@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.config
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.objectMapper

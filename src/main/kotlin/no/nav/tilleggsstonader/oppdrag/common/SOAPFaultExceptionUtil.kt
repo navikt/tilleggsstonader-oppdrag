@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.common
+package no.nav.tilleggsstonader.oppdrag.common
 
 import jakarta.xml.ws.soap.SOAPFaultException
 import org.slf4j.LoggerFactory

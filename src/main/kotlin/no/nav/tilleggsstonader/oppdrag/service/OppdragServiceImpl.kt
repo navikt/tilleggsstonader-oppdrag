@@ -1,13 +1,13 @@
-package no.nav.familie.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.service
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.domene.id
-import no.nav.familie.oppdrag.iverksetting.Jaxb
-import no.nav.familie.oppdrag.iverksetting.OppdragSender
-import no.nav.familie.oppdrag.repository.OppdragLager
-import no.nav.familie.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.domene.id
+import no.nav.tilleggsstonader.oppdrag.iverksetting.Jaxb
+import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragSender
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

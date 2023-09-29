@@ -1,8 +1,8 @@
-package no.nav.familie.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.service
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
+import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

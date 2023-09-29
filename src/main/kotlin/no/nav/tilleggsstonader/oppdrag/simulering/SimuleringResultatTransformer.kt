@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering
+package no.nav.tilleggsstonader.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.simulering.BetalingType

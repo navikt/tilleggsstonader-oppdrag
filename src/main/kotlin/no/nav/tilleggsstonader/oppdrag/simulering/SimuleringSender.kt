@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering
+package no.nav.tilleggsstonader.oppdrag.simulering
 
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse

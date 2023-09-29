@@ -1,8 +1,8 @@
-package no.nav.familie.oppdrag.rest
+package no.nav.tilleggsstonader.oppdrag.rest
 
 import jakarta.validation.Valid
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.oppdrag.tilbakekreving.ØkonomiClient
+import no.nav.tilleggsstonader.oppdrag.tilbakekreving.ØkonomiClient
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerRequest
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagAnnulerResponse
 import no.nav.okonomi.tilbakekrevingservice.KravgrunnlagHentDetaljRequest

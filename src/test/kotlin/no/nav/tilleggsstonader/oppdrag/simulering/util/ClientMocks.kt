@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering.util
+package no.nav.tilleggsstonader.oppdrag.simulering.util
 
 import io.mockk.every
 import io.mockk.mockk

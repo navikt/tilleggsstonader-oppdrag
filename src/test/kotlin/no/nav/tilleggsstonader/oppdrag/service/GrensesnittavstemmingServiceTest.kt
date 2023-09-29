@@ -1,14 +1,14 @@
-package no.nav.familie.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.service
 
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
-import no.nav.familie.oppdrag.avstemming.AvstemmingSender
-import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.repository.somAvstemming
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato
+import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.repository.somAvstemming
+import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.AksjonType
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Avstemmingsdata
 import org.assertj.core.api.Assertions.assertThat

@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering.mock
+package no.nav.tilleggsstonader.oppdrag.simulering.mock
 
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
 import no.nav.system.os.entiteter.typer.simpletypes.KodeStatusLinje

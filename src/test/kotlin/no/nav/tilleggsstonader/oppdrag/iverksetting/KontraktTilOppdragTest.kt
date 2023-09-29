@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.iverksetting
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag

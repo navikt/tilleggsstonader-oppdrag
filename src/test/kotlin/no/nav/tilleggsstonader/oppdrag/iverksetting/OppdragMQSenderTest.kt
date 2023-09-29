@@ -1,11 +1,11 @@
-package no.nav.familie.oppdrag.iverksetting
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import com.ibm.mq.jakarta.jms.MQConnectionFactory
 import com.ibm.msg.client.jakarta.wmq.WMQConstants
 import io.mockk.called
 import io.mockk.spyk
 import io.mockk.verify
-import no.nav.familie.oppdrag.util.Containers
+import no.nav.tilleggsstonader.oppdrag.util.Containers
 import no.trygdeetaten.skjema.oppdrag.ObjectFactory
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import no.trygdeetaten.skjema.oppdrag.Oppdrag110

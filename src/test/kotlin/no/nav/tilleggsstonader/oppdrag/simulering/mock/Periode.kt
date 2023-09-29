@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.simulering.mock
+package no.nav.tilleggsstonader.oppdrag.simulering.mock
 
 import java.math.BigDecimal
 import java.time.DayOfWeek

@@ -1,13 +1,13 @@
-package no.nav.familie.oppdrag.konsistensavstemming
+package no.nav.tilleggsstonader.oppdrag.konsistensavstemming
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-import no.nav.familie.oppdrag.avstemming.AvstemmingMapper
-import no.nav.familie.oppdrag.avstemming.SystemKode
-import no.nav.familie.oppdrag.iverksetting.GradTypeKode
-import no.nav.familie.oppdrag.iverksetting.OppdragSkjemaConstants
-import no.nav.familie.oppdrag.iverksetting.SatsTypeKode
-import no.nav.familie.oppdrag.iverksetting.UtbetalingsfrekvensKode
+import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingMapper
+import no.nav.tilleggsstonader.oppdrag.avstemming.SystemKode
+import no.nav.tilleggsstonader.oppdrag.iverksetting.GradTypeKode
+import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragSkjemaConstants
+import no.nav.tilleggsstonader.oppdrag.iverksetting.SatsTypeKode
+import no.nav.tilleggsstonader.oppdrag.iverksetting.UtbetalingsfrekvensKode
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Aksjonsdata
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Attestant
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Enhet

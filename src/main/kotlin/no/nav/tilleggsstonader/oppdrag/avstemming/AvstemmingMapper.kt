@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.avstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming
 
 import java.nio.ByteBuffer
 import java.util.Base64

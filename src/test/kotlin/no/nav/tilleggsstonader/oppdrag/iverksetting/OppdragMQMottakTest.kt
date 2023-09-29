@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.iverksetting
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import io.mockk.Runs
 import io.mockk.every
@@ -7,10 +7,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import jakarta.jms.TextMessage
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.familie.oppdrag.repository.OppdragLager
-import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.repository.somKvitteringsinformasjon
-import no.nav.familie.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.repository.somKvitteringsinformasjon
+import no.nav.tilleggsstonader.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

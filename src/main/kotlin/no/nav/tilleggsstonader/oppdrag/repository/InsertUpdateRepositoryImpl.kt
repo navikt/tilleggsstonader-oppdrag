@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
 import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.stereotype.Component

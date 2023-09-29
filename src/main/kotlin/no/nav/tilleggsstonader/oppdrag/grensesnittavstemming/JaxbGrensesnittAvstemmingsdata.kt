@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.grensesnittavstemming
+package no.nav.tilleggsstonader.oppdrag.grensesnittavstemming
 
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller

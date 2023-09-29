@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository

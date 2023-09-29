@@ -1,11 +1,11 @@
-package no.nav.familie.oppdrag.iverksetting
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import jakarta.jms.TextMessage
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.familie.oppdrag.config.ApplicationConfig.Companion.LOKALE_PROFILER
-import no.nav.familie.oppdrag.domene.id
-import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.repository.oppdragStatus
+import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig.Companion.LOKALE_PROFILER
+import no.nav.tilleggsstonader.oppdrag.domene.id
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.repository.oppdragStatus
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile

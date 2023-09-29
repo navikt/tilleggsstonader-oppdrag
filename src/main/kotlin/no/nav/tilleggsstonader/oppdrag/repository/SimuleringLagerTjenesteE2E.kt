@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
 class SimuleringLagerTjenesteE2E : SimuleringLagerTjeneste {
 

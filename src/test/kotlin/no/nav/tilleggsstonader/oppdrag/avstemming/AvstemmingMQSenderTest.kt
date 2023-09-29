@@ -1,15 +1,15 @@
-package no.nav.familie.oppdrag.avstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming
 
 import com.ibm.mq.jakarta.jms.MQConnectionFactory
 import com.ibm.msg.client.jakarta.wmq.WMQConstants
 import io.mockk.called
 import io.mockk.spyk
 import io.mockk.verify
-import no.nav.familie.oppdrag.grensesnittavstemming.GrensesnittavstemmingMapper
-import no.nav.familie.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
-import no.nav.familie.oppdrag.repository.somAvstemming
-import no.nav.familie.oppdrag.util.Containers
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato
+import no.nav.tilleggsstonader.oppdrag.grensesnittavstemming.GrensesnittavstemmingMapper
+import no.nav.tilleggsstonader.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
+import no.nav.tilleggsstonader.oppdrag.repository.somAvstemming
+import no.nav.tilleggsstonader.oppdrag.util.Containers
+import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Avstemmingsdata
 import org.junit.jupiter.api.Assertions

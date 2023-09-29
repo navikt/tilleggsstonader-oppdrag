@@ -1,9 +1,9 @@
-package no.nav.familie.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.repository
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.behandlingsIdForFørsteUtbetalingsperiode
-import no.nav.familie.oppdrag.iverksetting.OppdragMapper
+import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragMapper
 import java.time.LocalDateTime
 
 fun Utbetalingsoppdrag.somOppdragLagerMedVersjon(versjon: Int): OppdragLager {

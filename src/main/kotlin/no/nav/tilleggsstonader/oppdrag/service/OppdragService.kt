@@ -1,8 +1,8 @@
-package no.nav.familie.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.service
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.repository.OppdragLager
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 
 interface OppdragService {

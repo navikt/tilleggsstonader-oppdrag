@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.common
+package no.nav.tilleggsstonader.oppdrag.common
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.slf4j.LoggerFactory

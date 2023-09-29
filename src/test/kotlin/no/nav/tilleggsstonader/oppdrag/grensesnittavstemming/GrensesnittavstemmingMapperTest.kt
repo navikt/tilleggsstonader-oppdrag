@@ -1,12 +1,12 @@
-package no.nav.familie.oppdrag.grensesnittavstemming
+package no.nav.tilleggsstonader.oppdrag.grensesnittavstemming
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.oppdrag.avstemming.SystemKode
-import no.nav.familie.oppdrag.repository.OppdragTilAvstemming
-import no.nav.familie.oppdrag.repository.somAvstemming
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag
-import no.nav.familie.oppdrag.util.TestOppdragMedAvstemmingsdato.lagUtbetalingsperiode
+import no.nav.tilleggsstonader.oppdrag.avstemming.SystemKode
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragTilAvstemming
+import no.nav.tilleggsstonader.oppdrag.repository.somAvstemming
+import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag
+import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagUtbetalingsperiode
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.AksjonType
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Aksjonsdata
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.AvstemmingType

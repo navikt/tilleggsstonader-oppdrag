@@ -1,4 +1,4 @@
-package no.nav.familie.oppdrag.rest
+package no.nav.tilleggsstonader.oppdrag.rest
 
 import io.mockk.Runs
 import io.mockk.every
@@ -10,11 +10,11 @@ import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-import no.nav.familie.oppdrag.iverksetting.OppdragMapper
-import no.nav.familie.oppdrag.iverksetting.OppdragSender
-import no.nav.familie.oppdrag.repository.OppdragLager
-import no.nav.familie.oppdrag.repository.OppdragLagerRepository
-import no.nav.familie.oppdrag.service.OppdragServiceImpl
+import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragMapper
+import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragSender
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
+import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.service.OppdragServiceImpl
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.math.BigDecimal
