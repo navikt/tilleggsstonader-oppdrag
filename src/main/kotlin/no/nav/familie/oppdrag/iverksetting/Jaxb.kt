@@ -4,7 +4,6 @@ import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
-import no.rtv.namespacetss.TssSamhandlerData
 import no.trygdeetaten.skjema.oppdrag.ObjectFactory
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import java.io.StringReader
@@ -18,7 +17,6 @@ object Jaxb {
         Oppdrag::class.java,
         SimulerBeregningRequest::class.java,
         SimulerBeregningResponse::class.java,
-        TssSamhandlerData::class.java,
     )
     val xmlInputFactory = XMLInputFactory.newInstance()
 
@@ -65,22 +63,5 @@ object Jaxb {
         )
 
         return simuleringBeregningResponse.value
-    }
-
-    fun tilXml(request: TssSamhandlerData): String {
-        val jaxbContext: JAXBContext = JAXBContext.newInstance(TssSamhandlerData::class.java)
-        val marshaller: Marshaller = jaxbContext.createMarshaller()
-        val stringWriter = StringWriter()
-        marshaller.marshal(request, stringWriter)
-        return stringWriter.toString()
-    }
-
-    fun tilTssSamhandlerData(responsXml: String): TssSamhandlerData {
-        val tssSamhandlerData = jaxbContext.createUnmarshaller().unmarshal(
-            xmlInputFactory.createXMLStreamReader(StreamSource(StringReader(responsXml))),
-            TssSamhandlerData::class.java,
-        )
-
-        return tssSamhandlerData.value
     }
 }

@@ -6,9 +6,6 @@ import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import no.nav.tilbakekreving.tilbakekrevingsvedtak.vedtak.v1.TilbakekrevingsvedtakDto
-import no.rtv.namespacetss.SvarStatusType
-import no.rtv.namespacetss.TOutputElementer
-import no.rtv.namespacetss.TssSamhandlerData
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import no.trygdeetaten.skjema.oppdrag.Oppdrag110
 import org.assertj.core.api.Assertions.assertThat
@@ -66,25 +63,6 @@ internal class JaxbTest {
         val obj = Jaxb.tilSimuleringsrespons(xml)
         assertThat(xml).isEqualTo(Jaxb.tilXml(obj))
         assertThat(xml).isEqualTo(loadResource("xml/SimulerBeregningResponse.xml"))
-    }
-
-    @Test
-    internal fun `TssSamhandlerData tilXml`() {
-        val tss = TssSamhandlerData().apply {
-            tssInputData = TssSamhandlerData.TssInputData().apply {
-                tssInputData = TssSamhandlerData.TssInputData().apply {
-                    tssOutputData = TOutputElementer().apply {
-                        svarStatus = SvarStatusType().apply {
-                            alvorligGrad = "høy"
-                        }
-                    }
-                }
-            }
-        }
-        val xml = Jaxb.tilXml(tss)
-        val obj = Jaxb.tilTssSamhandlerData(xml)
-        assertThat(xml).isEqualTo(Jaxb.tilXml(obj))
-        assertThat(xml).isEqualTo(loadResource("xml/TssSamhandlerData.xml"))
     }
 
     @Test
