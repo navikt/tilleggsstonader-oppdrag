@@ -1,5 +1,6 @@
 package no.nav.tilleggsstonader.oppdrag.util
 
+import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
@@ -9,7 +10,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 
 @Configuration
-@ComponentScan("no.nav.familie.oppdrag")
+@ComponentScan(ApplicationConfig.pakkenavn)
 class TestConfig
 
 object Containers {

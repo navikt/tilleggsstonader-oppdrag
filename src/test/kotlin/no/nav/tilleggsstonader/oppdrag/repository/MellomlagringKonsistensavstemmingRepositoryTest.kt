@@ -1,5 +1,6 @@
 package no.nav.tilleggsstonader.oppdrag.repository
 
+import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
 import no.nav.tilleggsstonader.oppdrag.service.Fagsystem
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Test
@@ -71,7 +72,7 @@ internal class MellomlagringKonsistensavstemmingRepositoryTest {
 
     @Configuration
     @ComponentScan(
-        basePackages = ["no.nav.familie.oppdrag"],
+        basePackages = [ApplicationConfig.pakkenavn],
         excludeFilters = [ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*[MQ].*"])],
     )
     class TestConfig

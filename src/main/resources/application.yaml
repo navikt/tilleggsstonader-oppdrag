@@ -48,7 +48,7 @@ management:
       enabled: true
 
 springdoc:
-  packagesToScan: no.nav.familie.oppdrag
+  packagesToScan: no.nav.tilleggsstonader.oppdrag
   pathsToMatch: /v3/api-docs,/api/**
   swagger-ui:
     disable-swagger-default-url: true

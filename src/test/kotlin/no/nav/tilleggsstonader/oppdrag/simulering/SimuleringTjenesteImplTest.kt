@@ -2,6 +2,7 @@ package no.nav.tilleggsstonader.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
 import no.nav.familie.kontrakter.felles.tilbakekreving.Ytelsestype
+import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
 import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLager
 import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerTjeneste
 import no.nav.tilleggsstonader.oppdrag.simulering.util.lagTestUtbetalingsoppdragForFGBMedEttBarn
@@ -193,7 +194,7 @@ internal class SimuleringTjenesteImplTest {
 
     @Configuration
     @ComponentScan(
-        basePackages = ["no.nav.familie.oppdrag"],
+        basePackages = [ApplicationConfig.pakkenavn],
         excludeFilters = [ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*[MQ].*"])],
     )
     class TestConfig
