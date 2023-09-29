@@ -16,7 +16,7 @@ class TestConfig
 object Containers {
 
     var postgreSQLContainer = MyPostgreSQLContainer("postgres:latest")
-        .withDatabaseName("familie-oppdrag")
+        .withDatabaseName("tilleggsstonader-oppdrag")
         .withUsername("postgres")
         .withPassword("test")
         .withExposedPorts(5432)
