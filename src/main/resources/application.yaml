@@ -62,9 +62,5 @@ no.nav.security.jwt:
     accepted_audience: ${AZURE_APP_CLIENT_ID}
     cookie_name: azure_token
 
-BA_SAK_CLIENT_ID: ""
-EF_SAK_CLIENT_ID: ""
-EF_IVERKSETT_CLIENT_ID: ""
 TILBAKEKREVING_V1_URL: "http://localhost"
-FAMILIE_TILBAKE_CLIENT_ID: ""
 AZURE_APP_WELL_KNOWN_URL: ""
