@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.rest
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragId

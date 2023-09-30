@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.rest
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import io.mockk.Runs
 import io.mockk.every
