@@ -35,6 +35,6 @@ class ApplicationConfig {
 
     companion object {
         const val pakkenavn = "no.nav.tilleggsstonader.oppdrag"
-        val LOKALE_PROFILER = setOf("dev", "e2e", "dev_psql_mq")
+        val LOKALE_PROFILER = setOf("dev", "dev_psql_mq")
     }
 }

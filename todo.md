@@ -15,4 +15,3 @@
 * Verifisere at appen starter, readiness/ burde kontrolleres og kanskje endres i nais-filer
 
 * Fjerne interfaces? Og kun ha klassene
-* Fjerne E2E klasser

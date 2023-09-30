@@ -8,14 +8,12 @@ import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.oppdragStatus
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Profile
 import org.springframework.core.env.Environment
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Profile("!e2e")
 class OppdragMottaker(
     val oppdragLagerRepository: OppdragLagerRepository,
     val env: Environment,
@@ -74,10 +72,10 @@ class OppdragMottaker(
     }
 
     /**
-     * I dev og e2e settes status alltid til KVITTER_OK
+     * Lokalt settes status alltid til KVITTER_OK
      */
     private fun hentStatus(kvittering: Oppdrag) =
-        if (!env.activeProfiles.contains("dev") && !env.activeProfiles.contains("e2e")) {
+        if (!env.activeProfiles.contains("dev")) {
             kvittering.oppdragStatus
         } else {
             OppdragStatus.KVITTERT_OK

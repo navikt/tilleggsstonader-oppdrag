@@ -4,13 +4,11 @@ import com.ibm.mq.jakarta.jms.MQQueue
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.jms.JmsException
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Service
 
 @Service
-@Profile("!e2e")
 class OppdragSenderMQ(
     val jmsTemplateUtgående: JmsTemplate,
     @Value("\${oppdrag.mq.enabled}") val erEnabled: String,
