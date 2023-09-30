@@ -10,8 +10,6 @@ import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.conflict
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.illegalState
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.notFound
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.ok
-import no.nav.tilleggsstonader.oppdrag.service.OppdragAlleredeSendtException
-import no.nav.tilleggsstonader.oppdrag.service.OppdragService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

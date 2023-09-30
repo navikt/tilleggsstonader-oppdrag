@@ -12,7 +12,6 @@ import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
-import no.nav.tilleggsstonader.oppdrag.service.OppdragServiceImpl
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.math.BigDecimal

@@ -5,7 +5,6 @@ import no.nav.familie.kontrakter.felles.oppdrag.OppdragId
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.oppdragId
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
-import no.nav.tilleggsstonader.oppdrag.service.OppdragService
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import no.nav.tilleggsstonader.oppdrag.util.TestConfig
 import no.nav.tilleggsstonader.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer

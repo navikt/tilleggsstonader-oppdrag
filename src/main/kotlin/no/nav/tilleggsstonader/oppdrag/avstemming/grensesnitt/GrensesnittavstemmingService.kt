@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Metrics
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
+import no.nav.tilleggsstonader.oppdrag.common.Fagsystem
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Grunnlagsdata
 import org.slf4j.Logger
@@ -136,12 +137,4 @@ enum class Status(val status: String, val beskrivelse: String) {
     ),
     MANGLER("mangler", "Antall oppdrag hvor kvittering mangler."),
     VARSEL("varsel", "Antall oppdrag som har fått kvittering med mangler (alvorlighetsgrad 04)."),
-}
-
-enum class Fagsystem {
-    BA,
-    EFOG,
-    EFBT,
-    EFSP,
-    KS,
 }
