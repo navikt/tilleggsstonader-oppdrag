@@ -10,8 +10,6 @@ import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Opphør
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
-import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragMapper
-import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragSender
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.service.OppdragServiceImpl
