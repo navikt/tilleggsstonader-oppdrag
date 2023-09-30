@@ -1,11 +1,10 @@
-package no.nav.tilleggsstonader.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.avstemming.grensesnitt
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
-import no.nav.tilleggsstonader.oppdrag.grensesnittavstemming.GrensesnittavstemmingMapper
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Grunnlagsdata
 import org.slf4j.Logger

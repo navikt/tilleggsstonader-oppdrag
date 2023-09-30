@@ -1,7 +1,8 @@
-package no.nav.tilleggsstonader.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.avstemming.konsistens
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.tilleggsstonader.oppdrag.avstemming.grensesnitt.Fagsystem
 import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.avstemming.grensesnitt
 
 import io.mockk.every
 import io.mockk.justRun

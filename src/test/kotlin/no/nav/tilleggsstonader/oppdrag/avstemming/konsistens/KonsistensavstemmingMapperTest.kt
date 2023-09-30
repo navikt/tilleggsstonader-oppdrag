@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.konsistensavstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming.konsistens
 
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode

@@ -1,10 +1,9 @@
-package no.nav.tilleggsstonader.oppdrag.service
+package no.nav.tilleggsstonader.oppdrag.avstemming.konsistens
 
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingRequestV2
 import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
-import no.nav.tilleggsstonader.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
 import org.slf4j.Logger

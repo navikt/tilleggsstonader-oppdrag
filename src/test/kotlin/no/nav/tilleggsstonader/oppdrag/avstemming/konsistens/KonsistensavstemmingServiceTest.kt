@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.konsistensavstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming.konsistens
 
 import io.mockk.Runs
 import io.mockk.every
@@ -17,8 +17,6 @@ import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemm
 import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
-import no.nav.tilleggsstonader.oppdrag.service.KonsistensavstemmingService
-import no.nav.tilleggsstonader.oppdrag.service.MellomlagringKonsistensavstemmingService
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

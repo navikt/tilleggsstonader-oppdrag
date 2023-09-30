@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.grensesnittavstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming.grensesnitt
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag

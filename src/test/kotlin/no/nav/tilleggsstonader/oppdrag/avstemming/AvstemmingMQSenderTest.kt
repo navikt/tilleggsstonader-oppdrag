@@ -5,8 +5,8 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants
 import io.mockk.called
 import io.mockk.spyk
 import io.mockk.verify
-import no.nav.tilleggsstonader.oppdrag.grensesnittavstemming.GrensesnittavstemmingMapper
-import no.nav.tilleggsstonader.oppdrag.konsistensavstemming.KonsistensavstemmingMapper
+import no.nav.tilleggsstonader.oppdrag.avstemming.grensesnitt.GrensesnittavstemmingMapper
+import no.nav.tilleggsstonader.oppdrag.avstemming.konsistens.KonsistensavstemmingMapper
 import no.nav.tilleggsstonader.oppdrag.repository.somAvstemming
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato

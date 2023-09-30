@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.konsistensavstemming
+package no.nav.tilleggsstonader.oppdrag.avstemming.konsistens
 
 class KonsistensavstemmingConstants {
 
