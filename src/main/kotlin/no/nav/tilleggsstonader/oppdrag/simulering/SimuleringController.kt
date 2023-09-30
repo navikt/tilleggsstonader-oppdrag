@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.rest
+package no.nav.tilleggsstonader.oppdrag.simulering
 
 import jakarta.validation.Valid
 import no.nav.familie.kontrakter.felles.Ressurs
