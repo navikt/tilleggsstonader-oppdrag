@@ -75,7 +75,7 @@ class OppdragMottaker(
      * Lokalt settes status alltid til KVITTER_OK
      */
     private fun hentStatus(kvittering: Oppdrag) =
-        if (!env.activeProfiles.contains("dev")) {
+        if (!env.activeProfiles.contains("local")) {
             kvittering.oppdragStatus
         } else {
             OppdragStatus.KVITTERT_OK

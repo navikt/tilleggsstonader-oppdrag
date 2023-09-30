@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class ClientMocks {
 
     @Bean
-    @Profile("dev")
+    @Profile("local")
     @Primary
     fun mockSimulerFpService(): SimulerFpService {
         val simulerFpService = mockk<SimulerFpService>()

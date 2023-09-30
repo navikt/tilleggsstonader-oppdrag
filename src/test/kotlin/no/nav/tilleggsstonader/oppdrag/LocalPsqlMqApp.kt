@@ -31,7 +31,7 @@ object DevPsqlMqLauncher {
         properties.put("OPPDRAG_MQ_PORT_OVERRIDE", mq.getMappedPort(1414))
 
         SpringApplicationBuilder(ApplicationConfig::class.java)
-            .profiles("dev_psql_mq")
+            .profiles("local_psql_mq")
             .properties(properties)
             .run(*args)
     }

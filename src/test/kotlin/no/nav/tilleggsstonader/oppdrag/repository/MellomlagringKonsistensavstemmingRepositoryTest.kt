@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import java.util.*
 import kotlin.test.assertEquals
 
-@ActiveProfiles("dev")
+@ActiveProfiles("local")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
 @SpringBootTest(
     classes = [MellomlagringKonsistensavstemmingRepositoryTest.TestConfig::class],

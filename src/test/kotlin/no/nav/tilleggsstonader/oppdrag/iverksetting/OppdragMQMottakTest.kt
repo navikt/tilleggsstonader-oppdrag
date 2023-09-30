@@ -24,7 +24,7 @@ class OppdragMQMottakTest {
     val devEnv: Environment
         get() {
             val env = mockk<Environment>()
-            every { env.activeProfiles } returns arrayOf("dev")
+            every { env.activeProfiles } returns arrayOf("local")
             return env
         }
 
@@ -32,7 +32,7 @@ class OppdragMQMottakTest {
     fun setUp() {
         val env = mockk<Environment>()
         val oppdragLagerRepository = mockk<OppdragLagerRepository>()
-        every { env.activeProfiles } returns arrayOf("dev")
+        every { env.activeProfiles } returns arrayOf("local")
 
         oppdragMottaker = OppdragMottaker(oppdragLagerRepository, env)
     }

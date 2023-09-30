@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.test.assertFailsWith
 
-@ActiveProfiles("dev")
+@ActiveProfiles("local")
 @ContextConfiguration(initializers = arrayOf(Containers.PostgresSQLInitializer::class))
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @Testcontainers

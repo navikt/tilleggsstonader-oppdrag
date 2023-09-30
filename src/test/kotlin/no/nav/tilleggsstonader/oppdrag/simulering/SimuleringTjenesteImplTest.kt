@@ -25,7 +25,7 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@ActiveProfiles("dev")
+@ActiveProfiles("local")
 @ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class])
 @SpringBootTest(classes = [SimuleringTjenesteImplTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @Testcontainers

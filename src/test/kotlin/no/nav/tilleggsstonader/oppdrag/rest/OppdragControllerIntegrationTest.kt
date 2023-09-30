@@ -24,7 +24,7 @@ import org.testcontainers.shaded.org.awaitility.Awaitility.await
 import java.time.Duration
 import kotlin.test.assertEquals
 
-@ActiveProfiles("dev")
+@ActiveProfiles("local")
 @ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class, Containers.MQInitializer::class])
 @SpringBootTest(classes = [TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @EnableJms

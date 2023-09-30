@@ -6,7 +6,7 @@ import no.nav.tilleggsstonader.oppdrag.simulering.SimuleringSender
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
-@Profile("dev", "dev_psql_mq")
+@Profile("local", "local_psql_mq")
 @Service
 class SimuleringSenderMock : SimuleringSender {
 
