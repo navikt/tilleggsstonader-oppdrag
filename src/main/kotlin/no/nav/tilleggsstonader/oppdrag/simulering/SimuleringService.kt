@@ -2,7 +2,11 @@ package no.nav.tilleggsstonader.oppdrag.simulering
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.kontrakter.felles.simulering.*
+import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetalingerFraSimulering
+import no.nav.familie.kontrakter.felles.simulering.FeilutbetaltPeriode
+import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
+import no.nav.familie.kontrakter.felles.simulering.PosteringType
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
@@ -10,12 +14,12 @@ import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.S
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
 import no.nav.tilleggsstonader.oppdrag.common.logSoapFaultException
-import no.nav.tilleggsstonader.oppdrag.config.FinnesIkkeITps
-import no.nav.tilleggsstonader.oppdrag.config.IntegrasjonException
-import no.nav.tilleggsstonader.oppdrag.config.Integrasjonssystem
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.FinnesIkkeITps
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.IntegrasjonException
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.Integrasjonssystem
 import no.nav.tilleggsstonader.oppdrag.iverksetting.Jaxb
-import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLager
-import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerService
+import no.nav.tilleggsstonader.oppdrag.simulering.domain.SimuleringLager
+import no.nav.tilleggsstonader.oppdrag.simulering.domain.SimuleringLagerRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -26,7 +30,7 @@ import java.time.LocalDate
 class SimuleringService(
     val simuleringSender: SimuleringSender,
     val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
-    val simuleringLagerService: SimuleringLagerService,
+    val simuleringLagerRepository: SimuleringLagerRepository,
 ) {
 
     val mapper = jacksonObjectMapper()
@@ -64,12 +68,12 @@ class SimuleringService(
         )
 
         val simuleringsLager = SimuleringLager.lagFraOppdrag(utbetalingsoppdrag, simulerBeregningRequest)
-        simuleringLagerService.lagreINyTransaksjon(simuleringsLager)
+        simuleringLagerRepository.insert(simuleringsLager)
 
         val respons = hentSimulerBeregningResponse(simulerBeregningRequest, utbetalingsoppdrag)
 
         simuleringsLager.responseXml = Jaxb.tilXml(respons)
-        simuleringLagerService.oppdater(simuleringsLager)
+        simuleringLagerRepository.update(simuleringsLager)
 
         val beregning = respons.response?.simulering ?: return DetaljertSimuleringResultat(emptyList())
         return simuleringResultatTransformer.mapSimulering(
@@ -79,7 +83,7 @@ class SimuleringService(
     }
 
     fun hentFeilutbetalinger(request: HentFeilutbetalingerFraSimuleringRequest): FeilutbetalingerFraSimulering {
-        val simuleringLager = simuleringLagerService.hentSisteSimuleringsresultat(
+        val simuleringLager = simuleringLagerRepository.finnSisteSimuleringsresultat(
             request.ytelsestype.kode,
             request.eksternFagsakId,
             request.fagsystemsbehandlingId,

@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.infrastruktur.config
 
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter

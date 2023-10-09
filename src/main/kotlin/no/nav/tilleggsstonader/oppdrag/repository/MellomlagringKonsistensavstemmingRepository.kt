@@ -1,5 +1,7 @@
 package no.nav.tilleggsstonader.oppdrag.repository
 
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.database.InsertUpdateRepository
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.database.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
 import java.util.UUID
@@ -7,7 +9,7 @@ import java.util.UUID
 @Repository
 interface MellomlagringKonsistensavstemmingRepository :
     RepositoryInterface<MellomlagringKonsistensavstemming, UUID>,
-    InsertUpdateRepository<MellomlagringKonsistensavstemming> {
+        InsertUpdateRepository<MellomlagringKonsistensavstemming> {
 
     fun findAllByTransaksjonsId(
         transaksjonsId: UUID,

@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.infrastruktur.config
 
 import com.ibm.mq.constants.CMQC.MQENC_NATIVE
 import com.ibm.mq.jakarta.jms.MQQueueConnectionFactory

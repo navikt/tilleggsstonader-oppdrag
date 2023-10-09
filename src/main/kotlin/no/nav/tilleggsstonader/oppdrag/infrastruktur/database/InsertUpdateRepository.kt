@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.infrastruktur.database
 
 interface InsertUpdateRepository<T> {
 

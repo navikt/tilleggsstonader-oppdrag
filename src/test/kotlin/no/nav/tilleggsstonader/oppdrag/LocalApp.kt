@@ -1,6 +1,6 @@
 package no.nav.tilleggsstonader.oppdrag
 
-import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.ApplicationConfig
 import org.springframework.boot.builder.SpringApplicationBuilder
 
 object LocalApp {

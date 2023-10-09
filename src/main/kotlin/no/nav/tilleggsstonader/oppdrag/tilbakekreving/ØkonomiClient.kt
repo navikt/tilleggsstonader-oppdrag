@@ -8,8 +8,8 @@ import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingPortType
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakRequest
 import no.nav.okonomi.tilbakekrevingservice.TilbakekrevingsvedtakResponse
 import no.nav.tilleggsstonader.oppdrag.common.logSoapFaultException
-import no.nav.tilleggsstonader.oppdrag.config.IntegrasjonException
-import no.nav.tilleggsstonader.oppdrag.config.Integrasjonssystem
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.IntegrasjonException
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.Integrasjonssystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

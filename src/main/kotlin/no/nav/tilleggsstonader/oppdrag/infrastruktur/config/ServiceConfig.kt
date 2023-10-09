@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.infrastruktur.config
 
 import no.nav.common.cxf.CXFClient
 import no.nav.common.cxf.StsConfig

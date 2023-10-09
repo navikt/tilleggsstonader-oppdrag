@@ -2,9 +2,9 @@ package no.nav.tilleggsstonader.oppdrag.simulering
 
 import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
 import no.nav.familie.kontrakter.felles.tilbakekreving.Ytelsestype
-import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
-import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLager
-import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerService
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.ApplicationConfig
+import no.nav.tilleggsstonader.oppdrag.simulering.domain.SimuleringLager
+import no.nav.tilleggsstonader.oppdrag.simulering.domain.SimuleringLagerRepository
 import no.nav.tilleggsstonader.oppdrag.simulering.util.lagTestUtbetalingsoppdragForFGBMedEttBarn
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -31,16 +31,19 @@ import kotlin.test.assertTrue
 @Testcontainers
 internal class SimuleringServiceTest {
 
-    @Autowired lateinit var simuleringLagerService: SimuleringLagerService
+    @Autowired
+    lateinit var simuleringLagerRepository: SimuleringLagerRepository
 
-    @Autowired lateinit var simuleringService: SimuleringService
+    @Autowired
+    lateinit var simuleringService: SimuleringService
 
     @Autowired
     private lateinit var jdbcAggregateOperations: JdbcAggregateOperations
 
     companion object {
 
-        @Container var postgreSQLContainer = Containers.postgreSQLContainer
+        @Container
+        var postgreSQLContainer = Containers.postgreSQLContainer
     }
 
     @BeforeEach
@@ -56,7 +59,7 @@ internal class SimuleringServiceTest {
 
         assertNotNull(simuleringResultat)
 
-        val alleLagretSimuleringsLager = simuleringLagerService.finnAlleSimuleringsLager()
+        val alleLagretSimuleringsLager = simuleringLagerRepository.findAll().toList()
         assertEquals(1, alleLagretSimuleringsLager.size)
         val simuleringsLager = alleLagretSimuleringsLager[0]
         assertNotNull(simuleringsLager.requestXml)
@@ -71,7 +74,7 @@ internal class SimuleringServiceTest {
         val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10001_EFOG.xml")
         val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10001_EFOG.xml")
 
-        simuleringLagerService.lagreINyTransaksjon(
+        simuleringLagerRepository.insert(
             SimuleringLager(
                 fagsystem = "EFOG",
                 fagsakId = eksternFagsakId,
@@ -92,7 +95,7 @@ internal class SimuleringServiceTest {
             )
         assertTrue {
             feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
-                feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 1
+                    feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 1
         }
 
         val feilutbetaltPeriode = feilutbetalingerFraSimulering.feilutbetaltePerioder[0]
@@ -111,7 +114,7 @@ internal class SimuleringServiceTest {
         val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10002_BA.xml")
         val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10002_BA.xml")
 
-        simuleringLagerService.lagreINyTransaksjon(
+        simuleringLagerRepository.insert(
             SimuleringLager(
                 fagsystem = "BA",
                 fagsakId = eksternFagsakId,
@@ -132,7 +135,7 @@ internal class SimuleringServiceTest {
             )
         assertTrue {
             feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
-                feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 3
+                    feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 3
         }
 
         val feilutbetaltPeriode1 = feilutbetalingerFraSimulering.feilutbetaltePerioder[0]
@@ -165,7 +168,7 @@ internal class SimuleringServiceTest {
         val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10003_EFBT.xml")
         val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10003_EFBT.xml")
 
-        simuleringLagerService.lagreINyTransaksjon(
+        simuleringLagerRepository.insert(
             SimuleringLager(
                 fagsystem = "EFBT",
                 fagsakId = eksternFagsakId,

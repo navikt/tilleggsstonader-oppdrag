@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.config
+package no.nav.tilleggsstonader.oppdrag.infrastruktur.config
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException

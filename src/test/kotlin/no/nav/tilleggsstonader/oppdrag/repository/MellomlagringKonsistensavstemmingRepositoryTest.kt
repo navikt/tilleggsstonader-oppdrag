@@ -1,7 +1,7 @@
 package no.nav.tilleggsstonader.oppdrag.repository
 
 import no.nav.tilleggsstonader.oppdrag.common.Fagsystem
-import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.ApplicationConfig
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

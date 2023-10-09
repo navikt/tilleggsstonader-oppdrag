@@ -2,7 +2,7 @@ package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import jakarta.jms.TextMessage
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig.Companion.LOKALE_PROFILER
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.ApplicationConfig.Companion.LOKALE_PROFILER
 import no.nav.tilleggsstonader.oppdrag.domene.id
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.oppdragStatus

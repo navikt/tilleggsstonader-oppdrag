@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.simulering.domain
 
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag

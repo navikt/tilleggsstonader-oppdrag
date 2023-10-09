@@ -1,11 +1,14 @@
-package no.nav.tilleggsstonader.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.simulering.domain
 
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.database.InsertUpdateRepository
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.database.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface SimuleringLagerRepository : RepositoryInterface<SimuleringLager, UUID>, InsertUpdateRepository<SimuleringLager> {
+interface SimuleringLagerRepository : RepositoryInterface<SimuleringLager, UUID>,
+        InsertUpdateRepository<SimuleringLager> {
 
     // language=PostgreSQL
     @Query(

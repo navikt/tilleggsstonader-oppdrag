@@ -1,6 +1,6 @@
 package no.nav.tilleggsstonader.oppdrag.util
 
-import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
+import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.ApplicationConfig
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
