@@ -4,7 +4,7 @@ import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimule
 import no.nav.familie.kontrakter.felles.tilbakekreving.Ytelsestype
 import no.nav.tilleggsstonader.oppdrag.config.ApplicationConfig
 import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLager
-import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerTjeneste
+import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerService
 import no.nav.tilleggsstonader.oppdrag.simulering.util.lagTestUtbetalingsoppdragForFGBMedEttBarn
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -27,13 +27,13 @@ import kotlin.test.assertTrue
 
 @ActiveProfiles("local")
 @ContextConfiguration(initializers = [Containers.PostgresSQLInitializer::class])
-@SpringBootTest(classes = [SimuleringTjenesteImplTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
+@SpringBootTest(classes = [SimuleringServiceTest.TestConfig::class], properties = ["spring.cloud.vault.enabled=false"])
 @Testcontainers
-internal class SimuleringTjenesteImplTest {
+internal class SimuleringServiceTest {
 
-    @Autowired lateinit var simuleringLagerTjeneste: SimuleringLagerTjeneste
+    @Autowired lateinit var simuleringLagerService: SimuleringLagerService
 
-    @Autowired lateinit var simuleringTjeneste: SimuleringTjeneste
+    @Autowired lateinit var simuleringService: SimuleringService
 
     @Autowired
     private lateinit var jdbcAggregateOperations: JdbcAggregateOperations
@@ -52,11 +52,11 @@ internal class SimuleringTjenesteImplTest {
     fun `utførSimuleringOghentDetaljertSimuleringResultat skal lagre request og respons`() {
         val utbetalingsoppdrag = lagTestUtbetalingsoppdragForFGBMedEttBarn()
 
-        val simuleringResultat = simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag)
+        val simuleringResultat = simuleringService.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag)
 
         assertNotNull(simuleringResultat)
 
-        val alleLagretSimuleringsLager = simuleringLagerTjeneste.finnAlleSimuleringsLager()
+        val alleLagretSimuleringsLager = simuleringLagerService.finnAlleSimuleringsLager()
         assertEquals(1, alleLagretSimuleringsLager.size)
         val simuleringsLager = alleLagretSimuleringsLager[0]
         assertNotNull(simuleringsLager.requestXml)
@@ -71,7 +71,7 @@ internal class SimuleringTjenesteImplTest {
         val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10001_EFOG.xml")
         val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10001_EFOG.xml")
 
-        simuleringLagerTjeneste.lagreINyTransaksjon(
+        simuleringLagerService.lagreINyTransaksjon(
             SimuleringLager(
                 fagsystem = "EFOG",
                 fagsakId = eksternFagsakId,
@@ -82,7 +82,7 @@ internal class SimuleringTjenesteImplTest {
             ),
         )
 
-        val feilutbetalingerFraSimulering = simuleringTjeneste
+        val feilutbetalingerFraSimulering = simuleringService
             .hentFeilutbetalinger(
                 HentFeilutbetalingerFraSimuleringRequest(
                     ytelsestype = Ytelsestype.OVERGANGSSTØNAD,
@@ -111,7 +111,7 @@ internal class SimuleringTjenesteImplTest {
         val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10002_BA.xml")
         val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10002_BA.xml")
 
-        simuleringLagerTjeneste.lagreINyTransaksjon(
+        simuleringLagerService.lagreINyTransaksjon(
             SimuleringLager(
                 fagsystem = "BA",
                 fagsakId = eksternFagsakId,
@@ -122,7 +122,7 @@ internal class SimuleringTjenesteImplTest {
             ),
         )
 
-        val feilutbetalingerFraSimulering = simuleringTjeneste
+        val feilutbetalingerFraSimulering = simuleringService
             .hentFeilutbetalinger(
                 HentFeilutbetalingerFraSimuleringRequest(
                     ytelsestype = Ytelsestype.BARNETRYGD,
@@ -165,7 +165,7 @@ internal class SimuleringTjenesteImplTest {
         val requestXml = lesFil("/simulering/testdata/requestXML_fagsak_10003_EFBT.xml")
         val responsXml = lesFil("/simulering/testdata/responsXML_fagsak_10003_EFBT.xml")
 
-        simuleringLagerTjeneste.lagreINyTransaksjon(
+        simuleringLagerService.lagreINyTransaksjon(
             SimuleringLager(
                 fagsystem = "EFBT",
                 fagsakId = eksternFagsakId,
@@ -176,7 +176,7 @@ internal class SimuleringTjenesteImplTest {
             ),
         )
 
-        val feilutbetalingerFraSimulering = simuleringTjeneste
+        val feilutbetalingerFraSimulering = simuleringService
             .hentFeilutbetalinger(
                 HentFeilutbetalingerFraSimuleringRequest(
                     ytelsestype = Ytelsestype.BARNETILSYN,

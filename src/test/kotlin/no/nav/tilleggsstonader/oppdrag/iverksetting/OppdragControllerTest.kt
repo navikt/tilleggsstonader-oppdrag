@@ -89,7 +89,7 @@ internal class OppdragControllerTest {
             every { oppdragLagerRepository.opprettOppdrag(any()) } just Runs
         }
 
-        val oppdragService = OppdragServiceImpl(oppdragSender, oppdragLagerRepository)
+        val oppdragService = OppdragService(oppdragSender, oppdragLagerRepository)
 
         val oppdragController = OppdragController(oppdragService, mapper)
         return Pair(oppdragLagerRepository, oppdragController)

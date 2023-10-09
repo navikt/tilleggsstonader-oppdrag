@@ -2,11 +2,7 @@ package no.nav.tilleggsstonader.oppdrag.simulering
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
-import no.nav.familie.kontrakter.felles.simulering.DetaljertSimuleringResultat
-import no.nav.familie.kontrakter.felles.simulering.FeilutbetalingerFraSimulering
-import no.nav.familie.kontrakter.felles.simulering.FeilutbetaltPeriode
-import no.nav.familie.kontrakter.felles.simulering.HentFeilutbetalingerFraSimuleringRequest
-import no.nav.familie.kontrakter.felles.simulering.PosteringType
+import no.nav.familie.kontrakter.felles.simulering.*
 import no.nav.system.os.entiteter.beregningskjema.Beregning
 import no.nav.system.os.entiteter.beregningskjema.BeregningStoppnivaaDetaljer
 import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
@@ -19,22 +15,19 @@ import no.nav.tilleggsstonader.oppdrag.config.IntegrasjonException
 import no.nav.tilleggsstonader.oppdrag.config.Integrasjonssystem
 import no.nav.tilleggsstonader.oppdrag.iverksetting.Jaxb
 import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLager
-import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerTjeneste
+import no.nav.tilleggsstonader.oppdrag.repository.SimuleringLagerService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.springframework.web.context.annotation.ApplicationScope
 import java.math.BigDecimal
 import java.time.LocalDate
 
 @Service
-@ApplicationScope
-class SimuleringTjenesteImpl(
-    @Autowired val simuleringSender: SimuleringSender,
-    @Autowired val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
-    @Autowired val simuleringLagerTjeneste: SimuleringLagerTjeneste,
-) : SimuleringTjeneste {
+class SimuleringService(
+    val simuleringSender: SimuleringSender,
+    val simulerBeregningRequestMapper: SimulerBeregningRequestMapper,
+    val simuleringLagerService: SimuleringLagerService,
+) {
 
     val mapper = jacksonObjectMapper()
     val simuleringResultatTransformer = SimuleringResultatTransformer()
@@ -62,7 +55,7 @@ class SimuleringTjenesteImpl(
         }
     }
 
-    override fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
+    fun utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag: Utbetalingsoppdrag): DetaljertSimuleringResultat {
         val simulerBeregningRequest = simulerBeregningRequestMapper.tilSimulerBeregningRequest(utbetalingsoppdrag)
 
         secureLogger.info(
@@ -71,12 +64,12 @@ class SimuleringTjenesteImpl(
         )
 
         val simuleringsLager = SimuleringLager.lagFraOppdrag(utbetalingsoppdrag, simulerBeregningRequest)
-        simuleringLagerTjeneste.lagreINyTransaksjon(simuleringsLager)
+        simuleringLagerService.lagreINyTransaksjon(simuleringsLager)
 
         val respons = hentSimulerBeregningResponse(simulerBeregningRequest, utbetalingsoppdrag)
 
         simuleringsLager.responseXml = Jaxb.tilXml(respons)
-        simuleringLagerTjeneste.oppdater(simuleringsLager)
+        simuleringLagerService.oppdater(simuleringsLager)
 
         val beregning = respons.response?.simulering ?: return DetaljertSimuleringResultat(emptyList())
         return simuleringResultatTransformer.mapSimulering(
@@ -85,8 +78,8 @@ class SimuleringTjenesteImpl(
         )
     }
 
-    override fun hentFeilutbetalinger(request: HentFeilutbetalingerFraSimuleringRequest): FeilutbetalingerFraSimulering {
-        val simuleringLager = simuleringLagerTjeneste.hentSisteSimuleringsresultat(
+    fun hentFeilutbetalinger(request: HentFeilutbetalingerFraSimuleringRequest): FeilutbetalingerFraSimulering {
+        val simuleringLager = simuleringLagerService.hentSisteSimuleringsresultat(
             request.ytelsestype.kode,
             request.eksternFagsakId,
             request.fagsystemsbehandlingId,

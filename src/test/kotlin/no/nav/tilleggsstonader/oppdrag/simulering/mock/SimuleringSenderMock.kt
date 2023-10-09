@@ -1,16 +1,23 @@
 package no.nav.tilleggsstonader.oppdrag.simulering.mock
 
-import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
-import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
+import io.mockk.every
+import io.mockk.mockk
 import no.nav.tilleggsstonader.oppdrag.simulering.SimuleringSender
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Service
 
 @Profile("local", "local_psql_mq")
-@Service
-class SimuleringSenderMock : SimuleringSender {
+@Configuration
+class SimuleringConfig {
 
-    override fun hentSimulerBeregningResponse(simulerBeregningRequest: SimulerBeregningRequest?): SimulerBeregningResponse {
-        return SimuleringGenerator().opprettSimuleringsResultat(simulerBeregningRequest!!)
+    @Bean
+    fun simuleringSender(): SimuleringSender {
+        val service = mockk<SimuleringSender>()
+        every { service.hentSimulerBeregningResponse(any()) } answers {
+            SimuleringGenerator().opprettSimuleringsResultat(firstArg())
+        }
+        return service
     }
+
 }

@@ -52,7 +52,7 @@ class AvstemmingMQSenderTest {
 
     @Test
     fun skal_ikke_sende_avstemming_når_avskrudd() {
-        val avstemmingSender = AvstemmingSenderMQ(jmsTemplate, "false")
+        val avstemmingSender = AvstemmingSender(jmsTemplate, "false")
 
         Assertions.assertThrows(UnsupportedOperationException::class.java) {
             avstemmingSender.sendKonsistensAvstemming(lagTestKonsistensavstemming()[0])
@@ -63,7 +63,7 @@ class AvstemmingMQSenderTest {
 
     @Test
     fun skal_sende_konsistensavstemming_når_påskrudd() {
-        val avstemmingSender = AvstemmingSenderMQ(jmsTemplate, "true")
+        val avstemmingSender = AvstemmingSender(jmsTemplate, "true")
 
         avstemmingSender.sendKonsistensAvstemming(lagTestKonsistensavstemming()[0])
 
@@ -72,7 +72,7 @@ class AvstemmingMQSenderTest {
 
     @Test
     fun skal_sende_grensesnittavstemming_når_påskrudd() {
-        val avstemmingSender = AvstemmingSenderMQ(jmsTemplate, "true")
+        val avstemmingSender = AvstemmingSender(jmsTemplate, "true")
 
         avstemmingSender.sendGrensesnittAvstemming(lagTestGrensesnittavstemming()[0])
 

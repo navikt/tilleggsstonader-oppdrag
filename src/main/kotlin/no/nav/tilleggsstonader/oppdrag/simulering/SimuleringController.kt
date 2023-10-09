@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
     produces = [MediaType.APPLICATION_JSON_VALUE],
 )
 @ProtectedWithClaims(issuer = "azuread")
-class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste) {
+class SimuleringController(@Autowired val simuleringService: SimuleringService) {
 
     val logger: Logger = LoggerFactory.getLogger(SimuleringController::class.java)
 
@@ -34,7 +34,7 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
         @Valid @RequestBody
         utbetalingsoppdrag: Utbetalingsoppdrag,
     ): ResponseEntity<Ressurs<DetaljertSimuleringResultat>> {
-        return ok(simuleringTjeneste.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag))
+        return ok(simuleringService.utførSimuleringOghentDetaljertSimuleringResultat(utbetalingsoppdrag))
     }
 
     @PostMapping(path = ["/feilutbetalinger"])
@@ -47,6 +47,6 @@ class SimuleringController(@Autowired val simuleringTjeneste: SimuleringTjeneste
                 "fagsak=${request.eksternFagsakId}," +
                 " behandlingId=${request.eksternFagsakId}",
         )
-        return ok(simuleringTjeneste.hentFeilutbetalinger(request))
+        return ok(simuleringService.hentFeilutbetalinger(request))
     }
 }
