@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.avstemming.konsistens
 
 import no.nav.tilleggsstonader.oppdrag.infrastruktur.database.InsertUpdateRepository
 import no.nav.tilleggsstonader.oppdrag.infrastruktur.database.RepositoryInterface

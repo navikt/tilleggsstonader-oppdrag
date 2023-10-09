@@ -13,8 +13,6 @@ import no.nav.familie.kontrakter.felles.oppdrag.PerioderForBehandling
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
-import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemming
-import no.nav.tilleggsstonader.oppdrag.repository.MellomlagringKonsistensavstemmingRepository
 import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
