@@ -6,7 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.somAvstemming
 import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.AksjonType

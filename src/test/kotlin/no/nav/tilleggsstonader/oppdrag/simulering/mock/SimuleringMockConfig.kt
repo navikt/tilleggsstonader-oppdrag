@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile
 
 @Profile("local", "local_psql_mq")
 @Configuration
-class SimuleringConfig {
+class SimuleringMockConfig {
 
     @Bean
     fun simuleringSender(): SimuleringSender {
@@ -19,5 +19,4 @@ class SimuleringConfig {
         }
         return service
     }
-
 }

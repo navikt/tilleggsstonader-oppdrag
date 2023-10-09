@@ -1,6 +1,7 @@
 package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import com.ibm.mq.jakarta.jms.MQQueue
+import no.nav.tilleggsstonader.oppdrag.common.Jaxb
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -25,7 +26,7 @@ class OppdragSender(
         val oppdragXml = Jaxb.tilXml(oppdrag)
         LOG.info(
             "Sender oppdrag for fagsystem=${oppdrag.oppdrag110.kodeFagomraade} og " +
-                    "fagsak=${oppdrag.oppdrag110.fagsystemId} behandling=$oppdragId til Oppdragsystemet",
+                "fagsak=${oppdrag.oppdrag110.fagsystemId} behandling=$oppdragId til Oppdragsystemet",
         )
         try {
             jmsTemplateUtgående.send { session ->

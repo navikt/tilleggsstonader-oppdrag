@@ -6,7 +6,7 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppdrag.GrensesnittavstemmingRequest
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
 import no.nav.tilleggsstonader.oppdrag.common.Fagsystem
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLagerRepository
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Grunnlagsdata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

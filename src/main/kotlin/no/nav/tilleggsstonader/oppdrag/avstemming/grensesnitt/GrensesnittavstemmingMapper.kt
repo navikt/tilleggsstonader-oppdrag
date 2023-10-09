@@ -4,7 +4,7 @@ import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingMapper
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingMapper.fagområdeTilAvleverendeKomponentKode
 import no.nav.tilleggsstonader.oppdrag.avstemming.SystemKode
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragTilAvstemming
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragTilAvstemming
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.AksjonType
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.Aksjonsdata
 import no.nav.virksomhet.tjenester.avstemming.meldinger.v1.AvstemmingType

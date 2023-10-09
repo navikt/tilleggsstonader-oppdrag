@@ -1,6 +1,7 @@
 package no.nav.tilleggsstonader.oppdrag.repository
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdragStatus
 import no.trygdeetaten.skjema.oppdrag.Mmel
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 import org.junit.jupiter.api.Test

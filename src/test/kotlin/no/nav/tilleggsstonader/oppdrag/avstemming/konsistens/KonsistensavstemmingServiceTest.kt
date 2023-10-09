@@ -13,8 +13,8 @@ import no.nav.familie.kontrakter.felles.oppdrag.PerioderForBehandling
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsperiode
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
-import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.UtbetalingsoppdragForKonsistensavstemming
 import no.nav.virksomhet.tjenester.avstemming.informasjon.konsistensavstemmingsdata.v1.Konsistensavstemmingsdata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

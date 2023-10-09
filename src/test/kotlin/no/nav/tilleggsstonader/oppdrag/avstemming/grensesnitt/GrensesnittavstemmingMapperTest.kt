@@ -3,7 +3,7 @@ package no.nav.tilleggsstonader.oppdrag.avstemming.grensesnitt
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.tilleggsstonader.oppdrag.avstemming.SystemKode
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragTilAvstemming
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragTilAvstemming
 import no.nav.tilleggsstonader.oppdrag.repository.somAvstemming
 import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag
 import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagUtbetalingsperiode

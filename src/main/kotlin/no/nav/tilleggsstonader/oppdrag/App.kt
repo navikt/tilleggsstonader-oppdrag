@@ -6,8 +6,8 @@ import org.springframework.jms.annotation.EnableJms
 
 @SpringBootApplication
 @EnableJms
-class Launcher
+class App
 
 fun main(args: Array<String>) {
-    SpringApplication.run(Launcher::class.java, *args)
+    SpringApplication.run(App::class.java, *args)
 }

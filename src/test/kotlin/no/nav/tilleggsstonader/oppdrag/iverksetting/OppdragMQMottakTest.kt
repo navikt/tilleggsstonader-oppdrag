@@ -7,8 +7,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import jakarta.jms.TextMessage
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragLager
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLager
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLagerRepository
 import no.nav.tilleggsstonader.oppdrag.repository.somKvitteringsinformasjon
 import no.nav.tilleggsstonader.oppdrag.util.TestUtbetalingsoppdrag.utbetalingsoppdragMedTilfeldigAktoer
 import org.junit.jupiter.api.BeforeEach

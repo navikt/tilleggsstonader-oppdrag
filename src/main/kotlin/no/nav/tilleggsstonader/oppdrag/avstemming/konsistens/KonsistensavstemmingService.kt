@@ -5,8 +5,8 @@ import no.nav.familie.kontrakter.felles.oppdrag.KonsistensavstemmingUtbetalingso
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.tilleggsstonader.oppdrag.avstemming.AvstemmingSender
 import no.nav.tilleggsstonader.oppdrag.common.Fagsystem
-import no.nav.tilleggsstonader.oppdrag.repository.OppdragLagerRepository
-import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.UtbetalingsoppdragForKonsistensavstemming
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

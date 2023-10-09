@@ -10,7 +10,7 @@ import no.nav.tilleggsstonader.oppdrag.avstemming.konsistens.Konsistensavstemmin
 import no.nav.tilleggsstonader.oppdrag.common.Fagsystem
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.illegalState
 import no.nav.tilleggsstonader.oppdrag.common.RessursUtils.ok
-import no.nav.tilleggsstonader.oppdrag.repository.UtbetalingsoppdragForKonsistensavstemming
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.UtbetalingsoppdragForKonsistensavstemming
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

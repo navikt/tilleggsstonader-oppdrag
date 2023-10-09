@@ -1,4 +1,4 @@
-package no.nav.tilleggsstonader.oppdrag.iverksetting
+package no.nav.tilleggsstonader.oppdrag.common
 
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller

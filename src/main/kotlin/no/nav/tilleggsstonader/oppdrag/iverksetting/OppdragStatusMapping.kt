@@ -1,7 +1,6 @@
-package no.nav.tilleggsstonader.oppdrag.repository
+package no.nav.tilleggsstonader.oppdrag.iverksetting
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.tilleggsstonader.oppdrag.iverksetting.Status
 import no.trygdeetaten.skjema.oppdrag.Oppdrag
 
 val Oppdrag.oppdragStatus: OppdragStatus

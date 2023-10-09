@@ -13,11 +13,11 @@ import no.nav.system.os.entiteter.beregningskjema.BeregningsPeriode
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningFeilUnderBehandling
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningRequest
 import no.nav.system.os.tjenester.simulerfpservice.simulerfpservicegrensesnitt.SimulerBeregningResponse
+import no.nav.tilleggsstonader.oppdrag.common.Jaxb
 import no.nav.tilleggsstonader.oppdrag.common.logSoapFaultException
 import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.FinnesIkkeITps
 import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.IntegrasjonException
 import no.nav.tilleggsstonader.oppdrag.infrastruktur.config.Integrasjonssystem
-import no.nav.tilleggsstonader.oppdrag.iverksetting.Jaxb
 import no.nav.tilleggsstonader.oppdrag.simulering.domain.SimuleringLager
 import no.nav.tilleggsstonader.oppdrag.simulering.domain.SimuleringLagerRepository
 import org.slf4j.Logger

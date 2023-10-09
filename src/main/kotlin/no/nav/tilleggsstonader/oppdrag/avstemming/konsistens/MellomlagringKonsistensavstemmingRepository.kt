@@ -9,7 +9,7 @@ import java.util.UUID
 @Repository
 interface MellomlagringKonsistensavstemmingRepository :
     RepositoryInterface<MellomlagringKonsistensavstemming, UUID>,
-        InsertUpdateRepository<MellomlagringKonsistensavstemming> {
+    InsertUpdateRepository<MellomlagringKonsistensavstemming> {
 
     fun findAllByTransaksjonsId(
         transaksjonsId: UUID,

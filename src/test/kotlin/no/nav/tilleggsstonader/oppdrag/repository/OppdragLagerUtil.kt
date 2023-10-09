@@ -4,6 +4,9 @@ import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
 import no.nav.familie.kontrakter.felles.oppdrag.Utbetalingsoppdrag
 import no.nav.familie.kontrakter.felles.oppdrag.behandlingsIdForFørsteUtbetalingsperiode
 import no.nav.tilleggsstonader.oppdrag.iverksetting.OppdragMapper
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.Kvitteringsinformasjon
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLager
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragTilAvstemming
 import java.time.LocalDateTime
 
 fun Utbetalingsoppdrag.somOppdragLagerMedVersjon(versjon: Int): OppdragLager {

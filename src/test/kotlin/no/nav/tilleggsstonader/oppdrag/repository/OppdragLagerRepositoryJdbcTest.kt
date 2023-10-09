@@ -1,7 +1,9 @@
 package no.nav.tilleggsstonader.oppdrag.repository
 
 import no.nav.familie.kontrakter.felles.oppdrag.OppdragStatus
-import no.nav.tilleggsstonader.oppdrag.iverksetting.Jaxb
+import no.nav.tilleggsstonader.oppdrag.common.Jaxb
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.OppdragLagerRepository
+import no.nav.tilleggsstonader.oppdrag.iverksetting.oppdraglager.id
 import no.nav.tilleggsstonader.oppdrag.util.Containers
 import no.nav.tilleggsstonader.oppdrag.util.TestConfig
 import no.nav.tilleggsstonader.oppdrag.util.TestOppdragMedAvstemmingsdato.lagTestUtbetalingsoppdrag

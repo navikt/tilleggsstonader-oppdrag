@@ -95,7 +95,7 @@ internal class SimuleringServiceTest {
             )
         assertTrue {
             feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
-                    feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 1
+                feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 1
         }
 
         val feilutbetaltPeriode = feilutbetalingerFraSimulering.feilutbetaltePerioder[0]
@@ -135,7 +135,7 @@ internal class SimuleringServiceTest {
             )
         assertTrue {
             feilutbetalingerFraSimulering.feilutbetaltePerioder.isNotEmpty() &&
-                    feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 3
+                feilutbetalingerFraSimulering.feilutbetaltePerioder.size == 3
         }
 
         val feilutbetaltPeriode1 = feilutbetalingerFraSimulering.feilutbetaltePerioder[0]
