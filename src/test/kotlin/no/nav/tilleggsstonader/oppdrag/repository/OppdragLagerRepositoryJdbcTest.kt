@@ -25,7 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.UUID
 import kotlin.test.assertFailsWith
 
 @ActiveProfiles("local")
